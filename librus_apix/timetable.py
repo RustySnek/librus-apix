@@ -1,4 +1,4 @@
-from get_token import get_token
+from librus_apix.get_token import get_token
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 from collections import defaultdict

@@ -4,7 +4,7 @@ from requests.models import Response
 from bs4 import BeautifulSoup
 from requests import Session
 from requests.utils import cookiejar_from_dict, dict_from_cookiejar
-from urls import API_URL, BASE_URL, HEADERS
+from librus_apix.urls import API_URL, BASE_URL, HEADERS
 
 
 class AuthenticationError(Exception):

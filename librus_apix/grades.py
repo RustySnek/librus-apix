@@ -2,8 +2,8 @@ import re
 from datetime import datetime
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
-from get_token import get_token, Token
-from urls import BASE_URL
+from librus_apix.get_token import get_token, Token
+from librus_apix.urls import BASE_URL
 from typing import Union
 from dataclasses import dataclass
 

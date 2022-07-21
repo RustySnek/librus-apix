@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
-from get_token import get_token, Token
-from urls import BASE_URL, ATTENDANCE_URL
+from librus_apix.get_token import get_token, Token
+from librus_apix.urls import BASE_URL, ATTENDANCE_URL
 from typing import Iterable
 from collections import defaultdict
 from dataclasses import dataclass

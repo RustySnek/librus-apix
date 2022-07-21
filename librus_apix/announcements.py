@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
-from get_token import get_token, Token
-from urls import ANNOUNCEMENTS_URL
+from librus_apix.get_token import get_token, Token
+from librus_apix.urls import ANNOUNCEMENTS_URL
 from dataclasses import dataclass
 
 @dataclass

@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
-from get_token import Token, get_token
-from urls import BASE_URL, SCHEDULE_URL
+from librus_apix.get_token import Token, get_token
+from librus_apix.urls import BASE_URL, SCHEDULE_URL
 from dataclasses import dataclass
 
 @dataclass

@@ -1,7 +1,7 @@
 from typing import Generator
 from bs4 import BeautifulSoup
-from get_token import get_token, Token
-from urls import BASE_URL, HOMEWORK_URL
+from librus_apix.get_token import get_token, Token
+from librus_apix.urls import BASE_URL, HOMEWORK_URL
 from dataclasses import dataclass
 
 @dataclass
