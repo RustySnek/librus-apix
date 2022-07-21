@@ -3,6 +3,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 from librus_apix.get_token import get_token, Token
+from librus_apix.exceptions import TokenError
 from librus_apix.urls import BASE_URL
 from typing import Union
 from dataclasses import dataclass
@@ -16,10 +17,9 @@ class Grade:
     href: str
     desc: str
     semester: int
-    value: Union[float, str] = 0.0,
 
     @property
-    def value(self):
+    def value(self) -> Union[float, str]:
         if self.counts is False:
             return "Does not count"
         if len(self.grade) > 1:
@@ -31,8 +31,8 @@ class Grade:
         return grade_value
 
 
-def get_grades(token: Token) -> dict[str, list[Grade]]:
-    def get_desc_and_counts(a, grade, subject):
+def get_grades(token: Token) -> dict[int, list[Grade]]:
+    def get_desc_and_counts(a, grade, subject) -> list[str, bool]:
         desc = f"Ocena: {_grade}\nPrzedmiot: {subject}\n"
         desc += re.sub(
             r"<br*>",
@@ -51,7 +51,7 @@ def get_grades(token: Token) -> dict[str, list[Grade]]:
         token.get(BASE_URL + "/przegladaj_oceny/uczen").text, "lxml"
     ).find_all("tr", attrs={"class": ["line0", "line1"], "id": None})
     if len(tr) < 1:
-        return {'error': 'Malformed token'}, 401
+        raise TokenError("Malformed token")
     for box in tr:
         if box.select_one("td[class='center micro screen-only']") is None:
             continue
@@ -87,4 +87,4 @@ def get_grades(token: Token) -> dict[str, list[Grade]]:
                     if subject not in sem_grades[sem + 1]:
                         sem_grades[sem + 1][subject] = []
                     sem_grades[sem + 1][subject].append(g)
-    return sem_grades, 200
+    return sem_grades

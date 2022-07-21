@@ -5,13 +5,7 @@ from bs4 import BeautifulSoup
 from requests import Session
 from requests.utils import cookiejar_from_dict, dict_from_cookiejar
 from librus_apix.urls import API_URL, BASE_URL, HEADERS
-
-
-class AuthenticationError(Exception):
-    def __init__(self, message: str):
-        print(f"Authentication Error! {message}")
-
-
+from librus_apix.exceptions import AuthorizationError
 class Token:
     def __init__(self, API_Key: Optional[str] = None):
         self._session = Session()
@@ -51,10 +45,9 @@ def get_token(username: str, password: str) -> Token:
         )
 
         if response.json()["status"] == "error":
-            raise AuthenticationError(response.json()["errors"][0]["message"])
+            raise AuthorizationError(response.json()["errors"][0]["message"])
 
         s.get(API_URL + response.json().get("goTo"))
-
         response = s.get(BASE_URL + "/uczen/index")
         cookies = dict_from_cookiejar(s.cookies)
         token = Token(str(cookies["DZIENNIKSID"] + ":" + cookies["SDZIENNIKSID"]))

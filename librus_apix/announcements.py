@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from librus_apix.get_token import get_token, Token
 from librus_apix.urls import ANNOUNCEMENTS_URL
 from dataclasses import dataclass
+from librus_apix.exceptions import TokenError
 
 @dataclass
 class Announcement:
@@ -11,15 +12,15 @@ class Announcement:
     description: str = ""
     date: str = ""
 
-def get_announcements(token: Token) -> dict[str, dict[str, str]]:
+def get_announcements(token: Token) -> list[Announcement]:
     soup = BeautifulSoup(token.get(ANNOUNCEMENTS_URL).text, "lxml")
-    announcements = {'announcements': []}
+    announcements = []
     announcement_tables = soup.select('table.decorated.big.center.printable.margin-top')
     if len(announcement_tables) < 1:
-        return {'error': 'Malformed token'}, 401
+        raise TokenError("Malformed Token")
     for table in announcement_tables:
         title = table.select_one('thead > tr > td').text
         author, date, desc = [line.select_one('td').text.strip() for line in table.find_all('tr', attrs={'class': ['line0', 'line1']})]
         a = Announcement(title, author, desc, date)
-        announcements['announcements'].append(a.__dict__)
-    return announcements, 200
+        announcements.append(a)
+    return announcements

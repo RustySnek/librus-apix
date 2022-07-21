@@ -2,6 +2,7 @@ from typing import Generator
 from bs4 import BeautifulSoup
 from librus_apix.get_token import get_token, Token
 from librus_apix.urls import BASE_URL, HOMEWORK_URL
+from librus_apix.exceptions import TokenError
 from dataclasses import dataclass
 
 @dataclass
@@ -18,15 +19,15 @@ def homework_detail(token: Token, detail_url: str) -> dict[str, str]:
     h_desc = {}
     line = BeautifulSoup(token.get(HOMEWORK_URL + detail_url).text, "lxml").find("div", attrs={"class": "container-background"}).find_all("tr", attrs={"class": ["line0", "line1"]})
     if line is None:
-        return {'error': 'Malformed token'}, 401
+        raise TokenError("Malformed token")
     for td in line:
         h_desc[td.find_all("td")[0].text.replace("\xa0", " ")] = td.find_all("td")[
             1
         ].text.replace("\xa0", " ")
-    return h_desc, 200
+    return h_desc
 
 def get_homework(token: Token, date_from: str, date_to: str) -> list[Homework]:
-    hw = {'homework': []}
+    hw = []
     soup = BeautifulSoup(
         token.post(
             BASE_URL + "/moje_zadania",
@@ -35,7 +36,7 @@ def get_homework(token: Token, date_from: str, date_to: str) -> list[Homework]:
         "lxml",
     ).find("table", attrs={"class": "decorated myHomeworkTable"})
     if soup is None:
-        return {'error': 'Malformed token'}, 401
+        raise TokenError("Malformed token")
     lines = soup.find_all(
         "tr", attrs={"class": ["line0", "line1"]}
     )
@@ -51,5 +52,5 @@ def get_homework(token: Token, date_from: str, date_to: str) -> list[Homework]:
             str(hw_list[6] + " " + str(hw_list[7])),
             href,
         )
-        hw['homework'].append(h.__dict__)
-    return hw, 200
+        hw['homework'].append(h)
+    return hw

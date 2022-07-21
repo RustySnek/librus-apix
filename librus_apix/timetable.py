@@ -1,4 +1,5 @@
 from librus_apix.get_token import get_token
+from librus_apix.exceptions import TokenError
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 from collections import defaultdict
@@ -14,7 +15,7 @@ class Period:
     weekday: str
     info: dict[str, str]
 
-def get_timetable(token, monday_date: datetime):
+def get_timetable(token, monday_date: datetime) -> defaultdict[str, list[Period]]:
     timetable: defaultdict[str, list[Period]] = defaultdict(list)
     sunday = monday_date + timedelta(days=6)
     week = f"{monday_date.strftime('%Y-%m-%d')}_{sunday.strftime('%Y-%m-%d')}"
@@ -22,7 +23,7 @@ def get_timetable(token, monday_date: datetime):
     soup = BeautifulSoup(post.text, 'lxml')
     periods = soup.select('table.decorated.plan-lekcji > tr.line1')
     if len(periods) < 1:
-        return {'error': 'Malformed token'}, 401
+        raise TokenError("Malformed token")
     recess = soup.select('table.decorated.plan-lekcji > tr.line0')
     last_period = periods[-1].select_one('td.center').text
     for weekday in range(7):
@@ -60,5 +61,5 @@ def get_timetable(token, monday_date: datetime):
 
             weekday_str = datetime.strptime(date, "%Y-%m-%d").strftime("%A")
             p = Period(subject, teacher_and_classroom, date, date_from, date_to, weekday_str, info)
-            timetable[weekday_str].append(p.__dict__)
-    return timetable, 200
+            timetable[weekday_str].append(p)
+    return timetable

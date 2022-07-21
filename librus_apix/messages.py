@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from librus_apix.get_token import get_token, Token
 from librus_apix.urls import BASE_URL, MESSAGE_URL
+from librus_apix.exceptions import TokenError
 from dataclasses import dataclass
 
 @dataclass
@@ -17,11 +18,11 @@ def message_content(token: Token, content_url: str) -> str:
             raise Exception("Failed to get message content.")
         return str(content.text)
 
-def parse(message_soup: BeautifulSoup):
-    msgs: dict[str, list[Message]] = {'messages': []}
+def parse(message_soup: BeautifulSoup) -> list[Message]:
+    msgs: list[Message] = []
     soup = message_soup.find("table", attrs={"class": "decorated stretch"})
     if soup is None:
-        return {'error': 'Malformed token'}, 401
+        raise TokenError("Malformed token")
     tds = soup.find("tbody").find_all("tr", attrs={"class": ["line0", "line1"]})
     
     for td in tds:
@@ -31,8 +32,8 @@ def parse(message_soup: BeautifulSoup):
         title = str(title.text)
         date = str(date.text)
         m = Message(author, title, date, href)
-        msgs['messages'].append(m.__dict__)
-    return msgs, 200
+        msgs.append(m)
+    return msgs
 
 
 def get_recieved(token: Token, page: int) -> list[Message]:
@@ -41,6 +42,6 @@ def get_recieved(token: Token, page: int) -> list[Message]:
         "porcjowanie_pojemnik105": 105,}
     response = token.post(BASE_URL + "/wiadomosci", data=payload)
     soup = BeautifulSoup(response.text, "lxml")
-    recieved_msgs, status = parse(soup)
-    return recieved_msgs, status
+    recieved_msgs = parse(soup)
+    return recieved_msgs
 

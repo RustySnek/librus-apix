@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from librus_apix.get_token import get_token, Token
 from librus_apix.urls import BASE_URL, ATTENDANCE_URL
+from librus_apix.exceptions import TokenError
 from typing import Iterable
 from collections import defaultdict
 from dataclasses import dataclass
@@ -27,20 +28,20 @@ def get_detail(token: Token, detail_url: str) -> dict[str, str]:
         .find_all("tr", attrs={"class": ["line0", "line1"]})
     )
     if line is None:
-        return {'error': 'Malformed token'}, 401
+        raise TokenError("Malformed token")
     for l in line:
         if not l.find("th"):
             continue
         details[l.find("th").text] = l.find("td").text
-    return details, 200
+    return details
 
-def get_attendance(token: Token) -> Iterable[Attendance]:
+def get_attendance(token: Token) -> defaultdict[list[Attendance]]:
     soup = BeautifulSoup(token.get(BASE_URL + "/przegladaj_nb/uczen").text, "lxml")
     days = soup.find("table", attrs={"class": "center big decorated"}).find_all(
         "tr", attrs={"class": ["line0", "line1"]}
     )
     if days is None:
-        return {'error': 'Malformed token'}, 401
+        raise TokenError("Malformed token")
     current = ""
     att = defaultdict(list)
     semester = 1
@@ -83,5 +84,5 @@ def get_attendance(token: Token) -> Iterable[Attendance]:
                     by,
                     semester,
                 )
-                att[semester].append(a.__dict__)
-    return att, 200
+                att[semester].append(a)
+    return att
