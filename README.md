@@ -1,0 +1,1 @@
+# Librus Synergia web scraper.
