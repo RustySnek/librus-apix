@@ -3,10 +3,12 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from bs4.element import NavigableString
 from librus_apix.get_token import get_token, Token
-from librus_apix.exceptions import TokenError
+from librus_apix.helpers import no_access_check
+from librus_apix.exceptions import TokenError, ParseError
 from librus_apix.urls import BASE_URL
 from typing import Union
 from dataclasses import dataclass
+
 
 @dataclass
 class Grade:
@@ -47,11 +49,11 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
 
     grades: dict[str, list[Grade]] = {}
     sem_grades: dict[str, dict[str, list[Grade]]] = {}
-    tr = BeautifulSoup(
-        token.get(BASE_URL + "/przegladaj_oceny/uczen").text, "lxml"
+    tr = no_access_check(
+        BeautifulSoup(token.get(BASE_URL + "/przegladaj_oceny/uczen").text, "lxml")
     ).find_all("tr", attrs={"class": ["line0", "line1"], "id": None})
     if len(tr) < 1:
-        raise TokenError("Malformed token")
+        raise ParseError("Error in parsing grades")
     for box in tr:
         if box.select_one("td[class='center micro screen-only']") is None:
             continue
@@ -71,7 +73,7 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
                 for a in grade_a:
                     date = re.search("Data:.{11}", a.attrs["title"])
                     if date is None:
-                        raise Exception("Error in getting grade's date.")
+                        raise ParseError("Error in getting grade's date.")
 
                     _grade = a.text.replace("\xa0", "").replace("\n", "")
                     desc, counts = get_desc_and_counts(a, _grade, subject)
@@ -82,7 +84,7 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
                         date.group().split(" ")[1],
                         a.attrs["href"],
                         desc,
-                        sem+1,
+                        sem + 1,
                     )
                     if subject not in sem_grades[sem + 1]:
                         sem_grades[sem + 1][subject] = []

@@ -1,39 +1,47 @@
 from bs4 import BeautifulSoup
 from librus_apix.get_token import Token, get_token
 from librus_apix.urls import BASE_URL, SCHEDULE_URL
-from librus_apix.exceptions import TokenError
+from librus_apix.exceptions import TokenError, ParseError
+from librus_apix.helpers import no_access_check
+from collections import defaultdict
 from dataclasses import dataclass
 
+
 @dataclass
-class Day:
+class Event:
     title: str
     day: str
-    href: str = ""    
+    href: str = ""
+
 
 def schedule_detail(token: Token, prefix: str, detail_url: str) -> dict[str, str]:
     schedule = {}
-    tr = (
-    BeautifulSoup(token.get(SCHEDULE_URL + prefix + "/" + detail_url).text, "lxml")
-    .find("div", attrs={"class": "container-background"})
-    .find_all("tr", attrs={"class": ["line0", "line1"]})
+    div = no_access_check(
+        BeautifulSoup(
+            token.get(SCHEDULE_URL + prefix + "/" + detail_url).text, "lxml"
+        ).find("div", attrs={"class": "container-background"})
     )
-    if tr is None:
-        raise TokenError("Malformed token")
+    if div is None:
+        raise ParseError("Error in parsing schedule details.")
+    tr = div.find_all("tr", attrs={"class": ["line0", "line1"]})
     for s in tr:
         schedule[s.find("th").text.strip()] = s.find("td").text.strip()
-
     return schedule
 
 
-def get_schedule(token: Token, month: str, year: str) -> list[Day]:
-    schedule = []
-    soup = BeautifulSoup(
-        token.post(BASE_URL + "/terminarz", data={"rok": year, "miesiac": month}).text,
-        "lxml",
+def get_schedule(token: Token, month: str, year: str) -> defaultdict[int, list[Event]]:
+    schedule = defaultdict(list)
+    soup = no_access_check(
+        BeautifulSoup(
+            token.post(
+                BASE_URL + "/terminarz", data={"rok": year, "miesiac": month}
+            ).text,
+            "lxml",
+        )
     )
     days = soup.find_all("div", attrs={"class": "kalendarz-dzien"})
     if len(days) < 1:
-        raise TokenError("Malformed token")
+        raise ParseError("Error in parsing days of the schedule.")
     for day in days:
         d = day.find("div", attrs={"class": "kalendarz-numer-dnia"}).text
         tr = day.find_all("tr")
@@ -42,12 +50,11 @@ def get_schedule(token: Token, month: str, year: str) -> list[Day]:
                 title = event.find("td").text.strip()
                 try:
                     onclick = event.find("td").attrs["onclick"]
-                    href = "/".join(onclick.split("'")[1].split('/')[2:])
-                    _day = Day(title, d, href)
-                    schedule.append(_day)
+                    href = "/".join(onclick.split("'")[1].split("/")[2:])
+                    event = Event(title, d, href)
                 except KeyError:
-                    _day = Day(title, d)
-                    schedule.append(_day)
+                    event = Event(title, d)
+            schedule[int(d)].append(event)
         else:
-            schedule.append(Day("Empty", d))
+            schedule[int(d)].append(Event("Empty", d))
     return schedule

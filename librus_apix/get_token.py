@@ -6,6 +6,8 @@ from requests import Session
 from requests.utils import cookiejar_from_dict, dict_from_cookiejar
 from librus_apix.urls import API_URL, BASE_URL, HEADERS
 from librus_apix.exceptions import AuthorizationError
+
+
 class Token:
     def __init__(self, API_Key: Optional[str] = None):
         self._session = Session()
@@ -24,6 +26,7 @@ class Token:
             s.cookies = cookiejar_from_dict(self.cookies)
             response: Response = s.post(url, data)
             return response
+
     def get(self, url: str) -> Response:
         with self._session as s:
             s.headers = HEADERS
@@ -51,9 +54,7 @@ def get_token(username: str, password: str) -> Token:
         response = s.get(BASE_URL + "/uczen/index")
         cookies = dict_from_cookiejar(s.cookies)
         token = Token(str(cookies["DZIENNIKSID"] + ":" + cookies["SDZIENNIKSID"]))
-        csrf_token = re.search(
-            r'(?<=csrfTokenValue = ").*(?=")', response.text
-        )
+        csrf_token = re.search(r'(?<=csrfTokenValue = ").*(?=")', response.text)
         if csrf_token:
             token.csrf_token = csrf_token.group(0)
         return token
