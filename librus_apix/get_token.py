@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from requests import Session
 from requests.utils import cookiejar_from_dict, dict_from_cookiejar
 from librus_apix.urls import API_URL, BASE_URL, HEADERS
-from librus_apix.exceptions import AuthorizationError
+from librus_apix.exceptions import AuthorizationError, MaintananceError
 
 
 class Token:
@@ -38,6 +38,9 @@ class Token:
 def get_token(username: str, password: str) -> Token:
     with Session() as s:
         s.headers = HEADERS
+        maint_check = s.get('https://api.librus.pl/')
+        if maint_check.status_code == 503:
+            raise MaintananceError(maint_check.json()['Message'][0]["description"])
         s.get(
             API_URL
             + "/OAuth/Authorization?client_id=46&response_type=code&scope=mydata"
@@ -46,7 +49,6 @@ def get_token(username: str, password: str) -> Token:
             API_URL + "/OAuth/Authorization?client_id=46",
             data={"action": "login", "login": username, "pass": password},
         )
-
         if response.json()["status"] == "error":
             raise AuthorizationError(response.json()["errors"][0]["message"])
 

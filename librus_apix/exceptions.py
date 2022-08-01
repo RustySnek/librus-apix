@@ -12,3 +12,6 @@ class ParseError(Exception):
 
 class DateError(Exception):
     pass
+
+class MaintananceError(Exception):
+    pass
