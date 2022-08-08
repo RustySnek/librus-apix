@@ -30,7 +30,8 @@ def parse(message_soup: BeautifulSoup) -> list[Message]:
     if soup is None:
         raise ParseError("Error in parsing messages.")
     tds = soup.find("tbody").find_all("tr", attrs={"class": ["line0", "line1"]})
-
+    if tds[0].text.strip() == "Brak wiadomości":
+        return []
     for td in tds:
         _tick, _attachment, author, title, date, _trash = td.find_all("td")
         href = author.find("a").attrs["href"].split("/")[4]

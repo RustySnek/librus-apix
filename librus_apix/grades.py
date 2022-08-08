@@ -47,8 +47,10 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
             counts = True
         return desc, counts
 
-    grades: dict[str, list[Grade]] = {}
     sem_grades: dict[str, dict[str, list[Grade]]] = {}
+    sem_grades[1] = {}
+    sem_grades[2] = {}
+
     tr = no_access_check(
         BeautifulSoup(token.get(BASE_URL + "/przegladaj_oceny/uczen").text, "lxml")
     ).find_all("tr", attrs={"class": ["line0", "line1"], "id": None})
@@ -67,8 +69,6 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
         subject = semester_grades[0].text.replace("\n", "").strip()
         for sem, semester in enumerate(semesters):
             for sg in semester:
-                if sem + 1 not in sem_grades:
-                    sem_grades[sem + 1] = {}
                 grade_a = sg.select("span.grade-box > a")
                 for a in grade_a:
                     date = re.search("Data:.{11}", a.attrs["title"])
