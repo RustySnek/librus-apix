@@ -60,14 +60,17 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
         if box.select_one("td[class='center micro screen-only']") is None:
             continue
         semester_grades = box.select(
-            'td[class!="center micro screen-only"][class!="right"]'
+            'td[class!="center micro screen-only"]'#[class!="right"]'
         )
+        print(len(semester_grades))
         if len(semester_grades) < 9:
             continue
         # first_avg, second_avg, gpa = box.select('td.right')
         semesters = [semester_grades[1:4], semester_grades[4:7]]
         subject = semester_grades[0].text.replace("\n", "").strip()
         for sem, semester in enumerate(semesters):
+            if subject not in sem_grades[sem + 1]:
+                sem_grades[sem + 1][subject] = []
             for sg in semester:
                 grade_a = sg.select("span.grade-box > a")
                 for a in grade_a:
@@ -86,7 +89,5 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
                         desc,
                         sem + 1,
                     )
-                    if subject not in sem_grades[sem + 1]:
-                        sem_grades[sem + 1][subject] = []
                     sem_grades[sem + 1][subject].append(g)
     return sem_grades
