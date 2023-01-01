@@ -16,6 +16,7 @@ class Period:
     date_to: str
     weekday: str
     info: dict[str, str]
+    number: int
 
 
 def get_timetable(token, monday_date: datetime) -> defaultdict[str, list[Period]]:
@@ -34,10 +35,11 @@ def get_timetable(token, monday_date: datetime) -> defaultdict[str, list[Period]
     recess = soup.select("table.decorated.plan-lekcji > tr.line0")
     last_period = periods[-1].select_one("td.center").text
     for weekday in range(7):
-        for period in range(int(last_period)):
+        for period in range(int(last_period)+1):
             lesson = periods[period].select(
                 'td[id="timetableEntryBox"][class="line1"]'
             )[weekday]
+            lesson_number = int(periods[period].select_one('td[class="center"]').text)
             tooltip = lesson.select_one("div.center.plan-lekcji-info")
             a_href = lesson.select_one("a")
             info = {}
@@ -58,13 +60,10 @@ def get_timetable(token, monday_date: datetime) -> defaultdict[str, list[Period]
             ]
             lesson = lesson.select_one("div.text")
             try:
-                subject, teacher_and_classroom = (
-                    lesson.text.replace("\xa0", " ")
-                    .replace("\n", "")
-                    .replace("&nbsp", "")
-                    .split("-")
-                )
-            except:
+                subject = lesson.select_one('b').text
+                teacher_and_classroom =  '-'.join(lesson.text.replace("\xa0", " ").replace('\n', '').replace("&nbsp", "").split('-')[1:])
+                
+            except :
                 subject = ""
                 teacher_and_classroom = ""
 
@@ -77,6 +76,7 @@ def get_timetable(token, monday_date: datetime) -> defaultdict[str, list[Period]
                 date_to,
                 weekday_str,
                 info,
+                lesson_number
             )
             timetable[weekday_str].append(p)
     return timetable

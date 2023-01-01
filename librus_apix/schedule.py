@@ -5,13 +5,18 @@ from librus_apix.exceptions import TokenError, ParseError
 from librus_apix.helpers import no_access_check
 from collections import defaultdict
 from dataclasses import dataclass
-
+import re
+from typing import Union
 
 @dataclass
 class Event:
     title: str
+    subject: str
+    data: str
     day: str
-    href: str = ""
+    number: Union[int, str]
+    hour: str
+    href: str
 
 
 def schedule_detail(token: Token, prefix: str, detail_url: str) -> dict[str, str]:
@@ -45,16 +50,38 @@ def get_schedule(token: Token, month: str, year: str) -> defaultdict[int, list[E
     for day in days:
         d = day.find("div", attrs={"class": "kalendarz-numer-dnia"}).text
         tr = day.find_all("tr")
-        if tr:
+        if tr: 
             for event in tr:
-                title = event.find("td").text.strip()
+                td = event.find('td')
+                subject = 'unspecified'
+                span = td.find('span')
+                if span:
+                    subject = span.text
+                    span.extract()
+        
+                delimeter = '###'
+                for line in td.select('br'):
+                    line.replaceWith(delimeter)
+                data = td.text.replace('\xa0', ' ').replace(', ', '').replace('\n', '').strip().split(delimeter)
+                if len(data) >= 2:
+                    title = data[1]
+                else:
+                    title = data[0]
+
+                number = 'unknown'
+                hour = 'unknown'
+                try: 
+                    number = int(re.findall(r': ?[0-99]?[0-99]' ,event.find('td').text)[0].replace(': ', ''))
+                except ValueError:
+                    hour = re.findall(r' ?[0-2]?[0-9]:?[0-5]?[0-9]', event.find('td').text)[0]
+                except IndexError:
+                    pass
                 try:
                     onclick = event.find("td").attrs["onclick"]
-                    href = "/".join(onclick.split("'")[1].split("/")[2:])
-                    event = Event(title, d, href)
+                    href = "/".join(onclick.split("'")[1].split("/")[2:]) 
                 except KeyError:
-                    event = Event(title, d)
-            schedule[int(d)].append(event)
-        else:
-            schedule[int(d)].append(Event("Empty", d))
+                    href = ''
+
+                event = Event(title, subject, data, d, number, hour, href)
+                schedule[int(d)].append(event)
     return schedule

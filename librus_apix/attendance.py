@@ -38,9 +38,9 @@ def get_detail(token: Token, detail_url: str) -> dict[str, str]:
     return details
 
 
-def get_attendance(token: Token) -> defaultdict[list[Attendance]]:
+def get_attendance(token: Token, sort_by: dict[str, str]) -> defaultdict[list[Attendance]]:
     soup = no_access_check(
-        BeautifulSoup(token.get(BASE_URL + "/przegladaj_nb/uczen").text, "lxml")
+            BeautifulSoup(token.post(BASE_URL + "/przegladaj_nb/uczen", data=sort_by).text, "lxml")
     )
     table = soup.find("table", attrs={"class": "center big decorated"})
     if table is None:

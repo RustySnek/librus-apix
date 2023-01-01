@@ -9,6 +9,11 @@ from librus_apix.urls import BASE_URL
 from typing import Union
 from dataclasses import dataclass
 
+@dataclass
+class Gpa:
+    semester: int
+    gpa: float
+    subject: str
 
 @dataclass
 class Grade:
@@ -19,6 +24,9 @@ class Grade:
     href: str
     desc: str
     semester: int
+    category: str
+    teacher: str
+    weight: int
 
     @property
     def value(self) -> Union[float, str]:
@@ -33,7 +41,7 @@ class Grade:
         return grade_value
 
 
-def get_grades(token: Token) -> dict[int, list[Grade]]:
+def get_grades(token: Token, sort_by: str) -> dict[int, list[Union[Grade, Gpa]]]:
     def get_desc_and_counts(a, grade, subject) -> list[str, bool]:
         desc = f"Ocena: {_grade}\nPrzedmiot: {subject}\n"
         desc += re.sub(
@@ -47,12 +55,12 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
             counts = True
         return desc, counts
 
-    sem_grades: dict[str, dict[str, list[Grade]]] = {}
+    sem_grades: dict[int, dict[str, list[Grade]]] = {}
     sem_grades[1] = {}
     sem_grades[2] = {}
 
     tr = no_access_check(
-        BeautifulSoup(token.get(BASE_URL + "/przegladaj_oceny/uczen").text, "lxml")
+            BeautifulSoup(token.post(BASE_URL + "/przegladaj_oceny/uczen", data={sort_by: 1}).text, "lxml")
     ).find_all("tr", attrs={"class": ["line0", "line1"], "id": None})
     if len(tr) < 1:
         raise ParseError("Error in parsing grades")
@@ -62,10 +70,9 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
         semester_grades = box.select(
             'td[class!="center micro screen-only"]'#[class!="right"]'
         )
-        print(len(semester_grades))
         if len(semester_grades) < 9:
             continue
-        # first_avg, second_avg, gpa = box.select('td.right')
+        average_grades = list(map(lambda x: x.text, box.select('td.right')))
         semesters = [semester_grades[1:4], semester_grades[4:7]]
         subject = semester_grades[0].text.replace("\n", "").strip()
         for sem, semester in enumerate(semesters):
@@ -75,6 +82,19 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
                 grade_a = sg.select("span.grade-box > a")
                 for a in grade_a:
                     date = re.search("Data:.{11}", a.attrs["title"])
+                    attr_dict = {}
+                    for attr in a.attrs['title'].replace('<br/>', '<br>').split('<br>'):
+                        if len(attr.strip()) > 2:
+                            key, value = attr.split(': ')
+                            attr_dict[key] = value
+                    category = attr_dict['Kategoria']
+                    teacher = attr_dict['Nauczyciel']
+                    weight = 0
+                    try:
+                        weight = attr_dict['Waga']
+                    except:
+                        pass
+
                     if date is None:
                         raise ParseError("Error in getting grade's date.")
 
@@ -88,6 +108,13 @@ def get_grades(token: Token) -> dict[int, list[Grade]]:
                         a.attrs["href"],
                         desc,
                         sem + 1,
+                        category,
+                        teacher,
+                        weight
                     )
                     sem_grades[sem + 1][subject].append(g)
+            if average_grades[sem].strip() != '-':
+                gpa = Gpa(sem+1, float(average_grades[sem]), subject)
+                sem_grades[sem + 1][subject].append(gpa)
+        
     return sem_grades
