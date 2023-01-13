@@ -8,6 +8,7 @@ from librus_apix.exceptions import TokenError, ParseError
 from librus_apix.urls import BASE_URL
 from typing import Union
 from dataclasses import dataclass
+from collections import defaultdict
 
 @dataclass
 class Gpa:
@@ -41,7 +42,8 @@ class Grade:
         return grade_value
 
 
-def get_grades(token: Token, sort_by: str) -> dict[int, list[Union[Grade, Gpa]]]:
+def get_grades(token: Token, sort_by: str) -> tuple[dict[int, list[Union[Grade, Gpa]]], dict[str, Gpa]]:
+
     def get_desc_and_counts(a, grade, subject) -> list[str, bool]:
         desc = f"Ocena: {_grade}\nPrzedmiot: {subject}\n"
         desc += re.sub(
@@ -58,6 +60,7 @@ def get_grades(token: Token, sort_by: str) -> dict[int, list[Union[Grade, Gpa]]]
     sem_grades: dict[int, dict[str, list[Grade]]] = {}
     sem_grades[1] = {}
     sem_grades[2] = {}
+    avg_grades = defaultdict(list)
 
     tr = no_access_check(
             BeautifulSoup(token.post(BASE_URL + "/przegladaj_oceny/uczen", data={sort_by: 1}).text, "lxml")
@@ -73,7 +76,7 @@ def get_grades(token: Token, sort_by: str) -> dict[int, list[Union[Grade, Gpa]]]
         if len(semester_grades) < 9:
             continue
         average_grades = list(map(lambda x: x.text, box.select('td.right')))
-        semesters = [semester_grades[1:4], semester_grades[4:7]]
+        semesters = [semester_grades[1:4], semester_grades[5:7]]
         subject = semester_grades[0].text.replace("\n", "").strip()
         for sem, semester in enumerate(semesters):
             if subject not in sem_grades[sem + 1]:
@@ -113,8 +116,7 @@ def get_grades(token: Token, sort_by: str) -> dict[int, list[Union[Grade, Gpa]]]
                         weight
                     )
                     sem_grades[sem + 1][subject].append(g)
-            if average_grades[sem].strip() != '-':
-                gpa = Gpa(sem+1, float(average_grades[sem]), subject)
-                sem_grades[sem + 1][subject].append(gpa)
+            gpa = Gpa(sem+1, average_grades[sem], subject)
+            avg_grades[subject].append(gpa)
         
-    return sem_grades
+    return sem_grades, avg_grades

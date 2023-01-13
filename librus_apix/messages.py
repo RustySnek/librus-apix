@@ -12,6 +12,8 @@ class Message:
     title: str
     date: str
     href: str
+    unread: bool
+    has_attachment: bool
 
 
 def message_content(token: Token, content_url: str) -> str:
@@ -26,6 +28,7 @@ def message_content(token: Token, content_url: str) -> str:
 
 def parse(message_soup: BeautifulSoup) -> list[Message]:
     msgs: list[Message] = []
+    hasAttachment = False
     soup = message_soup.find("table", attrs={"class": "decorated stretch"})
     if soup is None:
         raise ParseError("Error in parsing messages.")
@@ -33,12 +36,18 @@ def parse(message_soup: BeautifulSoup) -> list[Message]:
     if tds[0].text.strip() == "Brak wiadomości":
         return []
     for td in tds:
-        _tick, _attachment, author, title, date, _trash = td.find_all("td")
+        unread = False; hasAttachment = False
+        _tick, attachment, author, title, date, _trash = td.find_all("td")
+        if attachment.find('img') != False:
+            hasAttachment = True
+        if title.get('style') and 'font-weight: bold' in title.get('style'):
+            unread = True
+
         href = author.find("a").attrs["href"].split("/")[4]
         author = str(author.text)
         title = str(title.text)
         date = str(date.text)
-        m = Message(author, title, date, href)
+        m = Message(author, title, date, href, unread, hasAttachment)
         msgs.append(m)
     return msgs
 
