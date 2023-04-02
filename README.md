@@ -76,7 +76,7 @@ for message in messages:
 
 ```
 
-# Getting the Schedule
+### Getting the Schedule
 
 ```py
 from librus-apix.schedule import get_schedule, schedule_detail
@@ -92,7 +92,7 @@ for day in schedule:
 
 ```
 
-# Getting the Timetable
+### Getting the Timetable
 
 ```py
 from datetime import datetime
