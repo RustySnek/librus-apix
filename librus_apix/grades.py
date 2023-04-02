@@ -57,9 +57,7 @@ def get_grades(token: Token, sort_by: str) -> tuple[dict[int, list[Union[Grade, 
             counts = True
         return desc, counts
 
-    sem_grades: dict[int, dict[str, list[Grade]]] = {}
-    sem_grades[1] = {}
-    sem_grades[2] = {}
+    sem_grades: dict[int, dict[str, list[Grade]]] = {1: {}, 2: {}}
     avg_grades = defaultdict(list)
 
     tr = no_access_check(
@@ -117,6 +115,6 @@ def get_grades(token: Token, sort_by: str) -> tuple[dict[int, list[Union[Grade, 
                     )
                     sem_grades[sem + 1][subject].append(g)
             gpa = Gpa(sem+1, average_grades[sem], subject)
-            avg_grades[subject].append(gpa)
-        
+            avg_grades[subject].append(gpa) 
+        avg_grades[subject].append(Gpa(0, average_grades[-1], subject))
     return sem_grades, avg_grades
