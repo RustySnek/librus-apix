@@ -38,7 +38,7 @@ def get_detail(token: Token, detail_url: str) -> dict[str, str]:
     return details
 
 
-def get_attendance(token: Token, sort_by: dict[str, str]) -> defaultdict[list[Attendance]]:
+def get_attendance(token: Token, sort_by: dict[str, str] = {'zmiany_logowanie_wszystkie': ''}) -> list[list[Attendance]]:
     soup = no_access_check(
             BeautifulSoup(token.post(BASE_URL + "/przegladaj_nb/uczen", data=sort_by).text, "lxml")
     )
@@ -47,7 +47,7 @@ def get_attendance(token: Token, sort_by: dict[str, str]) -> defaultdict[list[At
         raise ParseError("Error parsing attendance.")
     days = table.find_all("tr", attrs={"class": ["line0", "line1"]})
     current = ""
-    att = defaultdict(list)
+    att = [[], []]
     semester = 1
     for day in days:
         if current == day.attrs["class"]:
@@ -88,5 +88,5 @@ def get_attendance(token: Token, sort_by: dict[str, str]) -> defaultdict[list[At
                     by,
                     semester,
                 )
-                att[semester].append(a)
+                att[semester-1].append(a)
     return att
