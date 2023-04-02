@@ -9,10 +9,11 @@ pip install librus-apix
 ## Quick Start
 
 ## Getting the Token
+```py
 from librus-apix.get_token import get_token
 
 token = get_token("Username", "Password")
-
+```
 ### Getting the Math grades
 
 ```py
