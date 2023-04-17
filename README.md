@@ -10,24 +10,25 @@ pip install librus-apix
 
 ## Getting the Token
 ```py
-from librus-apix.get_token import get_token
+from librus_apix.get_token import get_token
 
 token = get_token("Username", "Password")
 ```
 ### Getting the Math grades
 
 ```py
-from librus-apix.grades import get_grades
+from librus_apix.grades import get_grades
 
 grades, average_grades = get_grades(token)
 
-for mark in grades["Mathematics"]:
-    print(mark.grade)
+for semester in grades:
+  for mark in grades[semester]["Mathematics"]:
+      print(mark.grade)
 ```
 
 ### Getting the Announcements
 ```py
-from librus-apix.announcements import get_announcements
+from librus_apix.announcements import get_announcements
 
 announcements = get_announcements(token)
 
@@ -38,7 +39,7 @@ for a in announcements:
 
 ### Getting the attendance
 ```py
-from librus-apix.attendance import get_attendance
+from librus_apix.attendance import get_attendance
 
 first_semester, second_semester = get_attendance(token)
 
@@ -49,7 +50,7 @@ for attendance in first_semester:
 
 ### Getting the Homework
 ```py
-from librus-apix.homework import get_homework, homework_detail
+from librus_apix.homework import get_homework, homework_detail
 
 # date from-to up to 1 month 
 date_from = '2023-03-02'
@@ -67,7 +68,7 @@ for h in homework:
 
 ### Getting the Messages
 ```py
-from librus-apix.messages import get_recieved, message_content
+from librus_apix.messages import get_recieved, message_content
 
 messages = get_recieved(token, page=1)
 for message in messages:
@@ -80,7 +81,7 @@ for message in messages:
 ### Getting the Schedule
 
 ```py
-from librus-apix.schedule import get_schedule, schedule_detail
+from librus_apix.schedule import get_schedule, schedule_detail
 month = '2'
 year = '2023'
 schedule = get_schedule(token, month, year)
@@ -97,7 +98,7 @@ for day in schedule:
 
 ```py
 from datetime import datetime
-from librus-apix.timetable import get_timetable
+from librus_apix.timetable import get_timetable
 
 monday_date = '2023-04-3'
 monday_datetime = datetime.strptime(monday_date, '%Y-%m-%d')

@@ -1,3 +1,4 @@
+from ctypes import ArgumentError
 import re
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -42,8 +43,7 @@ class Grade:
         return grade_value
 
 
-def get_grades(token: Token, sort_by: str) -> tuple[dict[int, list[Union[Grade, Gpa]]], dict[str, Gpa]]:
-
+def get_grades(token: Token, sort_by: str = 'all') -> tuple[dict[int, list[Union[Grade, Gpa]]], dict[str, Gpa]]:
     def get_desc_and_counts(a, grade, subject) -> list[str, bool]:
         desc = f"Ocena: {_grade}\nPrzedmiot: {subject}\n"
         desc += re.sub(
@@ -56,12 +56,18 @@ def get_grades(token: Token, sort_by: str) -> tuple[dict[int, list[Union[Grade, 
         if gpacount and gpacount[0].split(": ")[1] == "tak":
             counts = True
         return desc, counts
-
+    SORT = {
+        "all": 'zmiany_logowanie_wszystkie',
+        "week": 'zmiany_logowanie_tydzien',
+        "last_login": 'zmiany_logowanie'
+            }
+    if sort_by not in SORT.keys():
+        raise ArgumentError("Wrong value for sort_by it can be either all, week or last_login") 
     sem_grades: dict[int, dict[str, list[Grade]]] = {1: {}, 2: {}}
     avg_grades = defaultdict(list)
 
     tr = no_access_check(
-            BeautifulSoup(token.post(BASE_URL + "/przegladaj_oceny/uczen", data={sort_by: 1}).text, "lxml")
+            BeautifulSoup(token.post(BASE_URL + "/przegladaj_oceny/uczen", data={SORT[sort_by]: 1}).text, "lxml")
     ).find_all("tr", attrs={"class": ["line0", "line1"], "id": None})
     if len(tr) < 1:
         raise ParseError("Error in parsing grades")
