@@ -102,8 +102,8 @@ from librus_apix.timetable import get_timetable
 
 monday_date = '2023-04-3'
 monday_datetime = datetime.strptime(monday_date, '%Y-%m-%d')
-t_table = get_timetable(token, monday_datetime)
-for weekday in timetable
+timetable = get_timetable(token, monday_datetime)
+for weekday in timetable:
   for period in timetable[weekday]:
     print(period.subject, period.teacher_and_classroom)
 
