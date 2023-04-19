@@ -12,6 +12,7 @@
 Icon
 
 venv/
+examples/config.py
 config.py
 api.py
 apitest.py

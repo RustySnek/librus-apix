@@ -12,31 +12,8 @@ from dataclasses import dataclass
 class Attendance:
     symbol: str
     href: str
-    _type: str
-    date: str
-    lesson: str
-    subject: str
-    teacher: str
-    hour: str
-    excursion: str
-    by: str
     semester: int
-
-
-def get_detail(token: Token, detail_url: str) -> dict[str, str]:
-    details = {}
-    div = no_access_check(
-        BeautifulSoup(token.get(ATTENDANCE_URL + detail_url).text, "lxml")
-    ).find("div", attrs={"class": "container-background"})
-    line = div.find_all("tr", attrs={"class": ["line0", "line1"]})
-    if len(line) < 1:
-        raise ParseError("Error in parsing attendance.")
-    for l in line:
-        if not l.find("th"):
-            continue
-        details[l.find("th").text] = l.find("td").text
-    return details
-
+    attributes: dict
 
 def get_attendance(token: Token, sort_by: dict[str, str] = {'zmiany_logowanie_wszystkie': ''}) -> list[list[Attendance]]:
     soup = no_access_check(
@@ -60,14 +37,15 @@ def get_attendance(token: Token, sort_by: dict[str, str] = {'zmiany_logowanie_ws
             for single in at:
                 if not single:
                     continue
-                _type, date, lesson, subject, teacher, hour, excursion, by = (
+                attributes = { i.split(": ")[0].strip():
                     i.split(": ")[1].strip()
                     for i in single.attrs["title"]
                     .replace("</b>", "<br>")
                     .replace("<br/>", "")
                     .strip()
                     .split("<br>")
-                )
+                    }
+                #_type, date, lesson, subject, teacher, hour, excursion, by = attributes.values()
                 href = (
                     single.attrs["onclick"]
                     .replace("otworz_w_nowym_oknie(", "")
@@ -78,15 +56,8 @@ def get_attendance(token: Token, sort_by: dict[str, str] = {'zmiany_logowanie_ws
                 a = Attendance(
                     single.text,
                     href,
-                    _type,
-                    date.split(" ")[0],
-                    lesson,
-                    subject,
-                    teacher,
-                    hour,
-                    excursion,
-                    by,
                     semester,
+                    attributes
                 )
                 att[semester-1].append(a)
     return att

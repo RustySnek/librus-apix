@@ -43,7 +43,7 @@ class Grade:
         return grade_value
 
 
-def get_grades(token: Token, sort_by: str = 'all') -> tuple[dict[int, list[Union[Grade, Gpa]]], dict[str, Gpa]]:
+def get_grades(token: Token, sort_by: str = 'all') -> tuple[dict[int, dict[str ,Grade]], dict[str, Gpa]]:
     def get_desc_and_counts(a, grade, subject) -> list[str, bool]:
         desc = f"Ocena: {_grade}\nPrzedmiot: {subject}\n"
         desc += re.sub(
@@ -62,7 +62,7 @@ def get_grades(token: Token, sort_by: str = 'all') -> tuple[dict[int, list[Union
         "last_login": 'zmiany_logowanie'
             }
     if sort_by not in SORT.keys():
-        raise ArgumentError("Wrong value for sort_by it can be either all, week or last_login") 
+        raise ArgumentError("Wrong value for sort_by it can be either all, week or last_login")
     sem_grades: dict[int, dict[str, list[Grade]]] = {1: {}, 2: {}}
     avg_grades = defaultdict(list)
 
@@ -80,13 +80,13 @@ def get_grades(token: Token, sort_by: str = 'all') -> tuple[dict[int, list[Union
         if len(semester_grades) < 9:
             continue
         average_grades = list(map(lambda x: x.text, box.select('td.right')))
-        semesters = [semester_grades[1:4], semester_grades[5:7]]
+        semesters = [semester_grades[1:4], semester_grades[4:7]]
         subject = semester_grades[0].text.replace("\n", "").strip()
         for sem, semester in enumerate(semesters):
             if subject not in sem_grades[sem + 1]:
                 sem_grades[sem + 1][subject] = []
             for sg in semester:
-                grade_a = sg.select("span.grade-box > a")
+                grade_a = sg.select("td[class!='center'] > span.grade-box > a")
                 for a in grade_a:
                     date = re.search("Data:.{11}", a.attrs["title"])
                     attr_dict = {}
@@ -121,6 +121,6 @@ def get_grades(token: Token, sort_by: str = 'all') -> tuple[dict[int, list[Union
                     )
                     sem_grades[sem + 1][subject].append(g)
             gpa = Gpa(sem+1, average_grades[sem], subject)
-            avg_grades[subject].append(gpa) 
+            avg_grades[subject].append(gpa)
         avg_grades[subject].append(Gpa(0, average_grades[-1], subject))
     return sem_grades, avg_grades
