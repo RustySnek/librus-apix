@@ -15,6 +15,20 @@ class Attendance:
     semester: int
     attributes: dict
 
+def get_detail(token: Token, detail_url: str) -> dict[str, str]:
+    details = {}
+    div = no_access_check(
+        BeautifulSoup(token.get(ATTENDANCE_URL + detail_url).text, "lxml")
+    ).find("div", attrs={"class": "container-background"})
+    line = div.find_all("tr", attrs={"class": ["line0", "line1"]})
+    if len(line) < 1:
+        raise ParseError("Error in parsing attendance.")
+    for l in line:
+        if not l.find("th"):
+            continue
+        details[l.find("th").text] = l.find("td").text
+    return details
+
 def get_attendance(token: Token, sort_by: dict[str, str] = {'zmiany_logowanie_wszystkie': ''}) -> list[list[Attendance]]:
     soup = no_access_check(
             BeautifulSoup(token.post(BASE_URL + "/przegladaj_nb/uczen", data=sort_by).text, "lxml")

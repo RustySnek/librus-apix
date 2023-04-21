@@ -4,7 +4,7 @@ from librus_apix.urls import BASE_URL, MESSAGE_URL
 from librus_apix.exceptions import TokenError, ParseError
 from librus_apix.helpers import no_access_check
 from dataclasses import dataclass
-
+import re
 
 @dataclass
 class Message:
@@ -51,6 +51,17 @@ def parse(message_soup: BeautifulSoup) -> list[Message]:
         msgs.append(m)
     return msgs
 
+def get_max_page_number(token: Token) -> int:
+    soup = no_access_check(BeautifulSoup(token.get(BASE_URL + '/wiadomosci').text, 'lxml'))
+    try:
+        pages = soup.select_one('div.pagination > span')
+        if not pages:
+            return 0
+        max_pages = pages.text.replace("\xa0", "")
+        max_pages_number = int(re.search('z[0-9]*', max_pages).group(0).replace('z', ""))
+    except:
+        raise ParseError("Error while trying to get max page number.")
+    return max_pages_number
 
 def get_recieved(token: Token, page: int) -> list[Message]:
     payload = {
