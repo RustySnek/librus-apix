@@ -39,10 +39,10 @@ def get_attendance(token: Token, sort_by: dict[str, str] = {'zmiany_logowanie_ws
     days = table.find_all("tr", attrs={"class": ["line0", "line1"]})
     current = ""
     att = [[], []]
-    semester = 1
+    semester = 2
     for day in days:
         if current == day.attrs["class"]:
-            semester = 2
+            semester = 1
         current = day.attrs["class"]
         date = day.find("td", attrs={"class": None})
         attendance = day.find_all("td", attrs={"class": "center"})
