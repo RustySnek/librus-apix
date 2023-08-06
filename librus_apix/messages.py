@@ -61,7 +61,7 @@ def get_max_page_number(token: Token) -> int:
         max_pages_number = int(re.search('z[0-9]*', max_pages).group(0).replace('z', ""))
     except:
         raise ParseError("Error while trying to get max page number.")
-    return max_pages_number
+    return max_pages_number - 1
 
 def get_recieved(token: Token, page: int) -> list[Message]:
     payload = {
