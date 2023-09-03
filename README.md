@@ -112,7 +112,7 @@ for weekday in timetable:
 ## Working on the Project
 
 ```sh
-git clone https://github.com/Poroknights/librus-apix
+git clone https://github.com/RustySnek/librus-apix
 cd librus-apix
 python -m venv venv
 source ./venv/bin/activate

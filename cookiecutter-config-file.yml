@@ -6,8 +6,8 @@ default_context:
   organization: "librus-apix"
   license: "MIT"
   minimal_python_version: 3.9
-  github_name: "Poroknights"
-  email: "whinitc2@gmail.com"
+  github_name: "RustySnek"
+  email: "jodlowskipascal@gmail.com"
   version: "0.3.1"
   line_length: "88"
   create_example_template: "cli"
