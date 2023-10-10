@@ -33,9 +33,8 @@ def get_timetable(token, monday_date: datetime) -> defaultdict[str, list[Period]
     if len(periods) < 1:
         raise ParseError("Error in parsing timetable.")
     recess = soup.select("table.decorated.plan-lekcji > tr.line0")
-    last_period = periods[-1].select_one("td.center").text
     for weekday in range(7):
-        for period in range(int(last_period)+1):
+        for period in range(len(periods)):
             lesson = periods[period].select(
                 'td[id="timetableEntryBox"][class="line1"]'
             )[weekday]
@@ -62,7 +61,7 @@ def get_timetable(token, monday_date: datetime) -> defaultdict[str, list[Period]
             try:
                 subject = lesson.select_one('b').text
                 teacher_and_classroom =  '-'.join(lesson.text.replace("\xa0", " ").replace('\n', '').replace("&nbsp", "").split('-')[1:])
-                
+
             except :
                 subject = ""
                 teacher_and_classroom = ""
