@@ -52,11 +52,8 @@ def get_token(username: str, password: str) -> Token:
         if response.json()["status"] == "error":
             raise AuthorizationError(response.json()["errors"][0]["message"])
 
-        s.get(API_URL + response.json().get("goTo"))
-        response = s.get(BASE_URL + "/uczen/index")
+        res = s.get(API_URL + response.json().get("goTo"))
         cookies = dict_from_cookiejar(s.cookies)
         token = Token(str(cookies["DZIENNIKSID"] + ":" + cookies["SDZIENNIKSID"]))
-        csrf_token = re.search(r'(?<=csrfTokenValue = ").*(?=")', response.text)
-        if csrf_token:
-            token.csrf_token = csrf_token.group(0)
+
         return token
