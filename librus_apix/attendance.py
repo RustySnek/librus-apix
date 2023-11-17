@@ -13,7 +13,13 @@ class Attendance:
     symbol: str
     href: str
     semester: int
-    attributes: dict
+    date: str
+    type: str
+    teacher: str
+    period: int
+    excursion: bool
+    topic: str
+    subject: str
 
 def get_detail(token: Token, detail_url: str) -> dict[str, str]:
     details = {}
@@ -59,7 +65,14 @@ def get_attendance(token: Token, sort_by: dict[str, str] = {'zmiany_logowanie_ws
                     .strip()
                     .split("<br>")
                     }
-                #_type, date, lesson, subject, teacher, hour, excursion, by = attributes.values()
+                date = attributes["Data"].split(" ")[0]
+                _type = attributes["Rodzaj"]
+                school_subject = attributes["Lekcja"]
+                topic = attributes["Temat zajęć"]
+                period = int(attributes["Godzina lekcyjna"])
+                excursion = True if attributes["Czy wycieczka"] == "Tak" else False
+                teacher = attributes["Nauczyciel"]
+
                 href = (
                     single.attrs["onclick"]
                     .replace("otworz_w_nowym_oknie(", "")
@@ -71,7 +84,13 @@ def get_attendance(token: Token, sort_by: dict[str, str] = {'zmiany_logowanie_ws
                     single.text,
                     href,
                     semester,
-                    attributes
+                    date,
+                    _type,
+                    teacher,
+                    period,
+                    excursion,
+                    topic,
+                    school_subject,
                 )
                 att[semester-1].append(a)
     return att

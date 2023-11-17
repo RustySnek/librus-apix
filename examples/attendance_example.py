@@ -14,7 +14,14 @@ Structure of Attendance class:
         symbol: str
         href: str
         semester: int
-        attributes: dict | Contains all of the attributes ex. {'Date': '2023-02-08'}
+        date: str
+        type: str
+        teacher: str
+        period: int
+        excursion: bool
+        topic: str
+        subject: str
+
 """
 
 # Printing out the attendance from first semester and it's attributes
