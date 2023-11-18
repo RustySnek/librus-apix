@@ -69,7 +69,7 @@ def get_attendance(token: Token, sort_by: Dict[str, str] = {'zmiany_logowanie_ws
                 date = attributes["Data"].split(" ")[0]
                 _type = attributes["Rodzaj"]
                 school_subject = attributes["Lekcja"]
-                topic = attributes["Temat zajęć"]
+                topic = attributes.get("Temat zajęć")       # optional
                 period = int(attributes["Godzina lekcyjna"])
                 excursion = True if attributes["Czy wycieczka"] == "Tak" else False
                 teacher = attributes["Nauczyciel"]
