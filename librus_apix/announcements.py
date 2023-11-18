@@ -1,3 +1,4 @@
+from typing import List
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 from librus_apix.get_token import get_token, Token
@@ -15,7 +16,7 @@ class Announcement:
     date: str = ""
 
 
-def get_announcements(token: Token) -> list[Announcement]:
+def get_announcements(token: Token) -> List[Announcement]:
     soup = no_access_check(BeautifulSoup(token.get(ANNOUNCEMENTS_URL).text, "lxml"))
     announcements = []
     announcement_tables = soup.select("table.decorated.big.center.printable.margin-top")

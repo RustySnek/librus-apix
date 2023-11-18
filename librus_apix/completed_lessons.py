@@ -1,3 +1,4 @@
+from typing import List
 from dataclasses import dataclass
 from bs4 import BeautifulSoup
 from librus_apix.urls import COMPLETED_LESSONS_URL
@@ -37,7 +38,7 @@ def get_max_page_number(token: Token, date_from, date_to) -> int:
         raise ParseError("Error while trying to get max page number.")
     return max_pages_number
 
-def get_completed(token: Token, date_from: str, date_to: str, page: int = 0) -> list[Lesson]:
+def get_completed(token: Token, date_from: str, date_to: str, page: int = 0) -> List[Lesson]:
     """
     date_from and date_to don't have a limit of how far apart they can be.
     date_from and date_to can also excceed the current date and will just return an empty list.

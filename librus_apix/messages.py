@@ -1,3 +1,4 @@
+from typing import List
 from bs4 import BeautifulSoup
 from librus_apix.get_token import get_token, Token
 from librus_apix.urls import BASE_URL, MESSAGE_URL
@@ -26,8 +27,8 @@ def message_content(token: Token, content_url: str) -> str:
     return str(content.text)
 
 
-def parse(message_soup: BeautifulSoup) -> list[Message]:
-    msgs: list[Message] = []
+def parse(message_soup: BeautifulSoup) -> List[Message]:
+    msgs: List[Message] = []
     hasAttachment = False
     soup = message_soup.find("table", attrs={"class": "decorated stretch"})
     if soup is None:
@@ -63,7 +64,7 @@ def get_max_page_number(token: Token) -> int:
         raise ParseError("Error while trying to get max page number.")
     return max_pages_number - 1
 
-def get_recieved(token: Token, page: int) -> list[Message]:
+def get_recieved(token: Token, page: int) -> List[Message]:
     payload = {
         "numer_strony105": page,
         "porcjowanie_pojemnik105": 105,
