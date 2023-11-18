@@ -24,8 +24,7 @@ Structure of Attendance class:
 
 """
 
-# Printing out the attendance from first semester and it's attributes
+# Printing out the attendance from first semester and their dates
 for a in first_semester:
     print()
-    print(a.symbol)
-    print("\n".join([f"{key}: {value}" for key, value in a.attributes.items()]))
+    print(a.symbol, a.date)
