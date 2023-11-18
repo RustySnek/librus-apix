@@ -44,13 +44,11 @@ def get_attendance(token: Token, sort_by: Dict[str, str] = {'zmiany_logowanie_ws
     if table is None:
         raise ParseError("Error parsing attendance.")
     days = table.find_all("tr", attrs={"class": ["line0", "line1"]})
-    current = ""
     att = [[], []]
-    semester = 2
+    semester = -1
     for day in days:
-        if current == day.attrs["class"]:
-            semester = 1
-        current = day.attrs["class"]
+        if day.find("td", attrs={'class': "center bolded"}):
+            semester += 1
         date = day.find("td", attrs={"class": None})
         attendance = day.find_all("td", attrs={"class": "center"})
         for attend in attendance:
@@ -93,5 +91,5 @@ def get_attendance(token: Token, sort_by: Dict[str, str] = {'zmiany_logowanie_ws
                     topic,
                     school_subject,
                 )
-                att[semester-1].append(a)
+                att[semester].append(a)
     return att
