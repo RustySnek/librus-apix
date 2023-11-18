@@ -120,7 +120,9 @@ def get_grades(token: Token, sort_by: str = 'all') -> Tuple[Dict[int, Dict[str ,
                         weight
                     )
                     sem_grades[sem + 1][subject].append(g)
-            gpa = Gpa(sem+1, average_grades[sem], subject)
+            avg_gr = average_grades[sem] if len(average_grades) > sem else 0.0      # might happen that the list is empty
+            gpa = Gpa(sem+1, avg_gr, subject)
             avg_grades[subject].append(gpa)
-        avg_grades[subject].append(Gpa(0, average_grades[-1], subject))
+        avg_gr = average_grades[-1] if average_grades else 0.0          # might happen that the list is empty
+        avg_grades[subject].append(Gpa(0, avg_gr, subject))
     return sem_grades, avg_grades
