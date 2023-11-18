@@ -7,7 +7,7 @@ from librus_apix.get_token import get_token, Token
 from librus_apix.helpers import no_access_check
 from librus_apix.exceptions import TokenError, ParseError
 from librus_apix.urls import BASE_URL
-from typing import Union
+from typing import Union, Tuple, List, Dict
 from dataclasses import dataclass
 from collections import defaultdict
 
@@ -43,8 +43,8 @@ class Grade:
         return grade_value
 
 
-def get_grades(token: Token, sort_by: str = 'all') -> tuple[dict[int, dict[str ,Grade]], dict[str, Gpa]]:
-    def get_desc_and_counts(a, grade, subject) -> list[str, bool]:
+def get_grades(token: Token, sort_by: str = 'all') -> Tuple[Dict[int, Dict[str ,Grade]], Dict[str, Gpa]]:
+    def get_desc_and_counts(a, grade, subject) -> Tuple[str, bool]:
         desc = f"Ocena: {_grade}\nPrzedmiot: {subject}\n"
         desc += re.sub(
             r"<br*>",
@@ -63,7 +63,7 @@ def get_grades(token: Token, sort_by: str = 'all') -> tuple[dict[int, dict[str ,
             }
     if sort_by not in SORT.keys():
         raise ArgumentError("Wrong value for sort_by it can be either all, week or last_login")
-    sem_grades: dict[int, dict[str, list[Grade]]] = {1: {}, 2: {}}
+    sem_grades: Dict[int, Dict[str, List[Grade]]] = {1: {}, 2: {}}
     avg_grades = defaultdict(list)
 
     tr = no_access_check(

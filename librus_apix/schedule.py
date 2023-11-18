@@ -6,7 +6,7 @@ from librus_apix.helpers import no_access_check
 from collections import defaultdict
 from dataclasses import dataclass
 import re
-from typing import Union
+from typing import Union, List, Dict
 
 @dataclass
 class Event:
@@ -19,7 +19,7 @@ class Event:
     href: str
 
 
-def schedule_detail(token: Token, prefix: str, detail_url: str) -> dict[str, str]:
+def schedule_detail(token: Token, prefix: str, detail_url: str) -> Dict[str, str]:
     schedule = {}
     div = no_access_check(
         BeautifulSoup(
@@ -34,7 +34,7 @@ def schedule_detail(token: Token, prefix: str, detail_url: str) -> dict[str, str
     return schedule
 
 
-def get_schedule(token: Token, month: str, year: str) -> defaultdict[int, list[Event]]:
+def get_schedule(token: Token, month: str, year: str) -> Dict[int, List[Event]]:
     schedule = defaultdict(list)
     soup = no_access_check(
         BeautifulSoup(

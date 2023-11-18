@@ -1,3 +1,4 @@
+from typing import List, Dict
 from librus_apix.get_token import get_token
 from librus_apix.exceptions import TokenError, ParseError, DateError
 from librus_apix.helpers import no_access_check
@@ -15,12 +16,12 @@ class Period:
     date_from: str
     date_to: str
     weekday: str
-    info: dict[str, str]
+    info: Dict[str, str]
     number: int
 
 
-def get_timetable(token, monday_date: datetime) -> defaultdict[str, list[Period]]:
-    timetable: defaultdict[str, list[Period]] = defaultdict(list)
+def get_timetable(token, monday_date: datetime) -> Dict[str, List[Period]]:
+    timetable: Dict[str, List[Period]] = defaultdict(list)
     if monday_date.strftime("%A") != "Monday":
         raise DateError("You must input a Monday date.")
     sunday = monday_date + timedelta(days=6)

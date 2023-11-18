@@ -1,4 +1,4 @@
-from typing import Generator
+from typing import Generator, List, Dict
 from bs4 import BeautifulSoup
 from librus_apix.get_token import get_token, Token
 from librus_apix.helpers import no_access_check
@@ -18,7 +18,7 @@ class Homework:
     href: str
 
 
-def homework_detail(token: Token, detail_url: str) -> dict[str, str]:
+def homework_detail(token: Token, detail_url: str) -> Dict[str, str]:
     h_desc = {}
     soup = no_access_check(
         BeautifulSoup(token.get(HOMEWORK_URL + detail_url).text, "lxml")
@@ -34,7 +34,7 @@ def homework_detail(token: Token, detail_url: str) -> dict[str, str]:
     return h_desc
 
 
-def get_homework(token: Token, date_from: str, date_to: str) -> list[Homework]:
+def get_homework(token: Token, date_from: str, date_to: str) -> List[Homework]:
     hw = []
     soup = no_access_check(
         BeautifulSoup(

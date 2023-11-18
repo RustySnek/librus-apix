@@ -1,3 +1,4 @@
+from typing import List, Dict
 from bs4 import BeautifulSoup
 from librus_apix.get_token import get_token, Token
 from librus_apix.helpers import no_access_check
@@ -21,7 +22,7 @@ class Attendance:
     topic: str
     subject: str
 
-def get_detail(token: Token, detail_url: str) -> dict[str, str]:
+def get_detail(token: Token, detail_url: str) -> Dict[str, str]:
     details = {}
     div = no_access_check(
         BeautifulSoup(token.get(ATTENDANCE_URL + detail_url).text, "lxml")
@@ -35,7 +36,7 @@ def get_detail(token: Token, detail_url: str) -> dict[str, str]:
         details[l.find("th").text] = l.find("td").text
     return details
 
-def get_attendance(token: Token, sort_by: dict[str, str] = {'zmiany_logowanie_wszystkie': ''}) -> list[list[Attendance]]:
+def get_attendance(token: Token, sort_by: Dict[str, str] = {'zmiany_logowanie_wszystkie': ''}) -> List[List[Attendance]]:
     soup = no_access_check(
             BeautifulSoup(token.post(BASE_URL + "/przegladaj_nb/uczen", data=sort_by).text, "lxml")
     )

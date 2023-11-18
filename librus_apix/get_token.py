@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Union
+from typing import Optional, Union, Dict
 from requests.models import Response
 from bs4 import BeautifulSoup
 from requests import Session
@@ -20,7 +20,7 @@ class Token:
         cookies["SDZIENNIKSID"] = API_Key.split(":")[1]
         self.cookies = cookies
 
-    def post(self, url: str, data: dict[str, Union[str, int]]) -> Response:
+    def post(self, url: str, data: Dict[str, Union[str, int]]) -> Response:
         with self._session as s:
             s.headers = HEADERS
             s.cookies = cookiejar_from_dict(self.cookies)
