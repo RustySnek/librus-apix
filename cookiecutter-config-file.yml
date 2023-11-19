@@ -8,6 +8,6 @@ default_context:
   minimal_python_version: 3.9
   github_name: "RustySnek"
   email: "jodlowskipascal@gmail.com"
-  version: "0.4.2"
+  version: "0.4.3"
   line_length: "88"
   create_example_template: "cli"
