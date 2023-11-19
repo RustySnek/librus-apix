@@ -92,7 +92,7 @@ def get_grades(token: Token, sort_by: str = 'all') -> Tuple[Dict[int, Dict[str ,
                     attr_dict = {}
                     for attr in a.attrs['title'].replace('<br/>', '<br>').split('<br>'):
                         if len(attr.strip()) > 2:
-                            key, value = attr.split(': ')
+                            key, value = attr.split(': ', 1)
                             attr_dict[key] = value
                     category = attr_dict['Kategoria']
                     teacher = attr_dict['Nauczyciel']
