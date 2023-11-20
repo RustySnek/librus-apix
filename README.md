@@ -19,10 +19,13 @@ token = get_token("Username", "Password")
 ```py
 from librus_apix.grades import get_grades
 
-grades, average_grades = get_grades(token)
+grades, average_grades, descriptive_grades = get_grades(token)
 
 for semester in grades:
   for mark in grades[semester]["Mathematics"]:
+      print(mark.grade)
+for semester in descriptive_grades:
+  for mark in grades[semester]["Emotional development"]:
       print(mark.grade)
 ```
 
