@@ -35,8 +35,7 @@ def homework_detail(token: Token, detail_url: str) -> Dict[str, str]:
 
 
 def get_homework(token: Token, date_from: str, date_to: str) -> List[Homework]:
-    hw = []
-    soup = no_access_check(
+    soup_base = no_access_check(
         BeautifulSoup(
             token.post(
                 BASE_URL + "/moje_zadania",
@@ -49,9 +48,17 @@ def get_homework(token: Token, date_from: str, date_to: str) -> List[Homework]:
             ).text,
             "lxml",
         )
-    ).find("table", attrs={"class": "decorated myHomeworkTable"})
+    )
+    soup = soup_base.find("table", attrs={"class": "decorated myHomeworkTable"})
     if soup is None:
+        # no proper content found - error or no data
+        soup = soup_base.find("p", attrs={"class": "msgEmptyTable"}) 
+        if soup is not None:
+            # empty table found - return empty list
+            return []
+        # parsing error
         raise ParseError("Error in parsing homework.")
+    hw = []
     lines = soup.find_all("tr", attrs={"class": ["line0", "line1"]})
     for line in lines:
         hw_list = [txt.text.replace("\n", "") for txt in line.find_all("td")]
