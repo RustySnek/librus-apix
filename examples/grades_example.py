@@ -9,7 +9,7 @@ token = get_token(username, password)
 The second argument "sort_by" of get_grades() function is used to retrieve the grades from the last login or the past week.
 """
 sort_by = ["all", "week", "last_login"] # All of the options for sort_by argument
-grades, semester_grades = get_grades(token, sort_by[0])
+grades, semester_grades, descriptive_grades = get_grades(token, sort_by[0])
 
 """
 The grades structure looks as follows:
@@ -40,10 +40,41 @@ The Grade class contains the following variables:
         weight: int
         value: [float, str] | Property function that returns a real value of the mark ex. '4+' is 4.75.
                             | If the mark is '-' or '+' it returns 'Does not count'.
+
+The descriptive grades structure looks as follows:
+    grades = {
+        1: {
+            "History": list[GradeDescriptive],
+            "Mathematics": list[GradeDescriptive],
+            ...
+        },
+        2: {
+            "History": list[GradeDescriptive],
+            "Mathematics": list[GradeDescriptive],
+            ...
+        }
+    }
+
+The GradeDescriptive class contains the following variables:
+    class GradeDescriptive:
+        title: str
+        grade: str | A string representation of the grade ex. '4+'
+        date: str
+        href: str
+        desc: str | Description of the mark
+        semester: int
+        teacher: str
 """
 # Printing out the first three marks of all subjects in the first semester.
 
 first_semester, second_semester = grades.values()
+for subject in first_semester:
+    initial_three_grades = first_semester[subject][:3]
+    print(f'Subject: {subject}')
+    for mark in initial_three_grades:
+        print(f'\t|{mark.grade}| - {mark.date}')
+
+first_semester, second_semester = descriptive_grades.values()
 for subject in first_semester:
     initial_three_grades = first_semester[subject][:3]
     print(f'Subject: {subject}')
