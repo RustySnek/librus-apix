@@ -71,21 +71,42 @@ def get_grades(token: Token, sort_by: str = 'all') -> Tuple[Dict[int, Dict[str ,
     sem_grades_desc = _extract_grades_descriptive(tr)
     return sem_grades, avg_grades, sem_grades_desc
 
+def _handle_subject(semester_grades):
+    return semester_grades[0].text.replace("\n", "").strip()
+
+def get_desc_and_counts(a, grade, subject) -> Tuple[str, bool]:
+    desc = f"Ocena: {grade}\nPrzedmiot: {subject}\n"
+    desc += re.sub(
+        r"<br*>",
+        "\n",
+        a.attrs["title"].replace("<br/>", "").replace("<br />", "\n"),
+    )
+    gpacount = re.search("Licz do średniej: [a-zA-Z]{3}", desc)
+    counts = False
+    if gpacount and gpacount[0].split(": ")[1] == "tak":
+        counts = True
+    return desc, counts
+
+
+def _extract_grade_info(a, subject):
+    date = re.search("Data:.{11}", a.attrs["title"])
+    attr_dict = {}
+    for attr in a.attrs['title'].replace('<br/>', '<br>').split('<br>'):
+        if len(attr.strip()) > 2:
+            key, value = attr.split(': ', 1)
+            attr_dict[key] = value
+    category = attr_dict.get('Kategoria', '')
+    teacher = attr_dict.get('Nauczyciel', '')
+    weight = attr_dict.get('Waga', 0)
+
+    if date is None:
+        raise ParseError("Error in getting grade's date.")
+    grade = a.text.replace("\xa0", "").replace("\n", "")
+    desc, counts = get_desc_and_counts(a, grade, subject)
+
+    return grade, date.group().split(" ")[1], a.attrs["href"], desc, counts, category, teacher, weight
 
 def _extract_grades_numeric(table_rows):
-    def get_desc_and_counts(a, grade, subject) -> Tuple[str, bool]:
-        desc = f"Ocena: {grade}\nPrzedmiot: {subject}\n"
-        desc += re.sub(
-            r"<br*>",
-            "\n",
-            a.attrs["title"].replace("<br/>", "").replace("<br />", "\n"),
-        )
-        gpacount = re.search("Licz do średniej: [a-zA-Z]{3}", desc)
-        counts = False
-        if gpacount and gpacount[0].split(": ")[1] == "tak":
-            counts = True
-        return desc, counts
-
     sem_grades: Dict[int, Dict[str, List[Grade]]] = {1: {}, 2: {}}
     avg_grades = defaultdict(list)
 
@@ -100,37 +121,19 @@ def _extract_grades_numeric(table_rows):
             continue
         average_grades = list(map(lambda x: x.text, box.select('td.right')))
         semesters = [semester_grades[1:4], semester_grades[4:7]]
-        subject = semester_grades[0].text.replace("\n", "").strip()
+        subject = _handle_subject(semester_grades)
         for sem, semester in enumerate(semesters):
             if subject not in sem_grades[sem + 1]:
                 sem_grades[sem + 1][subject] = []
             for sg in semester:
                 grade_a = sg.select("td[class!='center'] > span.grade-box > a")
                 for a in grade_a:
-                    date = re.search("Data:.{11}", a.attrs["title"])
-                    attr_dict = {}
-                    for attr in a.attrs['title'].replace('<br/>', '<br>').split('<br>'):
-                        if len(attr.strip()) > 2:
-                            key, value = attr.split(': ', 1)
-                            attr_dict[key] = value
-                    category = attr_dict['Kategoria']
-                    teacher = attr_dict['Nauczyciel']
-                    weight = 0
-                    try:
-                        weight = attr_dict['Waga']
-                    except:
-                        pass
-
-                    if date is None:
-                        raise ParseError("Error in getting grade's date.")
-
-                    _grade = a.text.replace("\xa0", "").replace("\n", "")
-                    desc, counts = get_desc_and_counts(a, _grade, subject)
+                    _grade, date, href, desc, counts, category, teacher, weight = _extract_grade_info(a, subject)
                     g = Grade(
                         subject,
                         _grade,
                         counts,
-                        date.group().split(" ")[1],
+                        date,
                         a.attrs["href"],
                         desc,
                         sem + 1,
@@ -177,30 +180,15 @@ def _extract_grades_descriptive(table_rows):
                 sem_grades_desc[sem_number][subject] = []
             grade_a = sg.select("td[class!='center'] > span.grade-box > a")
             for a in grade_a:
-                date = re.search("Data:.{11}", a.attrs["title"])
-                attr_dict = {}
-                attrs_data = a.attrs['title']
-                attrs_data = attrs_data.replace('<br/>', '<br>')
-                attrs_data = attrs_data.replace('<br />', '<br>')
-                for attr in attrs_data.split('<br>'):
-                    if len(attr.strip()) > 2:
-                        key, value = attr.split(': ', 1)
-                        attr_dict[key] = value
-                teacher = attr_dict['Nauczyciel']
 
-                if date is None:
-                    raise ParseError("Error in getting grade's date.")
-
-                _grade = a.text.replace("\xa0", "").replace("\n", "")
-                href = a.attrs["href"]
+                _grade, date, href, desc, _, category, teacher, weight = _extract_grade_info(a, subject)
                 if "javascript" in href:
-                    # javascript content is not standard href - clear it 
+                    # javascript content is not standard href - clear it
                     href = ""
-                desc = get_desc(a, _grade, subject)
                 g = GradeDescriptive(
                     subject,
                     _grade,
-                    date.group().split(" ")[1],
+                    date,
                     href,
                     desc,
                     sem_number,
