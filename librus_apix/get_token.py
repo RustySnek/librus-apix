@@ -40,7 +40,11 @@ def get_token(username: str, password: str) -> Token:
         s.headers = HEADERS
         maint_check = s.get('https://api.librus.pl/')
         if maint_check.status_code == 503:
-            raise MaintananceError(maint_check.json()['Message'][0]["description"])
+            message_list = maint_check.json().get('Message')
+            if not message_list:
+                # during recent maintenance there were no messages (empty list)
+                raise MaintananceError("maintenance")
+            raise MaintananceError(message_list[0]["description"])
         s.get(
             API_URL
             + "/OAuth/Authorization?client_id=46&response_type=code&scope=mydata"
