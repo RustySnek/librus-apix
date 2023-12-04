@@ -13,18 +13,18 @@ grades, semester_grades, descriptive_grades = get_grades(token, sort_by[0])
 
 """
 The grades structure looks as follows:
-    grades = {
-        1: {
+    grades = [
+        {
             "History": list[Grade],
             "Mathematics": list[Grade],
             ...
         },
-        2: {
+        {
             "History": list[Grade],
             "Mathematics": list[Grade],
             ...
         }
-    }
+    ]
 
 The Grade class contains the following variables:
     class Grade:
@@ -42,18 +42,18 @@ The Grade class contains the following variables:
                             | If the mark is '-' or '+' it returns 'Does not count'.
 
 The descriptive grades structure looks as follows:
-    grades = {
-        1: {
+    grades = [
+        {
             "History": list[GradeDescriptive],
             "Mathematics": list[GradeDescriptive],
             ...
         },
-        2: {
+        {
             "History": list[GradeDescriptive],
             "Mathematics": list[GradeDescriptive],
             ...
         }
-    }
+    ]
 
 The GradeDescriptive class contains the following variables:
     class GradeDescriptive:
@@ -67,14 +67,14 @@ The GradeDescriptive class contains the following variables:
 """
 # Printing out the first three marks of all subjects in the first semester.
 
-first_semester, second_semester = grades.values()
+first_semester, second_semester = grades
 for subject in first_semester:
     initial_three_grades = first_semester[subject][:3]
     print(f"Subject: {subject}")
     for mark in initial_three_grades:
         print(f"\t|{mark.grade}| - {mark.date}")
 
-first_semester, second_semester = descriptive_grades.values()
+first_semester, second_semester = descriptive_grades
 for subject in first_semester:
     initial_three_grades = first_semester[subject][:3]
     print(f"Subject: {subject}")
