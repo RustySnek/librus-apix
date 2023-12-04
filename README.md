@@ -112,6 +112,15 @@ for weekday in timetable:
 
 ```
 
+
+### Getting the lucky number
+```py
+from librus_apix.student_information import student_information
+
+info = student_information(token)
+print(info.lucky_number)
+```
+
 ## Working on the Project
 
 ```sh
