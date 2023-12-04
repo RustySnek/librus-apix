@@ -59,7 +59,7 @@ class GradeDescriptive:
 def get_grades(
     token: Token, sort_by: str = "all"
 ) -> Tuple[
-    Dict[int, Dict[str, Grade]], Dict[str, Gpa], Dict[int, Dict[str, GradeDescriptive]]
+    List[Dict[str, Grade]], Dict[str, Gpa], List[Dict[str, GradeDescriptive]]
 ]:
     SORT = {
         "all": "zmiany_logowanie_wszystkie",
@@ -134,7 +134,7 @@ def _extract_grade_info(a, subject):
 
 
 def _extract_grades_numeric(table_rows):
-    sem_grades: Dict[int, Dict[str, List[Grade]]] = {1: {}, 2: {}}
+    sem_grades: List[Dict[str, List[Grade]]] = [{}, {}]
     avg_grades = defaultdict(list)
 
     for box in table_rows:
@@ -150,8 +150,8 @@ def _extract_grades_numeric(table_rows):
         semesters = [semester_grades[1:4], semester_grades[4:7]]
         subject = _handle_subject(semester_grades)
         for sem, semester in enumerate(semesters):
-            if subject not in sem_grades[sem + 1]:
-                sem_grades[sem + 1][subject] = []
+            if subject not in sem_grades[sem]:
+                sem_grades[sem][subject] = []
             for sg in semester:
                 grade_a = sg.select("td[class!='center'] > span.grade-box > a")
                 for a in grade_a:
@@ -177,7 +177,7 @@ def _extract_grades_numeric(table_rows):
                         teacher,
                         weight,
                     )
-                    sem_grades[sem + 1][subject].append(g)
+                    sem_grades[sem][subject].append(g)
             avg_gr = (
                 average_grades[sem] if len(average_grades) > sem else 0.0
             )  # might happen that the list is empty
@@ -201,7 +201,7 @@ def _extract_grades_descriptive(table_rows):
         )
         return desc
 
-    sem_grades_desc: Dict[int, Dict[str, List[GradeDescriptive]]] = {1: {}, 2: {}}
+    sem_grades_desc: List[Dict[str, List[GradeDescriptive]]] = [{}, {}]
 
     for box in table_rows:
         if box.select_one("td[class='micro center screen-only']") is None:
@@ -215,9 +215,8 @@ def _extract_grades_descriptive(table_rows):
         semesters = [semester_grades[1], semester_grades[2]]
         subject = semester_grades[0].text.replace("\n", "").strip()
         for sem_index, sg in enumerate(semesters):
-            sem_number = sem_index + 1
-            if subject not in sem_grades_desc[sem_number]:
-                sem_grades_desc[sem_number][subject] = []
+            if subject not in sem_grades_desc[sem_index]:
+                sem_grades_desc[sem_index][subject] = []
             grade_a = sg.select("td[class!='center'] > span.grade-box > a")
             for a in grade_a:
                 (
@@ -236,6 +235,6 @@ def _extract_grades_descriptive(table_rows):
                 g = GradeDescriptive(
                     subject, _grade, date, href, desc, sem_number, teacher
                 )
-                sem_grades_desc[sem_number][subject].append(g)
+                sem_grades_desc[sem_index][subject].append(g)
 
     return sem_grades_desc
