@@ -5,10 +5,11 @@ username = "USERNAME"
 password = "PASSWORD"
 token = get_token(username, password)
 
-first_semester, second_semester = get_attendance(token)
+sort_by = ["all", "last_login", "week"]
+first_semester, second_semester = get_attendance(token, sort_by[0])
 
 """
-get_attendance(token) -> list[list[Attendance], list[Attendance]]
+get_attendance(token, sort_by) -> list[list[Attendance], list[Attendance]]
 Structure of Attendance class:
     class Attendance:
         symbol: str

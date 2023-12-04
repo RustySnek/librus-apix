@@ -22,6 +22,7 @@ class Attendance:
     topic: str
     subject: str
 
+
 def get_detail(token: Token, detail_url: str) -> Dict[str, str]:
     details = {}
     div = no_access_check(
@@ -36,9 +37,22 @@ def get_detail(token: Token, detail_url: str) -> Dict[str, str]:
         details[l.find("th").text] = l.find("td").text
     return details
 
-def get_attendance(token: Token, sort_by: Dict[str, str] = {'zmiany_logowanie_wszystkie': ''}) -> List[List[Attendance]]:
+
+def get_attendance(token: Token, sort_by: str = "all") -> List[List[Attendance]]:
+    SORT = {
+        "all": {"zmiany_logowanie_wszystkie": ""},
+        "week": {"zmiany_logowanie_tydzien": "zmiany_logowanie_tydzien"},
+        "last_login": {"zmiany_logowanie": "zmiany_logowanie"},
+    }
+    if sort_by not in SORT.keys():
+        raise ArgumentError(
+            "Wrong value for sort_by it can be either all, week or last_login"
+        )
+
     soup = no_access_check(
-            BeautifulSoup(token.post(BASE_URL + "/przegladaj_nb/uczen", data=sort_by).text, "lxml")
+        BeautifulSoup(
+            token.post(BASE_URL + "/przegladaj_nb/uczen", data=sort_by).text, "lxml"
+        )
     )
     table = soup.find("table", attrs={"class": "center big decorated"})
     if table is None:
@@ -47,7 +61,7 @@ def get_attendance(token: Token, sort_by: Dict[str, str] = {'zmiany_logowanie_ws
     att = [[], []]
     semester = -1
     for day in days:
-        if day.find("td", attrs={'class': "center bolded"}):
+        if day.find("td", attrs={"class": "center bolded"}):
             semester += 1
         date = day.find("td", attrs={"class": None})
         attendance = day.find_all("td", attrs={"class": "center"})
@@ -56,18 +70,18 @@ def get_attendance(token: Token, sort_by: Dict[str, str] = {'zmiany_logowanie_ws
             for single in at:
                 if not single:
                     continue
-                attributes = { i.split(": ")[0].strip():
-                    i.split(": ")[1].strip()
+                attributes = {
+                    i.split(": ")[0].strip(): i.split(": ")[1].strip()
                     for i in single.attrs["title"]
                     .replace("</b>", "<br>")
                     .replace("<br/>", "")
                     .strip()
                     .split("<br>")
-                    }
+                }
                 date = attributes["Data"].split(" ")[0]
                 _type = attributes["Rodzaj"]
                 school_subject = attributes["Lekcja"]
-                topic = attributes.get("Temat zajęć")       # optional
+                topic = attributes.get("Temat zajęć")  # optional
                 period = int(attributes["Godzina lekcyjna"])
                 excursion = True if attributes["Czy wycieczka"] == "Tak" else False
                 teacher = attributes["Nauczyciel"]
