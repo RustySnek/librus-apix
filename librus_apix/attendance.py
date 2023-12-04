@@ -51,7 +51,7 @@ def get_attendance(token: Token, sort_by: str = "all") -> List[List[Attendance]]
 
     soup = no_access_check(
         BeautifulSoup(
-            token.post(BASE_URL + "/przegladaj_nb/uczen", data=sort_by).text, "lxml"
+            token.post(BASE_URL + "/przegladaj_nb/uczen", data=SORT[sort_by]).text, "lxml"
         )
     )
     table = soup.find("table", attrs={"class": "center big decorated"})
