@@ -9,8 +9,8 @@ Homework takes date_from and date_to as arguments.
 The dates shouldn't be more than a month apart.
 Format '%Y-%m-%d'
 """
-date_from = '2023-03-02'
-date_to = '2023-03-30'
+date_from = "2023-03-02"
+date_to = "2023-03-30"
 homework = get_homework(token, date_from, date_to)
 
 """

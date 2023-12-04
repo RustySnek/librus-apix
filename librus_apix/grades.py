@@ -11,11 +11,13 @@ from typing import Union, Tuple, List, Dict
 from dataclasses import dataclass
 from collections import defaultdict
 
+
 @dataclass
 class Gpa:
     semester: int
     gpa: float
     subject: str
+
 
 @dataclass
 class Grade:
@@ -42,6 +44,7 @@ class Grade:
             grade_value = float(self.grade)
         return grade_value
 
+
 @dataclass
 class GradeDescriptive:
     title: str
@@ -52,17 +55,29 @@ class GradeDescriptive:
     semester: int
     teacher: str
 
-def get_grades(token: Token, sort_by: str = 'all') -> Tuple[Dict[int, Dict[str ,Grade]], Dict[str, Gpa], Dict[int, Dict[str ,GradeDescriptive]]]:
+
+def get_grades(
+    token: Token, sort_by: str = "all"
+) -> Tuple[
+    Dict[int, Dict[str, Grade]], Dict[str, Gpa], Dict[int, Dict[str, GradeDescriptive]]
+]:
     SORT = {
-        "all": 'zmiany_logowanie_wszystkie',
-        "week": 'zmiany_logowanie_tydzien',
-        "last_login": 'zmiany_logowanie'
-            }
+        "all": "zmiany_logowanie_wszystkie",
+        "week": "zmiany_logowanie_tydzien",
+        "last_login": "zmiany_logowanie",
+    }
     if sort_by not in SORT.keys():
-        raise ArgumentError("Wrong value for sort_by it can be either all, week or last_login")
+        raise ArgumentError(
+            "Wrong value for sort_by it can be either all, week or last_login"
+        )
 
     tr = no_access_check(
-            BeautifulSoup(token.post(BASE_URL + "/przegladaj_oceny/uczen", data={SORT[sort_by]: 1}).text, "lxml")
+        BeautifulSoup(
+            token.post(
+                BASE_URL + "/przegladaj_oceny/uczen", data={SORT[sort_by]: 1}
+            ).text,
+            "lxml",
+        )
     ).find_all("tr", attrs={"class": ["line0", "line1"], "id": None})
     if len(tr) < 1:
         raise ParseError("Error in parsing grades")
@@ -71,8 +86,10 @@ def get_grades(token: Token, sort_by: str = 'all') -> Tuple[Dict[int, Dict[str ,
     sem_grades_desc = _extract_grades_descriptive(tr)
     return sem_grades, avg_grades, sem_grades_desc
 
+
 def _handle_subject(semester_grades):
     return semester_grades[0].text.replace("\n", "").strip()
+
 
 def get_desc_and_counts(a, grade, subject) -> Tuple[str, bool]:
     desc = f"Ocena: {grade}\nPrzedmiot: {subject}\n"
@@ -91,20 +108,30 @@ def get_desc_and_counts(a, grade, subject) -> Tuple[str, bool]:
 def _extract_grade_info(a, subject):
     date = re.search("Data:.{11}", a.attrs["title"])
     attr_dict = {}
-    for attr in a.attrs['title'].replace('<br/>', '<br>').split('<br>'):
+    for attr in a.attrs["title"].replace("<br/>", "<br>").split("<br>"):
         if len(attr.strip()) > 2:
-            key, value = attr.split(': ', 1)
+            key, value = attr.split(": ", 1)
             attr_dict[key] = value
-    category = attr_dict.get('Kategoria', '')
-    teacher = attr_dict.get('Nauczyciel', '')
-    weight = attr_dict.get('Waga', 0)
+    category = attr_dict.get("Kategoria", "")
+    teacher = attr_dict.get("Nauczyciel", "")
+    weight = attr_dict.get("Waga", 0)
 
     if date is None:
         raise ParseError("Error in getting grade's date.")
     grade = a.text.replace("\xa0", "").replace("\n", "")
     desc, counts = get_desc_and_counts(a, grade, subject)
 
-    return grade, date.group().split(" ")[1], a.attrs["href"], desc, counts, category, teacher, weight
+    return (
+        grade,
+        date.group().split(" ")[1],
+        a.attrs["href"],
+        desc,
+        counts,
+        category,
+        teacher,
+        weight,
+    )
+
 
 def _extract_grades_numeric(table_rows):
     sem_grades: Dict[int, Dict[str, List[Grade]]] = {1: {}, 2: {}}
@@ -115,11 +142,11 @@ def _extract_grades_numeric(table_rows):
             # row without grade data - skip
             continue
         semester_grades = box.select(
-            'td[class!="center micro screen-only"]'#[class!="right"]'
+            'td[class!="center micro screen-only"]'  # [class!="right"]'
         )
         if len(semester_grades) < 9:
             continue
-        average_grades = list(map(lambda x: x.text, box.select('td.right')))
+        average_grades = list(map(lambda x: x.text, box.select("td.right")))
         semesters = [semester_grades[1:4], semester_grades[4:7]]
         subject = _handle_subject(semester_grades)
         for sem, semester in enumerate(semesters):
@@ -128,7 +155,16 @@ def _extract_grades_numeric(table_rows):
             for sg in semester:
                 grade_a = sg.select("td[class!='center'] > span.grade-box > a")
                 for a in grade_a:
-                    _grade, date, href, desc, counts, category, teacher, weight = _extract_grade_info(a, subject)
+                    (
+                        _grade,
+                        date,
+                        href,
+                        desc,
+                        counts,
+                        category,
+                        teacher,
+                        weight,
+                    ) = _extract_grade_info(a, subject)
                     g = Grade(
                         subject,
                         _grade,
@@ -139,13 +175,17 @@ def _extract_grades_numeric(table_rows):
                         sem + 1,
                         category,
                         teacher,
-                        weight
+                        weight,
                     )
                     sem_grades[sem + 1][subject].append(g)
-            avg_gr = average_grades[sem] if len(average_grades) > sem else 0.0      # might happen that the list is empty
-            gpa = Gpa(sem+1, avg_gr, subject)
+            avg_gr = (
+                average_grades[sem] if len(average_grades) > sem else 0.0
+            )  # might happen that the list is empty
+            gpa = Gpa(sem + 1, avg_gr, subject)
             avg_grades[subject].append(gpa)
-        avg_gr = average_grades[-1] if average_grades else 0.0          # might happen that the list is empty
+        avg_gr = (
+            average_grades[-1] if average_grades else 0.0
+        )  # might happen that the list is empty
         avg_grades[subject].append(Gpa(0, avg_gr, subject))
 
     return sem_grades, avg_grades
@@ -168,7 +208,7 @@ def _extract_grades_descriptive(table_rows):
             # row without descriptive grade data - skip
             continue
         semester_grades = box.select(
-            'td[class!="micro center screen-only"]'#[class!="right"]'
+            'td[class!="micro center screen-only"]'  # [class!="right"]'
         )
         if len(semester_grades) < 3:
             continue
@@ -180,19 +220,21 @@ def _extract_grades_descriptive(table_rows):
                 sem_grades_desc[sem_number][subject] = []
             grade_a = sg.select("td[class!='center'] > span.grade-box > a")
             for a in grade_a:
-
-                _grade, date, href, desc, _, category, teacher, weight = _extract_grade_info(a, subject)
-                if "javascript" in href:
-                    # javascript content is not standard href - clear it
-                    href = ""
-                g = GradeDescriptive(
-                    subject,
+                (
                     _grade,
                     date,
                     href,
                     desc,
-                    sem_number,
-                    teacher
+                    _,
+                    category,
+                    teacher,
+                    weight,
+                ) = _extract_grade_info(a, subject)
+                if "javascript" in href:
+                    # javascript content is not standard href - clear it
+                    href = ""
+                g = GradeDescriptive(
+                    subject, _grade, date, href, desc, sem_number, teacher
                 )
                 sem_grades_desc[sem_number][subject].append(g)
 

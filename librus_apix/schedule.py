@@ -8,6 +8,7 @@ from dataclasses import dataclass
 import re
 from typing import Union, List, Dict
 
+
 @dataclass
 class Event:
     title: str
@@ -50,37 +51,49 @@ def get_schedule(token: Token, month: str, year: str) -> Dict[int, List[Event]]:
     for day in days:
         d = day.find("div", attrs={"class": "kalendarz-numer-dnia"}).text
         tr = day.find_all("tr")
-        if tr: 
+        if tr:
             for event in tr:
-                td = event.find('td')
-                subject = 'unspecified'
-                span = td.find('span')
+                td = event.find("td")
+                subject = "unspecified"
+                span = td.find("span")
                 if span:
                     subject = span.text
                     span.extract()
-        
-                delimeter = '###'
-                for line in td.select('br'):
+
+                delimeter = "###"
+                for line in td.select("br"):
                     line.replaceWith(delimeter)
-                data = td.text.replace('\xa0', ' ').replace(', ', '').replace('\n', '').strip().split(delimeter)
+                data = (
+                    td.text.replace("\xa0", " ")
+                    .replace(", ", "")
+                    .replace("\n", "")
+                    .strip()
+                    .split(delimeter)
+                )
                 if len(data) >= 2:
                     title = data[1]
                 else:
                     title = data[0]
 
-                number = 'unknown'
-                hour = 'unknown'
-                try: 
-                    number = int(re.findall(r': ?[0-99]?[0-99]' ,event.find('td').text)[0].replace(': ', ''))
+                number = "unknown"
+                hour = "unknown"
+                try:
+                    number = int(
+                        re.findall(r": ?[0-99]?[0-99]", event.find("td").text)[
+                            0
+                        ].replace(": ", "")
+                    )
                 except ValueError:
-                    hour = re.findall(r' ?[0-2]?[0-9]:?[0-5]?[0-9]', event.find('td').text)[0]
+                    hour = re.findall(
+                        r" ?[0-2]?[0-9]:?[0-5]?[0-9]", event.find("td").text
+                    )[0]
                 except IndexError:
                     pass
                 try:
                     onclick = event.find("td").attrs["onclick"]
-                    href = "/".join(onclick.split("'")[1].split("/")[2:]) 
+                    href = "/".join(onclick.split("'")[1].split("/")[2:])
                 except KeyError:
-                    href = ''
+                    href = ""
 
                 event = Event(title, subject, data, d, number, hour, href)
                 schedule[int(d)].append(event)

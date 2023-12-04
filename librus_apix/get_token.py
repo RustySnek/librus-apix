@@ -38,7 +38,7 @@ class Token:
 def get_token(username: str, password: str) -> Token:
     with Session() as s:
         s.headers = HEADERS
-        maint_check = s.get('https://api.librus.pl/')
+        maint_check = s.get("https://api.librus.pl/")
         if maint_check.status_code == 503:
             message_list = maint_check.json().get('Message')
             if not message_list:

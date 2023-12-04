@@ -8,7 +8,7 @@ token = get_token(username, password)
 """
 The second argument "sort_by" of get_grades() function is used to retrieve the grades from the last login or the past week.
 """
-sort_by = ["all", "week", "last_login"] # All of the options for sort_by argument
+sort_by = ["all", "week", "last_login"]  # All of the options for sort_by argument
 grades, semester_grades, descriptive_grades = get_grades(token, sort_by[0])
 
 """
@@ -70,13 +70,13 @@ The GradeDescriptive class contains the following variables:
 first_semester, second_semester = grades.values()
 for subject in first_semester:
     initial_three_grades = first_semester[subject][:3]
-    print(f'Subject: {subject}')
+    print(f"Subject: {subject}")
     for mark in initial_three_grades:
-        print(f'\t|{mark.grade}| - {mark.date}')
+        print(f"\t|{mark.grade}| - {mark.date}")
 
 first_semester, second_semester = descriptive_grades.values()
 for subject in first_semester:
     initial_three_grades = first_semester[subject][:3]
-    print(f'Subject: {subject}')
+    print(f"Subject: {subject}")
     for mark in initial_three_grades:
-        print(f'\t|{mark.grade}| - {mark.date}')
+        print(f"\t|{mark.grade}| - {mark.date}")

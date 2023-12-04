@@ -26,10 +26,10 @@ Structure of Lesson class:
 """
 
 # Printing out the first 15 lessons from the past week
-date_from = ''
-date_to = ''
+date_from = ""
+date_to = ""
 
 page = get_max_page_number(token, date_from, date_to)
-completed_lessons = get_completed(token, date_from, date_to, page-1)
+completed_lessons = get_completed(token, date_from, date_to, page - 1)
 for lesson in completed_lessons:
     print(lesson.lesson_number, lesson.subject)

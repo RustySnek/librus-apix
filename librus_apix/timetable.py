@@ -60,10 +60,15 @@ def get_timetable(token, monday_date: datetime) -> Dict[str, List[Period]]:
             ]
             lesson = lesson.select_one("div.text")
             try:
-                subject = lesson.select_one('b').text
-                teacher_and_classroom =  '-'.join(lesson.text.replace("\xa0", " ").replace('\n', '').replace("&nbsp", "").split('-')[1:])
+                subject = lesson.select_one("b").text
+                teacher_and_classroom = "-".join(
+                    lesson.text.replace("\xa0", " ")
+                    .replace("\n", "")
+                    .replace("&nbsp", "")
+                    .split("-")[1:]
+                )
 
-            except :
+            except:
                 subject = ""
                 teacher_and_classroom = ""
 
@@ -76,7 +81,7 @@ def get_timetable(token, monday_date: datetime) -> Dict[str, List[Period]]:
                 date_to,
                 weekday_str,
                 info,
-                lesson_number
+                lesson_number,
             )
             timetable[weekday_str].append(p)
     return timetable

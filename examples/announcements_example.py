@@ -19,4 +19,4 @@ Structure of Announcement class:
 # Printing out all of the announcements.
 
 for a in announcements:
-   print(f"{a.description}\n{a.author} - {a.date}\n")
+    print(f"{a.description}\n{a.author} - {a.date}\n")

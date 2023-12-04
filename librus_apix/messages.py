@@ -7,6 +7,7 @@ from librus_apix.helpers import no_access_check
 from dataclasses import dataclass
 import re
 
+
 @dataclass
 class Message:
     author: str
@@ -37,11 +38,12 @@ def parse(message_soup: BeautifulSoup) -> List[Message]:
     if tds[0].text.strip() == "Brak wiadomości":
         return []
     for td in tds:
-        unread = False; hasAttachment = False
+        unread = False
+        hasAttachment = False
         _tick, attachment, author, title, date, _trash = td.find_all("td")
-        if attachment.find('img') != False:
+        if attachment.find("img") != False:
             hasAttachment = True
-        if title.get('style') and 'font-weight: bold' in title.get('style'):
+        if title.get("style") and "font-weight: bold" in title.get("style"):
             unread = True
 
         href = author.find("a").attrs["href"].split("/")[4]
@@ -52,17 +54,23 @@ def parse(message_soup: BeautifulSoup) -> List[Message]:
         msgs.append(m)
     return msgs
 
+
 def get_max_page_number(token: Token) -> int:
-    soup = no_access_check(BeautifulSoup(token.get(BASE_URL + '/wiadomosci').text, 'lxml'))
+    soup = no_access_check(
+        BeautifulSoup(token.get(BASE_URL + "/wiadomosci").text, "lxml")
+    )
     try:
-        pages = soup.select_one('div.pagination > span')
+        pages = soup.select_one("div.pagination > span")
         if not pages:
             return 0
         max_pages = pages.text.replace("\xa0", "")
-        max_pages_number = int(re.search('z[0-9]*', max_pages).group(0).replace('z', ""))
+        max_pages_number = int(
+            re.search("z[0-9]*", max_pages).group(0).replace("z", "")
+        )
     except:
         raise ParseError("Error while trying to get max page number.")
     return max_pages_number - 1
+
 
 def get_recieved(token: Token, page: int) -> List[Message]:
     payload = {

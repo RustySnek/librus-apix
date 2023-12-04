@@ -6,8 +6,8 @@ username = "USERNAME"
 password = "PASSWORD"
 token = get_token(username, password)
 
-monday_date = '2023-04-03'
-monday_datetime = datetime.strptime(monday_date, '%Y-%m-%d')
+monday_date = "2023-04-03"
+monday_datetime = datetime.strptime(monday_date, "%Y-%m-%d")
 timetable = get_timetable(token, monday_datetime)
 
 """

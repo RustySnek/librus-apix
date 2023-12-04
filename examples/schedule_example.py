@@ -20,8 +20,8 @@ Structure of Event class:
         href: str
 """
 
-month = '2'
-year = '2023'
+month = "2"
+year = "2023"
 schedule = get_schedule(token, month, year)
 
 # Printing out all events in the month
@@ -32,6 +32,6 @@ for day in schedule:
         # Check if Event has an href before accessing it
         if event.href == "":
             continue
-        prefix, href = event.href.split('/')
+        prefix, href = event.href.split("/")
         details = schedule_detail(token, prefix, href)
-        print('\n'.join([f'{key}: {value}' for key,value in details.items()]))
+        print("\n".join([f"{key}: {value}" for key, value in details.items()]))

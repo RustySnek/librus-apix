@@ -52,7 +52,7 @@ def get_homework(token: Token, date_from: str, date_to: str) -> List[Homework]:
     soup = soup_base.find("table", attrs={"class": "decorated myHomeworkTable"})
     if soup is None:
         # no proper content found - error or no data
-        soup = soup_base.find("p", attrs={"class": "msgEmptyTable"}) 
+        soup = soup_base.find("p", attrs={"class": "msgEmptyTable"})
         if soup is not None:
             # empty table found - return empty list
             return []
