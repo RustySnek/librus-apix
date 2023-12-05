@@ -233,7 +233,7 @@ def _extract_grades_descriptive(table_rows):
                     # javascript content is not standard href - clear it
                     href = ""
                 g = GradeDescriptive(
-                    subject, _grade, date, href, desc, sem_number, teacher
+                    subject, _grade, date, href, desc, sem_index + 1, teacher
                 )
                 sem_grades_desc[sem_index][subject].append(g)
 
