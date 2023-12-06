@@ -20,8 +20,8 @@ class Period:
     number: int
 
 
-def get_timetable(token, monday_date: datetime) -> Dict[str, List[Period]]:
-    timetable: Dict[str, List[Period]] = defaultdict(list)
+def get_timetable(token, monday_date: datetime) -> List[List[Period]]:
+    timetable: List[List[Period]] = []
     if monday_date.strftime("%A") != "Monday":
         raise DateError("You must input a Monday date.")
     sunday = monday_date + timedelta(days=6)
@@ -35,6 +35,7 @@ def get_timetable(token, monday_date: datetime) -> Dict[str, List[Period]]:
         raise ParseError("Error in parsing timetable.")
     recess = soup.select("table.decorated.plan-lekcji > tr.line0")
     for weekday in range(7):
+        timetable.append([])
         for period in range(len(periods)):
             lesson = periods[period].select(
                 'td[id="timetableEntryBox"][class="line1"]'
@@ -83,5 +84,5 @@ def get_timetable(token, monday_date: datetime) -> Dict[str, List[Period]]:
                 info,
                 lesson_number,
             )
-            timetable[weekday_str].append(p)
+            timetable[weekday].append(p)
     return timetable
