@@ -18,7 +18,8 @@ class Period:
     weekday: str
     info: Dict[str, str]
     number: int
-
+    next_recess_from: str | None
+    next_recess_to: str | None
 
 def get_timetable(token, monday_date: datetime) -> List[List[Period]]:
     timetable: List[List[Period]] = []
@@ -37,6 +38,7 @@ def get_timetable(token, monday_date: datetime) -> List[List[Period]]:
     for weekday in range(7):
         timetable.append([])
         for period in range(len(periods)):
+            [recess_from, recess_to] = [x.strip() for x in recess[period].select_one("td.center").text.replace("&nbsp;", "").strip().split("-")] if period <= len(recess) - 1 else [None, None]
             lesson = periods[period].select(
                 'td[id="timetableEntryBox"][class="line1"]'
             )[weekday]
@@ -48,14 +50,19 @@ def get_timetable(token, monday_date: datetime) -> List[List[Period]]:
                 if a_href is None:
                     info[tooltip.text.strip()] = ""
                 else:
-                    info[tooltip.text.strip()] = (
-                        a_href.attrs["title"]
-                        .replace("<br>", " ")
-                        .replace("<b>", "")
-                        .replace("</b>", "")
-                        .replace("\xa0", " ")
-                    )
+                    attr_dict = {}
+                    for attr in a_href.attrs["title"].replace("<b>", "").replace("</b>", "").replace("\xa0", " ").split("<br>"):
+                        if len(attr.strip()) > 2:
 
+                            key, value = attr.split(": ", 1)
+                            attr_dict[key] = value
+
+                    info[tooltip.text.strip()] = {
+                            "teacher_swap":attr_dict.get("Nauczyciel", ""),
+                            "subject_swap":attr_dict.get("Przedmiot", ""),
+                            "classroom_swap":attr_dict.get("Sala", ""),
+                            "date_added":attr_dict.get("Data dodania", "")
+                            }
             date, date_from, date_to = [
                 val for key, val in lesson.attrs.items() if key.startswith("data")
             ]
@@ -83,6 +90,8 @@ def get_timetable(token, monday_date: datetime) -> List[List[Period]]:
                 weekday_str,
                 info,
                 lesson_number,
+                recess_from,
+                recess_to
             )
             timetable[weekday].append(p)
     return timetable
