@@ -14,6 +14,18 @@ from librus_apix.get_token import get_token
 
 token = get_token("Username", "Password")
 ```
+### Save and Load token
+```py
+from librus_apix.get_token import get_token, Token
+
+token = get_token("Username", "Password")
+
+token_key = token.API_Key
+# you can store this key and later load it into Token class like this:
+token = Token(token_key)
+
+
+```
 ### Getting the Math grades
 
 ```py
