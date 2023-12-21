@@ -14,7 +14,7 @@ class StudentInformation:
     number: int
     tutor: str
     school: dict
-    lucky_number: int
+    lucky_number: int | str
 """
 
 # Print out current lucky number and class' tutor
