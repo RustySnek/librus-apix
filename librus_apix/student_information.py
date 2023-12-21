@@ -1,3 +1,4 @@
+from typing import Union
 from bs4 import BeautifulSoup
 from dataclasses import dataclass
 from librus_apix.helpers import no_access_check
@@ -12,7 +13,7 @@ class StudentInformation:
     number: int
     tutor: str
     school: dict
-    lucky_number: int
+    lucky_number: Union[int, str]
 
 
 def get_student_information(token: Token):
