@@ -22,7 +22,11 @@ def get_student_information(token: Token):
             "lxml",
         )
     )
-    lucky_number = soup.select_one("span.luckyNumber > b").text
+    try:
+        lucky_number = int(soup.select_one("span.luckyNumber > b").text)
+    except:
+        lucky_number = "?"
+
     lines = soup.select_one("table.decorated.big.center > tbody").find_all(
         "tr", attrs={"class": ["line0", "line1"]}
     )[:5]
@@ -35,5 +39,5 @@ def get_student_information(token: Token):
         int(number),
         tutor,
         "\n".join([n.strip() for n in school.split("\n")]),
-        int(lucky_number),
+        lucky_number,
     )
