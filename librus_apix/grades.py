@@ -58,9 +58,7 @@ class GradeDescriptive:
 
 def get_grades(
     token: Token, sort_by: str = "all"
-) -> Tuple[
-    List[Dict[str, Grade]], Dict[str, Gpa], List[Dict[str, GradeDescriptive]]
-]:
+) -> Tuple[List[Dict[str, Grade]], Dict[str, Gpa], List[Dict[str, GradeDescriptive]]]:
     SORT = {
         "all": "zmiany_logowanie_wszystkie",
         "week": "zmiany_logowanie_tydzien",
@@ -74,7 +72,7 @@ def get_grades(
     tr = no_access_check(
         BeautifulSoup(
             token.post(
-                BASE_URL + "/przegladaj_oceny/uczen", data={SORT[sort_by]: 1}
+                token.GRADES_URL, data={SORT[sort_by]: 1}
             ).text,
             "lxml",
         )

@@ -14,6 +14,7 @@ class Token:
         API_Key: Optional[str] = None,
         base_url: Optional[str] = None,
         api_url: Optional[str] = None,
+        grades_url: Optional[str] = None,
         announcements_url: Optional[str] = None,
         message_url: Optional[str] = None,
         attendance_url: Optional[str] = None,
@@ -33,6 +34,7 @@ class Token:
         self.cookies = cookies
         self.BASE_URL = base_url if base_url else urls.BASE_URL
         self.API_URL = api_url if api_url else urls.API_URL
+        self.GRADES_URL = grades_url if grades_url else urls.GRADES_URL
         self.ANNOUNCEMENTS_URL = (
             announcements_url if announcements_url else urls.ANNOUNCEMENTS_URL
         )
@@ -67,6 +69,7 @@ def get_token(
     password: str,
     base_url: Optional[str] = None,
     api_url: str = urls.API_URL,
+    grades_url: Optional[str] = None,
     announcements_url: Optional[str] = None,
     message_url: Optional[str] = None,
     attendance_url: Optional[str] = None,
@@ -102,6 +105,7 @@ def get_token(
             str(cookies["DZIENNIKSID"] + ":" + cookies["SDZIENNIKSID"]),
             base_url,
             api_url,
+            grades_url,
             announcements_url,
             message_url,
             attendance_url,
