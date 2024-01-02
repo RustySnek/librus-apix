@@ -1,7 +1,6 @@
 from typing import List
 from dataclasses import dataclass
 from bs4 import BeautifulSoup
-from librus_apix.urls import COMPLETED_LESSONS_URL
 from librus_apix.get_token import Token
 from librus_apix.helpers import no_access_check
 from librus_apix.exceptions import ParseError
@@ -30,7 +29,7 @@ def get_max_page_number(token: Token, date_from, date_to) -> int:
         "porcjowanie_pojemnik1001": 1001,
     }
     soup = no_access_check(
-        BeautifulSoup(token.post(COMPLETED_LESSONS_URL, data=data).text, "lxml")
+        BeautifulSoup(token.post(token.COMPLETED_LESSONS_URL, data=data).text, "lxml")
     )
     try:
         pages = soup.select_one("div.pagination > span")
@@ -65,7 +64,7 @@ def get_completed(
     }
     completed_lessons = []
     soup = no_access_check(
-        BeautifulSoup(token.post(COMPLETED_LESSONS_URL, data=data).text, "lxml")
+        BeautifulSoup(token.post(token.COMPLETED_LESSONS_URL, data=data).text, "lxml")
     )
 
     lines = soup.select('table[class="decorated"] > tbody > tr')

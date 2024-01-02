@@ -1,10 +1,9 @@
 from typing import List, Dict
-from librus_apix.get_token import get_token
-from librus_apix.exceptions import TokenError, ParseError, DateError
+from librus_apix.get_token import Token
+from librus_apix.exceptions import ParseError, DateError
 from librus_apix.helpers import no_access_check
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
-from collections import defaultdict
 from dataclasses import dataclass
 
 
@@ -22,7 +21,7 @@ class Period:
     next_recess_to: str | None
 
 
-def get_timetable(token, monday_date: datetime) -> List[List[Period]]:
+def get_timetable(token: Token, monday_date: datetime) -> List[List[Period]]:
     timetable: List[List[Period]] = []
     if monday_date.strftime("%A") != "Monday":
         raise DateError("You must input a Monday date.")

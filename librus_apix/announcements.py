@@ -1,11 +1,9 @@
 from typing import List
-from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
-from librus_apix.get_token import get_token, Token
+from librus_apix.get_token import Token
 from librus_apix.helpers import no_access_check
-from librus_apix.urls import ANNOUNCEMENTS_URL
 from dataclasses import dataclass
-from librus_apix.exceptions import TokenError, ParseError
+from librus_apix.exceptions import ParseError
 
 
 @dataclass
@@ -17,7 +15,9 @@ class Announcement:
 
 
 def get_announcements(token: Token) -> List[Announcement]:
-    soup = no_access_check(BeautifulSoup(token.get(ANNOUNCEMENTS_URL).text, "lxml"))
+    soup = no_access_check(
+        BeautifulSoup(token.get(token.ANNOUNCEMENTS_URL).text, "lxml")
+    )
     announcements = []
     announcement_tables = soup.select("table.decorated.big.center.printable.margin-top")
     if len(announcement_tables) < 1:

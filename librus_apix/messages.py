@@ -1,8 +1,7 @@
 from typing import List
 from bs4 import BeautifulSoup
-from librus_apix.get_token import get_token, Token
-from librus_apix.urls import BASE_URL, MESSAGE_URL
-from librus_apix.exceptions import TokenError, ParseError
+from librus_apix.get_token import Token
+from librus_apix.exceptions import ParseError
 from librus_apix.helpers import no_access_check
 from dataclasses import dataclass
 import re
@@ -20,7 +19,7 @@ class Message:
 
 def message_content(token: Token, content_url: str) -> str:
     soup = no_access_check(
-        BeautifulSoup(token.get(MESSAGE_URL + content_url).text, "lxml")
+        BeautifulSoup(token.get(token.MESSAGE_URL + "/" + content_url).text, "lxml")
     )
     content = soup.find("div", attrs={"class": "container-message-content"})
     if content is None:
@@ -57,7 +56,7 @@ def parse(message_soup: BeautifulSoup) -> List[Message]:
 
 def get_max_page_number(token: Token) -> int:
     soup = no_access_check(
-        BeautifulSoup(token.get(BASE_URL + "/wiadomosci").text, "lxml")
+        BeautifulSoup(token.get(token.MESSAGE_URL).text, "lxml")
     )
     try:
         pages = soup.select_one("div.pagination > span")
@@ -77,7 +76,7 @@ def get_recieved(token: Token, page: int) -> List[Message]:
         "numer_strony105": page,
         "porcjowanie_pojemnik105": 105,
     }
-    response = token.post(BASE_URL + "/wiadomosci", data=payload)
+    response = token.post(token.MESSAGE_URL, data=payload)
     soup = no_access_check(BeautifulSoup(response.text, "lxml"))
     recieved_msgs = parse(soup)
     return recieved_msgs

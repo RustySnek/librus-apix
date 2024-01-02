@@ -19,7 +19,7 @@ class StudentInformation:
 def get_student_information(token: Token):
     soup = no_access_check(
         BeautifulSoup(
-            token.get(INFO_URL).text,
+            token.get(token.INFO_URL).text,
             "lxml",
         )
     )
