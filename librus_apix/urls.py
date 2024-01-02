@@ -5,6 +5,7 @@ HEADERS = {
 BASE_URL = "https://synergia.librus.pl"
 API_URL = "https://api.librus.pl"
 GRADES_URL = BASE_URL + "/przegladaj_oceny/uczen"
+TIMETABLE_URL = f"{BASE_URL}/przegladaj_plan_lekcji"
 ANNOUNCEMENTS_URL = f"{BASE_URL}/ogloszenia"
 MESSAGE_URL = f"{BASE_URL}/wiadomosci/1/5"
 ATTENDANCE_URL = f"{BASE_URL}/przegladaj_nb/szczegoly/"
