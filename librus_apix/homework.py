@@ -1,9 +1,8 @@
-from typing import Generator, List, Dict
+from typing import List, Dict
 from bs4 import BeautifulSoup
-from librus_apix.get_token import get_token, Token
+from librus_apix.get_token import Token
 from librus_apix.helpers import no_access_check
-from librus_apix.urls import BASE_URL, HOMEWORK_URL
-from librus_apix.exceptions import TokenError, ParseError
+from librus_apix.exceptions import ParseError
 from dataclasses import dataclass
 
 
