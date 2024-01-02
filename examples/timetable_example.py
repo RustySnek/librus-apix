@@ -13,7 +13,7 @@ timetable = get_timetable(token, monday_datetime)
 """
 The monday_datetime has to be Monday date else it will raise and error.
 
-timetable(token, monday_datetime) -> dict[str, list[Period]]
+timetable(token, monday_datetime) -> list[list[Period]]
 
 Structure of Period class:
     class Period:
@@ -31,5 +31,5 @@ Structure of Period class:
 for weekday in timetable:
     print()
     print(weekday)
-    for period in timetable[weekday]:
+    for period in weekday:
         print(period.number, period.subject, period.teacher_and_classroom)
