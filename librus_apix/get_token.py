@@ -1,7 +1,5 @@
-import re
 from typing import Optional, Union, Dict
 from requests.models import Response
-from bs4 import BeautifulSoup
 from requests import Session
 from requests.utils import cookiejar_from_dict, dict_from_cookiejar
 import librus_apix.urls as urls
@@ -19,8 +17,10 @@ class Token:
         announcements_url: Optional[str] = None,
         message_url: Optional[str] = None,
         attendance_url: Optional[str] = None,
+        attendance_details_url: Optional[str] = None,
         schedule_url: Optional[str] = None,
         homework_url: Optional[str] = None,
+        homework_details_url: Optional[str] = None,
         info_url: Optional[str] = None,
         completed_lessons_url: Optional[str] = None,
     ):
@@ -42,8 +42,16 @@ class Token:
         )
         self.MESSAGE_URL = message_url if message_url else urls.MESSAGE_URL
         self.ATTENDANCE_URL = attendance_url if attendance_url else urls.ATTENDANCE_URL
+        self.ATTENDANCE_DETAILS_URL = (
+            attendance_details_url
+            if attendance_details_url
+            else urls.ATTENDANCE_DETAILS_URL
+        )
         self.SCHEDULE_URL = schedule_url if schedule_url else urls.SCHEDULE_URL
         self.HOMEWORK_URL = homework_url if homework_url else urls.HOMEWORK_URL
+        self.HOMEWORK_DETAILS_URL = (
+            homework_details_url if homework_details_url else urls.HOMEWORK_DETAILS_URL
+        )
         self.INFO_URL = info_url if info_url else urls.INFO_URL
         self.COMPLETED_LESSONS_URL = (
             completed_lessons_url
@@ -76,8 +84,10 @@ def get_token(
     announcements_url: Optional[str] = None,
     message_url: Optional[str] = None,
     attendance_url: Optional[str] = None,
+    attendance_details_url: Optional[str] = None,
     schedule_url: Optional[str] = None,
     homework_url: Optional[str] = None,
+    homework_details_url: Optional[str] = None,
     info_url: Optional[str] = None,
     completed_lessons_url: Optional[str] = None,
 ) -> Token:
@@ -113,8 +123,10 @@ def get_token(
             announcements_url,
             message_url,
             attendance_url,
+            attendance_details_url,
             schedule_url,
             homework_url,
+            homework_details_url,
             info_url,
             completed_lessons_url,
         )

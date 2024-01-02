@@ -18,4 +18,4 @@ class StudentInformation:
 """
 
 # Print out current lucky number and class' tutor
-print(info.tutor,info.lucky_number)
+print(info.tutor, info.lucky_number)

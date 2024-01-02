@@ -21,7 +21,7 @@ class Homework:
 def homework_detail(token: Token, detail_url: str) -> Dict[str, str]:
     h_desc = {}
     soup = no_access_check(
-        BeautifulSoup(token.get(HOMEWORK_URL + detail_url).text, "lxml")
+        BeautifulSoup(token.get(token.HOMEWORK_DETAILS_URL + detail_url).text, "lxml")
     )
     div = soup.find("div", attrs={"class": "container-background"})
     if div is None:
@@ -38,7 +38,7 @@ def get_homework(token: Token, date_from: str, date_to: str) -> List[Homework]:
     soup_base = no_access_check(
         BeautifulSoup(
             token.post(
-                BASE_URL + "/moje_zadania",
+                token.HOMEWORK_URL,
                 data={
                     "dataOd": date_from,
                     "dataDo": date_to,

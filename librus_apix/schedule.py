@@ -1,7 +1,6 @@
 from bs4 import BeautifulSoup
-from librus_apix.get_token import Token, get_token
-from librus_apix.urls import BASE_URL, SCHEDULE_URL
-from librus_apix.exceptions import TokenError, ParseError
+from librus_apix.get_token import Token
+from librus_apix.exceptions import ParseError
 from librus_apix.helpers import no_access_check
 from collections import defaultdict
 from dataclasses import dataclass
@@ -24,7 +23,7 @@ def schedule_detail(token: Token, prefix: str, detail_url: str) -> Dict[str, str
     schedule = {}
     div = no_access_check(
         BeautifulSoup(
-            token.get(SCHEDULE_URL + prefix + "/" + detail_url).text, "lxml"
+            token.get(token.SCHEDULE_URL + prefix + "/" + detail_url).text, "lxml"
         ).find("div", attrs={"class": "container-background"})
     )
     if div is None:
@@ -40,7 +39,7 @@ def get_schedule(token: Token, month: str, year: str) -> Dict[int, List[Event]]:
     soup = no_access_check(
         BeautifulSoup(
             token.post(
-                BASE_URL + "/terminarz", data={"rok": year, "miesiac": month}
+                token.SCHEDULE_URL, data={"rok": year, "miesiac": month}
             ).text,
             "lxml",
         )
