@@ -36,9 +36,12 @@ def get_max_page_number(token: Token, date_from, date_to) -> int:
         if not pages:
             return 0
         max_pages = pages.text.replace("\xa0", "")
-        max_pages_number = int(
-            re.search("z[0-9]*", max_pages).group(0).replace("z", "")
-        )
+        try:
+            max_pages_number = int(
+                re.search("z[0-9]*", max_pages).group(0).replace("z", "")
+            )
+        except:
+            max_pages_number = 0
     except:
         raise ParseError("Error while trying to get max page number.")
     return max_pages_number
