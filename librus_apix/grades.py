@@ -71,9 +71,7 @@ def get_grades(
 
     tr = no_access_check(
         BeautifulSoup(
-            token.post(
-                token.GRADES_URL, data={SORT[sort_by]: 1}
-            ).text,
+            token.post(token.GRADES_URL, data={SORT[sort_by]: 1}).text,
             "lxml",
         )
     ).find_all("tr", attrs={"class": ["line0", "line1"], "id": None})

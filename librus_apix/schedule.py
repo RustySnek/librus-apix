@@ -38,9 +38,7 @@ def get_schedule(token: Token, month: str, year: str) -> Dict[int, List[Event]]:
     schedule = defaultdict(list)
     soup = no_access_check(
         BeautifulSoup(
-            token.post(
-                token.SCHEDULE_URL, data={"rok": year, "miesiac": month}
-            ).text,
+            token.post(token.SCHEDULE_URL, data={"rok": year, "miesiac": month}).text,
             "lxml",
         )
     )

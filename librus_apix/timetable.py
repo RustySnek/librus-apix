@@ -27,9 +27,7 @@ def get_timetable(token: Token, monday_date: datetime) -> List[List[Period]]:
         raise DateError("You must input a Monday date.")
     sunday = monday_date + timedelta(days=6)
     week = f"{monday_date.strftime('%Y-%m-%d')}_{sunday.strftime('%Y-%m-%d')}"
-    post = token.post(
-        token.TIMETABLE_URL, data={"tydzien": week}
-    )
+    post = token.post(token.TIMETABLE_URL, data={"tydzien": week})
     soup = no_access_check(BeautifulSoup(post.text, "lxml"))
     periods = soup.select("table.decorated.plan-lekcji > tr.line1")
     if len(periods) < 1:

@@ -55,9 +55,7 @@ def parse(message_soup: BeautifulSoup) -> List[Message]:
 
 
 def get_max_page_number(token: Token) -> int:
-    soup = no_access_check(
-        BeautifulSoup(token.get(token.MESSAGE_URL).text, "lxml")
-    )
+    soup = no_access_check(BeautifulSoup(token.get(token.MESSAGE_URL).text, "lxml"))
     try:
         pages = soup.select_one("div.pagination > span")
         if not pages:
