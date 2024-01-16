@@ -130,6 +130,8 @@ def _extract_grade_info(a, subject):
 
 
 def _extract_grades_numeric(table_rows):
+    # list containing two dicts (for each semester)
+    # key of each semester dict is subject, in each subject there is list of grades 
     sem_grades: List[Dict[str, List[Grade]]] = [{}, {}]
     avg_grades = defaultdict(list)
 
@@ -197,6 +199,8 @@ def _extract_grades_descriptive(table_rows):
         )
         return desc
 
+    # list containing two dicts (for each semester)
+    # key of each semester dict is subject, in each subject there is list of grades
     sem_grades_desc: List[Dict[str, List[GradeDescriptive]]] = [{}, {}]
 
     for box in table_rows:
@@ -232,5 +236,44 @@ def _extract_grades_descriptive(table_rows):
                     subject, _grade, date, href, desc, sem_index + 1, teacher
                 )
                 sem_grades_desc[sem_index][subject].append(g)
+
+    # get semester descriptive grade
+    found_grade = False
+    summary_title = ""
+    summary_desc = ""
+    summary_date = ""
+    summary_teacher = ""
+
+    parse_next_row = False
+    for box in table_rows:
+        if parse_next_row:
+            parse_next_row = False
+            paragraphs = box.find_all("p")
+            text_list = [ par.text.strip() for par in paragraphs ]
+            summary_desc = "\n".join(text_list).strip()
+            found_grade = True
+            # description found - break
+            # There is no more grades for now (for first semester). Maybe there will be grade for 
+            # second semester, but the format (structure) of web page is unknown for the moment.
+            # #TODO: implement the case for second semester (in future)
+            break
+
+        header = box.select_one("th")
+        if header:
+            # header row found - next row will contain the description
+            parse_next_row = True
+            title_tag = header.select_one("strong")
+            info = title_tag.next_sibling
+            summary_title = title_tag.text.strip()
+            summary_date = re.findall(r"opublikowano: (.+?) ", info)[0]     # get date only
+            summary_teacher = re.findall(r"nauczyciel: (.+?)\)", info)[0]
+
+    if found_grade:
+        sem_index = 0
+        semester_summary = GradeDescriptive(summary_title, "", summary_date, "",
+                                            summary_desc, sem_index + 1, summary_teacher)
+        if summary_title not in sem_grades_desc[sem_index]:
+            sem_grades_desc[sem_index][summary_title] = []
+        sem_grades_desc[sem_index][summary_title].append(semester_summary)
 
     return sem_grades_desc
