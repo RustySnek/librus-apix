@@ -40,7 +40,7 @@ def parse(message_soup: BeautifulSoup) -> List[Message]:
         unread = False
         hasAttachment = False
         _tick, attachment, author, title, date, _trash = td.find_all("td")
-        if attachment.find("img") != False:
+        if attachment.find("img"):
             hasAttachment = True
         if title.get("style") and "font-weight: bold" in title.get("style"):
             unread = True
