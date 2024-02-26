@@ -63,6 +63,15 @@ for attendance in first_semester:
 
 ```
 
+### Getting the attendance frequency
+```py
+from librus_apix.attendance import get_attendance_frequency
+
+first, second, overall = get_attendance_frequency(token)
+print(f"{first*100}%")
+
+```
+
 ### Getting the Homework
 ```py
 from librus_apix.homework import get_homework, homework_detail
