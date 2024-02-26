@@ -34,6 +34,46 @@ def get_detail(token: Token, detail_url: str) -> Dict[str, str]:
         details[l.find("th").text] = l.find("td").text
     return details
 
+def get_gateway_attendance(token: Token):
+    # The gateway api seems to be only updated every 3 hours
+    # The api.librus.pl seems to require a private key to access
+    types = {
+            "1": {"short": "nb" ,"name": "Nieobecność"},
+            "2": {"short": "sp" ,"name": "Spóźnienie"},
+            "3": {"short": "u" ,"name": "Nieobecność uspr."},
+            "4": {"short": "zw" ,"name": "Zwolnienie"},
+            "100": {"short": "ob" ,"name": "Obecność"},
+            "1266": {"short": "wy" ,"name": "Wycieczka"},
+            "2022": {"short": "k" ,"name": "Konkurs szkolny"},
+            "2829": {"short": "sz" ,"name": "Szkolenie"},
+            }
+    if token.oauth == "":
+        token.refresh_oauth()
+    token.cookies["oauth_token"] = token.oauth
+    response = token.get(token.GATEWAY_API_ATTENDANCE)
+
+    attendances = response.json()["Attendances"]
+
+
+    return [
+            (tuple(
+                types[
+                    str(a["Type"]["Id"])].values()),
+            a["LessonNo"],
+            a["Semester"]
+            ) for a in attendances]
+
+def get_attendance_frequency(token: Token):
+    attendance = get_gateway_attendance(token)
+    first_semester = [a for a in attendance if a[2] == 1]
+    second_semester = [a for a in attendance if a[2] == 2]
+    f_attended = len([a for a in first_semester if a[0][0] == "ob"])
+    s_attended = len([a for a in second_semester if a[0][0] == "ob"])
+    f_freq = f_attended / len(first_semester)
+    s_freq = s_attended / len(second_semester)
+    overall_freq = len([a for a in attendance if a[0][0] == "ob"]) / len(attendance)
+    return f_freq, s_freq, overall_freq
+    # ADD Lesson frequency
 
 def get_attendance(token: Token, sort_by: str = "all") -> List[List[Attendance]]:
     SORT = {
