@@ -23,16 +23,18 @@ class Token:
         homework_details_url: Optional[str] = None,
         info_url: Optional[str] = None,
         completed_lessons_url: Optional[str] = None,
+        gateway_api_attendance: Optional[str] = None,
     ):
         self._session = Session()
         if not API_Key:
-            self.cookies = ""
+            self.cookies = {}
             self.csrf_token = ""
             return
         self.API_Key = API_Key
         cookies = {"DZIENNIKSID": API_Key.split(":")[0]}
         cookies["SDZIENNIKSID"] = API_Key.split(":")[1]
         self.cookies = cookies
+        self.oauth = ""
         self.BASE_URL = base_url if base_url else urls.BASE_URL
         self.API_URL = api_url if api_url else urls.API_URL
         self.GRADES_URL = grades_url if grades_url else urls.GRADES_URL
@@ -47,6 +49,9 @@ class Token:
             if attendance_details_url
             else urls.ATTENDANCE_DETAILS_URL
         )
+        self.GATEWAY_API_ATTENDANCE = (
+               gateway_api_attendance if gateway_api_attendance else urls.GATEWAY_API_ATTENDANCE
+                )
         self.SCHEDULE_URL = schedule_url if schedule_url else urls.SCHEDULE_URL
         self.HOMEWORK_URL = homework_url if homework_url else urls.HOMEWORK_URL
         self.HOMEWORK_DETAILS_URL = (
@@ -58,6 +63,17 @@ class Token:
             if completed_lessons_url
             else urls.COMPLETED_LESSONS_URL
         )
+
+    def refresh_oauth(self) -> str:
+        with self._session as s:
+            s.headers = urls.HEADERS
+            s.cookies = cookiejar_from_dict(self.cookies)
+            response: Response = s.get("https://synergia.librus.pl/refreshToken")
+            if response.status_code == 200:
+                oauth = response.cookies.get("oauth_token")
+                self.oauth = oauth
+                return oauth
+        raise AuthorizationError(f"Error while refreshing oauth token {response.content}")
 
     def post(self, url: str, data: Dict[str, Union[str, int]]) -> Response:
         with self._session as s:
