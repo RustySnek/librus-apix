@@ -144,4 +144,4 @@ def get_attendance(token: Token, sort_by: str = "all") -> List[List[Attendance]]
                     school_subject,
                 )
                 att[semester].append(a)
-    return att
+    return reversed(att)
