@@ -131,7 +131,7 @@ def _extract_grade_info(a, subject):
 
 def _extract_grades_numeric(table_rows):
     # list containing two dicts (for each semester)
-    # key of each semester dict is subject, in each subject there is list of grades 
+    # key of each semester dict is subject, in each subject there is list of grades
     sem_grades: List[Dict[str, List[Grade]]] = [{}, {}]
     avg_grades = defaultdict(list)
 
@@ -151,7 +151,8 @@ def _extract_grades_numeric(table_rows):
             if subject not in sem_grades[sem]:
                 sem_grades[sem][subject] = []
             for sg in semester:
-                grade_a = sg.select("td[class!='center'] > span.grade-box > a")
+                grade_a_improved = sg.select("td[class!='center'] > span > span.grade-box > a")
+                grade_a = sg.select("td[class!='center'] > span.grade-box > a") + grade_a_improved
                 for a in grade_a:
                     (
                         _grade,
@@ -253,7 +254,7 @@ def _extract_grades_descriptive(table_rows):
             summary_desc = "\n".join(text_list).strip()
             found_grade = True
             # description found - break
-            # There is no more grades for now (for first semester). Maybe there will be grade for 
+            # There is no more grades for now (for first semester). Maybe there will be grade for
             # second semester, but the format (structure) of web page is unknown for the moment.
             # #TODO: implement the case for second semester (in future)
             break
