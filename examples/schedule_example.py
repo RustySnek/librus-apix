@@ -7,7 +7,7 @@ token = get_token(username, password)
 
 """
 get_schedule returns all days and their events from the month and year provided.
-get_schedule(token, month, year) -> dict[str, list[Event]]
+get_schedule(token, month, year, include_all = True) -> dict[str, list[Event]]
 
 Structure of Event class:
     class Event:
@@ -22,7 +22,7 @@ Structure of Event class:
 
 month = "2"
 year = "2023"
-schedule = get_schedule(token, month, year)
+schedule = get_schedule(token, month, year, True) # True to include empty days
 
 # Printing out all events in the month
 for day in schedule:

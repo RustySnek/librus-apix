@@ -34,7 +34,7 @@ def schedule_detail(token: Token, prefix: str, detail_url: str) -> Dict[str, str
     return schedule
 
 
-def get_schedule(token: Token, month: str, year: str) -> Dict[int, List[Event]]:
+def get_schedule(token: Token, month: str, year: str, include_empty: bool = False) -> Dict[int, List[Event]]:
     schedule = defaultdict(list)
     soup = no_access_check(
         BeautifulSoup(
@@ -47,6 +47,8 @@ def get_schedule(token: Token, month: str, year: str) -> Dict[int, List[Event]]:
         raise ParseError("Error in parsing days of the schedule.")
     for day in days:
         d = day.find("div", attrs={"class": "kalendarz-numer-dnia"}).text
+        if include_empty == True:
+            schedule[int(d)] = []
         tr = day.find_all("tr")
         if tr:
             for event in tr:
