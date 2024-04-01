@@ -12,7 +12,7 @@ from typing import Union, List, Dict
 class Event:
     title: str
     subject: str
-    data: str
+    data: dict
     day: str
     number: Union[int, str]
     hour: str
@@ -53,6 +53,8 @@ def get_schedule(token: Token, month: str, year: str, include_empty: bool = Fals
         if tr:
             for event in tr:
                 td = event.find("td")
+                title = td.attrs.get("title", "Nauczyciel: unknown<br />Opis: unknown")
+                additional_data = {key: val for key, val in [pair.split(": ", 1) for pair in title.split("<br />")]}
                 subject = "unspecified"
                 span = td.find("span")
                 if span:
@@ -94,6 +96,6 @@ def get_schedule(token: Token, month: str, year: str, include_empty: bool = Fals
                 except KeyError:
                     href = ""
 
-                event = Event(title, subject, data, d, number, hour, href)
+                event = Event(title, subject, additional_data, d, number, hour, href)
                 schedule[int(d)].append(event)
     return schedule
