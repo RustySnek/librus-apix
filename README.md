@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/RustySnek/librus-apix/blob/main/logo.png" alt="librus-apix logo"/>
+</p>
+
 # Librus Synergia web scraper.
 
 ## Installation
