@@ -146,6 +146,16 @@ info = student_information(token)
 print(info.lucky_number)
 ```
 
+### Adding a proxy
+```py
+# Proxy can be added with
+token = get_token(u, p, proxy={"https": "http://my-proxy.xyz"})
+# or
+token.proxy = {"https": "http://my-proxy.xyz"}
+# or
+token = Token(token_key, proxy={"https": "http://my-proxy.xyz"})
+```
+
 ## Working on the Project
 
 ```sh
