@@ -165,5 +165,6 @@ python -m venv venv
 source ./venv/bin/activate
 pip install requirements.txt
 # Installing library with editable flag
+sed -i "s/{{VERSION_PLACEHOLDER}}/1.0.0-dev/g" setup.cfg
 pip install -e .
 ```
