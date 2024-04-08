@@ -56,7 +56,7 @@ class Token:
         with self._session as s:
             s.headers = urls.HEADERS
             s.cookies = cookiejar_from_dict(self.cookies)
-            response: Response = s.get("https://synergia.librus.pl/refreshToken")
+            response: Response = s.get("https://synergia.librus.pl/refreshToken", proxies=self.proxy)
             if response.status_code == 200:
                 oauth = response.cookies.get("oauth_token")
                 self.oauth = oauth
