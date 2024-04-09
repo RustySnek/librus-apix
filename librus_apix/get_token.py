@@ -67,7 +67,7 @@ class Token:
         with self._session as s:
             s.headers = urls.HEADERS
             s.cookies = cookiejar_from_dict(self.cookies)
-            response: Response = s.post(url, json=data, proxies=self.proxy)
+            response: Response = s.post(url, data=data, proxies=self.proxy)
             return response
 
     def get(self, url: str) -> Response:
