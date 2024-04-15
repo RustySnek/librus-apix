@@ -71,6 +71,8 @@ def get_schedule(token: Token, month: str, year: str, include_empty: bool = Fals
                     .strip()
                     .split(delimeter)
                 )
+                if subject == "unspecified":
+                    subject = data[0]
                 if len(data) >= 2:
                     title = data[1]
                 else:
