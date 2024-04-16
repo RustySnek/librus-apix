@@ -67,11 +67,11 @@ def get_attendance_frequency(token: Token):
     attendance = get_gateway_attendance(token)
     first_semester = [a for a in attendance if a[2] == 1]
     second_semester = [a for a in attendance if a[2] == 2]
-    f_attended = len([a for a in first_semester if a[0][0] == "ob"])
-    s_attended = len([a for a in second_semester if a[0][0] == "ob"])
+    f_attended = len([a for a in first_semester if a[0][0] in ["wy", "ob", "sp"]])
+    s_attended = len([a for a in second_semester if a[0][0] in ["wy", "ob", "sp"]])
     f_freq = f_attended / len(first_semester) if len(second_semester) != 0 else 1
     s_freq = s_attended / len(second_semester) if len(second_semester) != 0 else 1
-    overall_freq = len([a for a in attendance if a[0][0] == "ob"]) / len(attendance) if len(attendance) != 0 else 1
+    overall_freq = len([a for a in attendance if a[0][0] in ["wy", "ob", "sp"]]) / len(attendance) if len(attendance) != 0 else 1
     return f_freq, s_freq, overall_freq
     # ADD Lesson frequency
 
