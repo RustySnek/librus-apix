@@ -16,6 +16,59 @@ class Message:
     unread: bool
     has_attachment: bool
 
+def recipient_groups():
+    return  {
+            "teachers": "nauczyciel",
+            "tutors": "wychowawca",
+            "parent_council": "szkolna_rada_rodzicow",
+            "pedagogue": "pedagog",
+            "admin": "admin",
+            "secretary": "sekretariat",
+            }
+
+
+def get_recipients(token: Token, group: str = "teachers"):
+    groups = recipient_groups()
+    if group not in groups:
+        raise ValueError(f"{group} group is not available. Available groups: {' | '.join(groups.keys())}")
+    group = groups[group]
+    payload = {"typAdresata": group, "poprzednia": 5, "tabZaznaczonych": "", "czyWirtualneKlasy": False, "idGrupy": 0}
+    soup = no_access_check(
+        BeautifulSoup(token.post(token.RECIPIENTS_URL, data=payload).text, "lxml")
+    )
+    labels = soup.select("label")
+    teachers = {}
+    for label in labels:
+        teachers[label.text.replace("\xa0", "")] = label.attrs.get("for", "").split("_")[-1]
+    return teachers
+
+def send_message(token: Token, title: str, content: str, recipient_group: str, recipient_ids: list[str]):
+    """
+    librus' amazing requests include all possible teacher ids for the group inside the payload.
+    The recipients are differentiated by lack of '_hid' in the key.
+    It might not be needed but I would rather not send a test message to everyone in school accidentally.
+    if anyone is willing to give it a test, good luck.
+    """
+    all_recipients_ids = list(get_recipients(token, recipient_group).values())
+    payload = {
+            "filtrUzytkownikow": 0,
+            "idPojemnika": "",
+            "adresat": recipient_groups().get(recipient_group, ""),
+            "DoKogo_hid": list(filter(lambda id: id not in recipient_ids, all_recipients_ids)),
+            "DoKogo": list(filter(lambda id: id in recipient_ids, all_recipients_ids)),
+            "Rodzaj": 0,
+            "temat": title,
+            "tresc": content,
+            "poprzednia": 5,
+            "fileStorageIdentifier": "",
+            "wyslij": "Wyślij"
+            }
+    sent_message = token.post(token.SEND_MESSAGE_URL, data=payload)
+
+    if sent_message.status_code == 200:
+        return True
+
+    return False
 
 def message_content(token: Token, content_url: str) -> str:
     soup = no_access_check(

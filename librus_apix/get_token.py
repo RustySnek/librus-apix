@@ -16,12 +16,14 @@ class Token:
         timetable_url: Optional[str] = urls.TIMETABLE_URL,
         announcements_url: Optional[str] = urls.ANNOUNCEMENTS_URL,
         message_url: Optional[str] = urls.MESSAGE_URL,
+        send_message_url: Optional[str] = urls.SEND_MESSAGE_URL,
         attendance_url: Optional[str] = urls.ATTENDANCE_URL,
         attendance_details_url: Optional[str] = urls.ATTENDANCE_DETAILS_URL,
         schedule_url: Optional[str] = urls.SCHEDULE_URL,
         homework_url: Optional[str] = urls.HOMEWORK_URL,
         homework_details_url: Optional[str] = urls.HOMEWORK_DETAILS_URL,
         info_url: Optional[str] = urls.INFO_URL,
+        recipients_url: Optional[str] = urls.RECIPIENTS_URL,
         completed_lessons_url: Optional[str] = urls.COMPLETED_LESSONS_URL,
         gateway_api_attendance: Optional[str] = urls.GATEWAY_API_ATTENDANCE,
         proxy: Optional[dict[str, str]] = {}
@@ -43,6 +45,7 @@ class Token:
         self.TIMETABLE_URL = timetable_url
         self.ANNOUNCEMENTS_URL = announcements_url
         self.MESSAGE_URL = message_url
+        self.SEND_MESSAGE_URL = send_message_url
         self.ATTENDANCE_URL = attendance_url
         self.ATTENDANCE_DETAILS_URL = attendance_details_url
         self.SCHEDULE_URL = schedule_url
@@ -51,6 +54,7 @@ class Token:
         self.INFO_URL = info_url
         self.COMPLETED_LESSONS_URL = completed_lessons_url
         self.GATEWAY_API_ATTENDANCE = gateway_api_attendance
+        self.RECIPIENTS_URL = recipients_url
 
     def refresh_oauth(self) -> str:
         with self._session as s:
@@ -87,12 +91,14 @@ def get_token(
     timetable_url: Optional[str] = urls.TIMETABLE_URL,
     announcements_url: Optional[str] = urls.ANNOUNCEMENTS_URL,
     message_url: Optional[str] = urls.MESSAGE_URL,
+    send_message_url: Optional[str] = urls.SEND_MESSAGE_URL,
     attendance_url: Optional[str] = urls.ATTENDANCE_URL,
     attendance_details_url: Optional[str] = urls.ATTENDANCE_DETAILS_URL,
     schedule_url: Optional[str] = urls.SCHEDULE_URL,
     homework_url: Optional[str] = urls.HOMEWORK_URL,
     homework_details_url: Optional[str] = urls.HOMEWORK_DETAILS_URL,
     info_url: Optional[str] = urls.INFO_URL,
+    recipients_url: Optional[str] = urls.RECIPIENTS_URL,
     completed_lessons_url: Optional[str] = urls.COMPLETED_LESSONS_URL,
     gateway_api_attendance: Optional[str] = urls.GATEWAY_API_ATTENDANCE,
     proxy: Optional[dict[str, str]] = {},
@@ -128,12 +134,14 @@ def get_token(
             timetable_url,
             announcements_url,
             message_url,
+            send_message_url,
             attendance_url,
             attendance_details_url,
             schedule_url,
             homework_url,
             homework_details_url,
             info_url,
+            recipients_url,
             completed_lessons_url,
             gateway_api_attendance,
             proxy=proxy
