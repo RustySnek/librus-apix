@@ -101,7 +101,12 @@ from librus_apix.messages import get_recipients, send_message
 recipients = get_recipients(token, "teachers")
 my_recipient = recipient_id["John Brown"]
 my_second_recipient = recipient_id["Barbara Brown"]
-sent = send_message(token, "Message Title", "Message\n content", "teachers", [my_recipient, my_second_recipient])
+sent = send_message(token,
+                   "Message Title",
+                   "Message\n content",
+                   "teachers",
+                   [my_recipient, my_second_recipient]
+)
 if sent == True:
   print("Sent!")
 else:
