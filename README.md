@@ -99,8 +99,8 @@ for h in homework:
 from librus_apix.messages import get_recipients, send_message
 
 recipients = get_recipients(token, "teachers")
-my_recipient = recipient_id["John Brown"]
-my_second_recipient = recipient_id["Barbara Brown"]
+my_recipient = recipients["John Brown"]
+my_second_recipient = recipients["Barbara Brown"]
 sent = send_message(token,
                    "Message Title",
                    "Message\n content",
