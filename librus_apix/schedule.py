@@ -54,7 +54,14 @@ def get_schedule(token: Token, month: str, year: str, include_empty: bool = Fals
             for event in tr:
                 td = event.find("td")
                 title = td.attrs.get("title", "Nauczyciel: unknown<br />Opis: unknown")
-                additional_data = {key: val for key, val in [pair.split(": ", 1) for pair in title.split("<br />")]}
+                additional_data = {}
+                pairs = [pair.split(":", 1) for pair in title.split("<br />")]
+                for pair in pairs:
+                    if len(pair) != 2:
+                        additional_data[key.strip()] = "unknown"
+                        continue
+                    key, val = pair
+                    additional_data[key.strip()] = val.strip()
                 subject = "unspecified"
                 span = td.find("span")
                 if span:
