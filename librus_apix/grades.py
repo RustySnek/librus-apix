@@ -152,8 +152,13 @@ def _extract_grades_numeric(table_rows):
             if subject not in sem_grades[sem]:
                 sem_grades[sem][subject] = []
             for sg in semester:
-                grade_a_improved = sg.select("td[class!='center'] > span > span.grade-box > a")
-                grade_a = sg.select("td[class!='center'] > span.grade-box > a") + grade_a_improved
+                grade_a_improved = sg.select(
+                    "td[class!='center'] > span > span.grade-box > a"
+                )
+                grade_a = (
+                    sg.select("td[class!='center'] > span.grade-box > a")
+                    + grade_a_improved
+                )
                 for a in grade_a:
                     (
                         _grade,
@@ -251,7 +256,7 @@ def _extract_grades_descriptive(table_rows):
         if parse_next_row:
             parse_next_row = False
             paragraphs = box.find_all("p")
-            text_list = [ par.text.strip() for par in paragraphs ]
+            text_list = [par.text.strip() for par in paragraphs]
             summary_desc = "\n".join(text_list).strip()
             found_grade = True
             # description found - break
@@ -267,13 +272,20 @@ def _extract_grades_descriptive(table_rows):
             title_tag = header.select_one("strong")
             info = title_tag.next_sibling
             summary_title = title_tag.text.strip()
-            summary_date = re.findall(r"opublikowano: (.+?) ", info)[0]     # get date only
+            summary_date = re.findall(r"opublikowano: (.+?) ", info)[0]  # get date only
             summary_teacher = re.findall(r"nauczyciel: (.+?)\)", info)[0]
 
     if found_grade:
         sem_index = 0
-        semester_summary = GradeDescriptive(summary_title, "", summary_date, "",
-                                            summary_desc, sem_index + 1, summary_teacher)
+        semester_summary = GradeDescriptive(
+            summary_title,
+            "",
+            summary_date,
+            "",
+            summary_desc,
+            sem_index + 1,
+            summary_teacher,
+        )
         if summary_title not in sem_grades_desc[sem_index]:
             sem_grades_desc[sem_index][summary_title] = []
         sem_grades_desc[sem_index][summary_title].append(semester_summary)

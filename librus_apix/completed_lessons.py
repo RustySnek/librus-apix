@@ -76,9 +76,7 @@ def get_completed(
         date = date.text if date is not None else "01-01-2000"
         weekday = line.select_one("td.tiny")
         weekday = weekday.text if weekday is not None else ""
-data = [
-            td.text.strip() for td in line.find_all("td", attrs={"class": None})
-        ]
+        data = [td.text.strip() for td in line.find_all("td", attrs={"class": None})]
         if len(data) < 5:
             continue
         lesson_number, subject_and_teacher, topic, z_value, attendance = data
@@ -86,7 +84,9 @@ data = [
         attendance_href = ""
         if attendance != "":
             attendance_href = line.select_one("td > p.box > a")
-            attendance_href = attendance_href.text if attendance_href is not None else ""
+            attendance_href = (
+                attendance_href.text if attendance_href is not None else ""
+            )
         lesson = Lesson(
             subject,
             teacher,

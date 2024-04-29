@@ -26,8 +26,8 @@ class Token:
         recipients_url: Optional[str] = urls.RECIPIENTS_URL,
         completed_lessons_url: Optional[str] = urls.COMPLETED_LESSONS_URL,
         gateway_api_attendance: Optional[str] = urls.GATEWAY_API_ATTENDANCE,
-        proxy: Optional[dict[str, str]] = {}
-        ):
+        proxy: Optional[dict[str, str]] = {},
+    ):
         self._session = Session()
         if not API_Key:
             self.cookies = {}
@@ -60,12 +60,16 @@ class Token:
         with self._session as s:
             s.headers = urls.HEADERS
             s.cookies = cookiejar_from_dict(self.cookies)
-            response: Response = s.get("https://synergia.librus.pl/refreshToken", proxies=self.proxy)
+            response: Response = s.get(
+                "https://synergia.librus.pl/refreshToken", proxies=self.proxy
+            )
             if response.status_code == 200:
                 oauth = response.cookies.get("oauth_token")
                 self.oauth = oauth
                 return oauth
-        raise AuthorizationError(f"Error while refreshing oauth token {response.content}")
+        raise AuthorizationError(
+            f"Error while refreshing oauth token {response.content}"
+        )
 
     def post(self, url: str, data: Dict[str, Union[str, int]]) -> Response:
         with self._session as s:
@@ -114,11 +118,13 @@ def get_token(
             raise MaintananceError(message_list[0]["description"])
         s.get(
             api_url
-            + "/OAuth/Authorization?client_id=46&response_type=code&scope=mydata", proxies=proxy
+            + "/OAuth/Authorization?client_id=46&response_type=code&scope=mydata",
+            proxies=proxy,
         )
         response = s.post(
             api_url + "/OAuth/Authorization?client_id=46",
-            data={"action": "login", "login": username, "pass": password}, proxies=proxy
+            data={"action": "login", "login": username, "pass": password},
+            proxies=proxy,
         )
         if response.json()["status"] == "error":
             raise AuthorizationError(response.json()["errors"][0]["message"])
@@ -144,7 +150,7 @@ def get_token(
             recipients_url,
             completed_lessons_url,
             gateway_api_attendance,
-            proxy=proxy
+            proxy=proxy,
         )
 
         return token

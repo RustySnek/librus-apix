@@ -34,7 +34,9 @@ def schedule_detail(token: Token, prefix: str, detail_url: str) -> Dict[str, str
     return schedule
 
 
-def get_schedule(token: Token, month: str, year: str, include_empty: bool = False) -> Dict[int, List[Event]]:
+def get_schedule(
+    token: Token, month: str, year: str, include_empty: bool = False
+) -> Dict[int, List[Event]]:
     schedule = defaultdict(list)
     soup = no_access_check(
         BeautifulSoup(

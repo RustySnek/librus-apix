@@ -27,7 +27,9 @@ def get_announcements(token: Token) -> List[Announcement]:
         title = title_element.text if title_element is not None else ""
 
         data = [
-            line.select_one("td").text.strip() if line.select_one("td") is not None else ""
+            line.select_one("td").text.strip()
+            if line.select_one("td") is not None
+            else ""
             for line in table.find_all("tr", attrs={"class": ["line0", "line1"]})
         ]
         author, date, desc = data

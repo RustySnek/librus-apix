@@ -64,7 +64,11 @@ def get_homework(token: Token, date_from: str, date_to: str) -> List[Homework]:
         if len(hw_list) < 8:
             raise ParseError("Error while parsing homework data")
         href = line.find("input")
-        href = href.attrs["onclick"].split("'")[1].split("/")[3] if line is not None else ""
+        href = (
+            href.attrs["onclick"].split("'")[1].split("/")[3]
+            if line is not None
+            else ""
+        )
         h = Homework(
             hw_list[0],
             hw_list[1],

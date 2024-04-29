@@ -31,9 +31,7 @@ def get_student_information(token: Token):
     lines = soup.select_one("table.decorated.big.center > tbody").find_all(
         "tr", attrs={"class": ["line0", "line1"]}
     )[:5]
-    data = [
-        val.select_one("td").text.strip() for val in lines
-    ]
+    data = [val.select_one("td").text.strip() for val in lines]
     if len(data) != 5:
         raise ParseError("Error while retrieving student information")
     name, class_name, number, tutor, school = data
