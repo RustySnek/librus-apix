@@ -24,7 +24,7 @@ def get_announcements(token: Token) -> List[Announcement]:
         raise ParseError("Error in parsing announcements")
     for table in announcement_tables:
         title = table.select_one("thead > tr > td")
-        title = title_element.text if title_element is not None else ""
+        title = title.text if title is not None else ""
 
         data = [
             line.select_one("td").text.strip()

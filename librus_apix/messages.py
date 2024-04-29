@@ -123,7 +123,7 @@ def parse(message_soup: BeautifulSoup) -> List[Message]:
             unread = True
 
         href = author.find("a")
-        href = a.attrs["href"].split("/")[4] if a is not None else ""
+        href = href.attrs["href"].split("/")[4] if href is not None else ""
         author = str(author.text)
         title = str(title.text)
         date = str(date.text)
