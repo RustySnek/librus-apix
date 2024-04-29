@@ -86,7 +86,10 @@ def parse(message_soup: BeautifulSoup) -> List[Message]:
     soup = message_soup.find("table", attrs={"class": "decorated stretch"})
     if soup is None:
         raise ParseError("Error in parsing messages.")
-    tds = soup.find("tbody").find_all("tr", attrs={"class": ["line0", "line1"]})
+    tbody = soup.find("tbody")
+    if tbody is None:
+        raise ParseError("Error in parsing messages (tbody).")
+    tds = tbody.find_all("tr", attrs={"class": ["line0", "line1"]})
     if tds[0].text.strip() == "Brak wiadomości":
         return []
     for td in tds:
@@ -98,7 +101,8 @@ def parse(message_soup: BeautifulSoup) -> List[Message]:
         if title.get("style") and "font-weight: bold" in title.get("style"):
             unread = True
 
-        href = author.find("a").attrs["href"].split("/")[4]
+        href = author.find("a")
+        href = a.attrs["href"].split("/")[4] if a is not None else ""
         author = str(author.text)
         title = str(title.text)
         date = str(date.text)

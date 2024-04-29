@@ -61,7 +61,10 @@ def get_homework(token: Token, date_from: str, date_to: str) -> List[Homework]:
     lines = soup.find_all("tr", attrs={"class": ["line0", "line1"]})
     for line in lines:
         hw_list = [txt.text.replace("\n", "") for txt in line.find_all("td")]
-        href = line.find("input").attrs["onclick"].split("'")[1].split("/")[3]
+        if len(hw_list) < 8:
+            raise ParseError("Error while parsing homework data")
+        href = line.find("input")
+        href = href.attrs["onclick"].split("'")[1].split("/")[3] if line is not None else ""
         h = Homework(
             hw_list[0],
             hw_list[1],

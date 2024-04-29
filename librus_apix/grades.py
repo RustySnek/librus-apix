@@ -103,6 +103,9 @@ def get_desc_and_counts(a, grade, subject) -> Tuple[str, bool]:
 
 def _extract_grade_info(a, subject):
     date = re.search("Data:.{11}", a.attrs["title"])
+    if date is None:
+        raise ParseError("Error in getting grade's date.")
+
     attr_dict = {}
     for attr in a.attrs["title"].replace("<br/>", "<br>").split("<br>"):
         if len(attr.strip()) > 2:
@@ -112,8 +115,6 @@ def _extract_grade_info(a, subject):
     teacher = attr_dict.get("Nauczyciel", "")
     weight = attr_dict.get("Waga", 0)
 
-    if date is None:
-        raise ParseError("Error in getting grade's date.")
     grade = a.text.replace("\xa0", "").replace("\n", "")
     desc, counts = get_desc_and_counts(a, grade, subject)
 
@@ -178,12 +179,12 @@ def _extract_grades_numeric(table_rows):
                     )
                     sem_grades[sem][subject].append(g)
             avg_gr = (
-                average_grades[sem] if len(average_grades) > sem else 0.0
+                average_grades[sem] if len(average_grades) >= sem else 0.0
             )  # might happen that the list is empty
             gpa = Gpa(sem + 1, avg_gr, subject)
             avg_grades[subject].append(gpa)
         avg_gr = (
-            average_grades[-1] if average_grades else 0.0
+            average_grades[-1] if len(average_grades) > 0 else 0.0
         )  # might happen that the list is empty
         avg_grades[subject].append(Gpa(0, avg_gr, subject))
 
@@ -260,7 +261,7 @@ def _extract_grades_descriptive(table_rows):
             break
 
         header = box.select_one("th")
-        if header:
+        if header and header.select_one("strong") is not None:
             # header row found - next row will contain the description
             parse_next_row = True
             title_tag = header.select_one("strong")

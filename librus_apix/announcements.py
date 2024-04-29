@@ -23,11 +23,14 @@ def get_announcements(token: Token) -> List[Announcement]:
     if len(announcement_tables) < 1:
         raise ParseError("Error in parsing announcements")
     for table in announcement_tables:
-        title = table.select_one("thead > tr > td").text
-        author, date, desc = [
-            line.select_one("td").text.strip()
+        title = table.select_one("thead > tr > td")
+        title = title_element.text if title_element is not None else ""
+
+        data = [
+            line.select_one("td").text.strip() if line.select_one("td") is not None else ""
             for line in table.find_all("tr", attrs={"class": ["line0", "line1"]})
         ]
+        author, date, desc = data
         a = Announcement(title, author, desc, date)
         announcements.append(a)
     return announcements

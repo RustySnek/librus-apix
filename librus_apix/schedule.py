@@ -46,19 +46,24 @@ def get_schedule(token: Token, month: str, year: str, include_empty: bool = Fals
     if len(days) < 1:
         raise ParseError("Error in parsing days of the schedule.")
     for day in days:
-        d = day.find("div", attrs={"class": "kalendarz-numer-dnia"}).text
+        try:
+            d = day.find("div", attrs={"class": "kalendarz-numer-dnia"}).text
+        except:
+            raise ParseError("Error while parsing day number")
         if include_empty == True:
             schedule[int(d)] = []
         tr = day.find_all("tr")
         if tr:
             for event in tr:
                 td = event.find("td")
+                if td is None:
+                    continue
                 title = td.attrs.get("title", "Nauczyciel: unknown<br />Opis: unknown")
                 additional_data = {}
                 pairs = [pair.split(":", 1) for pair in title.split("<br />")]
                 for pair in pairs:
                     if len(pair) != 2:
-                        additional_data[key.strip()] = "unknown"
+                        additional_data[pair[0].strip()] = "unknown"
                         continue
                     key, val = pair
                     additional_data[key.strip()] = val.strip()
@@ -103,6 +108,8 @@ def get_schedule(token: Token, month: str, year: str, include_empty: bool = Fals
                     onclick = event.find("td").attrs["onclick"]
                     href = "/".join(onclick.split("'")[1].split("/")[2:])
                 except KeyError:
+                    href = ""
+                except IndexError:
                     href = ""
 
                 event = Event(title, subject, additional_data, d, number, hour, href)

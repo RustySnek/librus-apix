@@ -25,13 +25,16 @@ def get_detail(token: Token, detail_url: str) -> Dict[str, str]:
     div = no_access_check(
         BeautifulSoup(token.get(token.ATTENDANCE_DETAILS_URL + detail_url).text, "lxml")
     ).find("div", attrs={"class": "container-background"})
+    if div is None:
+        raise ParseError("Error in parsing attendance")
     line = div.find_all("tr", attrs={"class": ["line0", "line1"]})
     if len(line) < 1:
         raise ParseError("Error in parsing attendance.")
     for l in line:
-        if not l.find("th"):
+        if l.find("th") is None or l.find("td") is None:
             continue
-        details[l.find("th").text] = l.find("td").text
+        if th_elem is not None and td_elem is not None:
+            details[l.find("th").text] = l.find("td").text
     return details
 
 def get_gateway_attendance(token: Token):
@@ -101,28 +104,30 @@ def get_attendance(token: Token, sort_by: str = "all") -> List[List[Attendance]]
     for day in days:
         if day.find("td", attrs={"class": "center bolded"}):
             semester += 1
-        date = day.find("td", attrs={"class": None})
         attendance = day.find_all("td", attrs={"class": "center"})
         for attend in attendance:
             at = attend.find_all("a")
             for single in at:
                 if not single:
                     continue
-                attributes = {
-                    i.split(": ")[0].strip(): i.split(": ")[1].strip()
-                    for i in single.attrs["title"]
-                    .replace("</b>", "<br>")
+                attributes = {}
+                pairs = [pair.split(":", 1) for pair in single.attrs["title"].replace("</b>", "<br>")
                     .replace("<br/>", "")
                     .strip()
-                    .split("<br>")
-                }
-                date = attributes["Data"].split(" ")[0]
-                _type = attributes["Rodzaj"]
-                school_subject = attributes["Lekcja"]
-                topic = attributes.get("Temat zajęć")  # optional
-                period = int(attributes["Godzina lekcyjna"])
-                excursion = True if attributes["Czy wycieczka"] == "Tak" else False
-                teacher = attributes["Nauczyciel"]
+                    .split("<br>")]
+                for pair in pairs:
+                    if len(pair) != 2:
+                        attributes[pair[0].strip()] = "unknown"
+                        continue
+                    key, val = pair
+                    attributes[key.strip()] = val.strip()
+                date = attributes.get("Data", "").split(" ")[0]
+                _type = attributes.get("Rodzaj", "")
+                school_subject = attributes.get("Lekcja", "")
+                topic = attributes.get("Temat zajęć", "")
+                period = int(attributes.get("Godzina lekcyjna", "0"))
+                excursion = True if attributes.get("Czy wycieczka", "") == "Tak" else False
+                teacher = attributes.get("Nauczyciel", "")
 
                 href = (
                     single.attrs["onclick"]
