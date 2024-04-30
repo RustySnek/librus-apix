@@ -11,14 +11,14 @@ recipients: Dict[str, str] = get_recipients(token, groups[0])
 
 my_recipient = recipient_id["John Brown"]
 my_second_recipient = recipient_id["Barbara Brown"]
-sent = send_message(token, "Message Title", "Message\n content", [my_recipient, my_second_recipient])
+sent, result = send_message(token, "test", "test", [my_recipient, my_second_recipient])
 
 """
-returns either true or false if status_code was 200
+returns either true or false if message was sent AND the result message
 meaning most likely message was sent correctly
 """
 
 if sent == True:
-    print("message was sent")
+    print(result)
 else:
-    print("There was an issue in sending your message")
+    print(result)

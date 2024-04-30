@@ -16,6 +16,7 @@ class Message:
     unread: bool
     has_attachment: bool
 
+
 def recipient_groups(token) -> List[str]:
     soup = no_access_check(
         BeautifulSoup(token.get(token.RECIPIENT_GROUPS_URL).text, "lxml")
@@ -28,6 +29,7 @@ def recipient_groups(token) -> List[str]:
             raise ParseError("Error getting groups (radio)")
         groups.append(radio.attrs.get("value", ""))
     return groups
+
 
 def get_recipients(token: Token, group: str):
     payload = {
@@ -66,11 +68,18 @@ def send_message(
         "fileStorageIdentifier": "",
         "wyslij": "Wyślij",
     }
-    sent_message = token.post(token.SEND_MESSAGE_URL, data=payload)
+    sent_message = no_access_check(
+        BeautifulSoup(token.post(token.SEND_MESSAGE_URL, data=payload).text, "lxml")
+    )
+    result = sent_message.select_one("div.container-background > p")
+    if result is None:
+        raise ParseError("Error getting the result of the message!")
+    result = result.text
+    if "nie zostala" in result.text:
+        return {False, result}
     if sent_message.status_code == 200:
-        return True
-
-    return False
+        return {True, result}
+    return {False, result}
 
 
 def message_content(token: Token, content_url: str) -> str:
