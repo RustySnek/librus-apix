@@ -24,6 +24,7 @@ class Token:
         homework_details_url: Optional[str] = urls.HOMEWORK_DETAILS_URL,
         info_url: Optional[str] = urls.INFO_URL,
         recipients_url: Optional[str] = urls.RECIPIENTS_URL,
+        recipient_groups_url: Optional[str] = urls.RECIPIENT_GROUPS_URL,
         completed_lessons_url: Optional[str] = urls.COMPLETED_LESSONS_URL,
         gateway_api_attendance: Optional[str] = urls.GATEWAY_API_ATTENDANCE,
         proxy: Optional[dict[str, str]] = {},
@@ -55,6 +56,7 @@ class Token:
         self.COMPLETED_LESSONS_URL = completed_lessons_url
         self.GATEWAY_API_ATTENDANCE = gateway_api_attendance
         self.RECIPIENTS_URL = recipients_url
+        self.RECIPIENT_GROUPS_URL = recipient_groups_url
 
     def refresh_oauth(self) -> str:
         with self._session as s:
@@ -103,6 +105,7 @@ def get_token(
     homework_details_url: Optional[str] = urls.HOMEWORK_DETAILS_URL,
     info_url: Optional[str] = urls.INFO_URL,
     recipients_url: Optional[str] = urls.RECIPIENTS_URL,
+    recipient_groups_url: Optional[str] = urls.RECIPIENT_GROUPS_URL,
     completed_lessons_url: Optional[str] = urls.COMPLETED_LESSONS_URL,
     gateway_api_attendance: Optional[str] = urls.GATEWAY_API_ATTENDANCE,
     proxy: Optional[dict[str, str]] = {},
@@ -148,6 +151,7 @@ def get_token(
             homework_details_url,
             info_url,
             recipients_url,
+            recipient_groups_url,
             completed_lessons_url,
             gateway_api_attendance,
             proxy=proxy,
