@@ -16,25 +16,20 @@ class Message:
     unread: bool
     has_attachment: bool
 
+def recipient_groups(token) -> List[str]:
+    soup = no_access_check(
+        BeautifulSoup(token.get(token.RECIPIENT_GROUPS_URL).text, "lxml")
+    )
+    groups = []
+    trs = soup.select("table.message-recipients > tbody > tr")
+    for tr in trs:
+        radio = tr.select_one("input.recipiantTypeRadio")
+        if radio is None:
+            raise ParseError("Error getting groups (radio)")
+        groups.append(radio.attrs.get("value", ""))
+    return groups
 
-def recipient_groups():
-    return {
-        "teachers": "nauczyciel",
-        "tutors": "wychowawca",
-        "parent_council": "szkolna_rada_rodzicow",
-        "pedagogue": "pedagog",
-        "admin": "admin",
-        "secretary": "sekretariat",
-    }
-
-
-def get_recipients(token: Token, group: str = "teachers"):
-    groups = recipient_groups()
-    if group not in groups:
-        raise ValueError(
-            f"{group} group is not available. Available groups: {' | '.join(groups.keys())}"
-        )
-    group = groups[group]
+def get_recipients(token: Token, group: str):
     payload = {
         "typAdresata": group,
         "poprzednia": 5,
@@ -58,24 +53,12 @@ def send_message(
     token: Token,
     title: str,
     content: str,
-    recipient_group: str,
     recipient_ids: list[str],
 ):
-    """
-    librus' amazing requests include all possible teacher ids for the group inside the payload.
-    The recipients are differentiated by lack of '_hid' in the key.
-    It might not be needed but I would rather not send a test message to everyone in school accidentally.
-    if anyone is willing to give it a test, good luck.
-    """
-    all_recipients_ids = list(get_recipients(token, recipient_group).values())
     payload = {
         "filtrUzytkownikow": 0,
         "idPojemnika": "",
-        "adresat": recipient_groups().get(recipient_group, ""),
-        "DoKogo_hid": list(
-            filter(lambda id: id not in recipient_ids, all_recipients_ids)
-        ),
-        "DoKogo": list(filter(lambda id: id in recipient_ids, all_recipients_ids)),
+        "DoKogo": recipient_ids,
         "Rodzaj": 0,
         "temat": title,
         "tresc": content,
@@ -84,7 +67,6 @@ def send_message(
         "wyslij": "Wyślij",
     }
     sent_message = token.post(token.SEND_MESSAGE_URL, data=payload)
-
     if sent_message.status_code == 200:
         return True
 
