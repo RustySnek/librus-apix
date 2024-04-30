@@ -96,11 +96,13 @@ for h in homework:
 
 ### Sending Messages
 ```py
-from librus_apix.messages import get_recipients, send_message
+from librus_apix.messages import recipient_groups, get_recipients, send_message
 
-recipients = get_recipients(token, "teachers")
+groups = recipient_groups(token)
+recipients = get_recipients(token, groups[0])
 my_recipient = recipients["John Brown"]
 my_second_recipient = recipients["Barbara Brown"]
+
 sent = send_message(token,
                    "Message Title",
                    "Message\n content",
