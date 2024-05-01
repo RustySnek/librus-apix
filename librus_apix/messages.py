@@ -92,6 +92,34 @@ def message_content(token: Token, content_url: str) -> str:
     return str(content.text)
 
 
+def parse_sent(message_soup: BeautifulSoup) -> List[Message]:
+    msgs: List[Message] = []
+    hasAttachment = False
+    soup = message_soup.find("table", attrs={"class": "decorated stretch"})
+    if soup is None:
+        raise ParseError("Error in parsing messages.")
+    tbody = soup.find("tbody")
+    if tbody is None:
+        raise ParseError("Error in parsing messages (tbody).")
+    tds = tbody.find_all("tr", attrs={"class": ["line0", "line1"]})
+    if tds[0].text.strip() == "Brak wiadomości":
+        return []
+    for td in tds:
+        hasAttachment = False
+        _tick, attachment, author, title, date, unread, _trash = td.find_all("td")
+        if attachment.find("img"):
+            hasAttachment = True
+        unread = True if unread == "NIE" else False
+        href = author.find("a")
+        href = href.attrs["href"].split("/")[4] if href is not None else ""
+        author = str(author.text)
+        title = str(title.text)
+        date = str(date.text)
+        m = Message(author, title, date, href, unread, hasAttachment)
+        msgs.append(m)
+    return msgs
+
+
 def parse(message_soup: BeautifulSoup) -> List[Message]:
     msgs: List[Message] = []
     hasAttachment = False
@@ -146,4 +174,15 @@ def get_recieved(token: Token, page: int) -> List[Message]:
     response = token.post(token.MESSAGE_URL, data=payload)
     soup = no_access_check(BeautifulSoup(response.text, "lxml"))
     recieved_msgs = parse(soup)
+    return recieved_msgs
+
+
+def get_sent(token: Token, page: int) -> List[Message]:
+    payload = {
+        "numer_strony105": page,
+        "porcjowanie_pojemnik105": 105,
+    }
+    response = token.post(token.SEND_MESSAGE_URL, data=payload)
+    soup = no_access_check(BeautifulSoup(response.text, "lxml"))
+    recieved_msgs = parse_sent(soup)
     return recieved_msgs
