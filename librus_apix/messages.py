@@ -112,7 +112,7 @@ def message_content(token: Token, content_url: str) -> MessageData:
     return MessageData(
         unwrap_message_data(author),
         unwrap_message_data(title),
-        content,
+        content.text,
         unwrap_message_data(date),
     )
 
