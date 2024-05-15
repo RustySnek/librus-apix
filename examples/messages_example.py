@@ -20,7 +20,10 @@ def messages(token):
         print()
         print(message.title)
         print(message.href)
-        print(message_content(token, message.href))
+        message = message_content(token, message.href)
+        # get full title and content
+        print(message.title)
+        print(message.content)
 
 
 if __name__ == "__main__":

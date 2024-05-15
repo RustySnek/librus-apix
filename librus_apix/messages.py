@@ -8,6 +8,14 @@ import re
 
 
 @dataclass
+class MessageData:
+    author: str
+    title: str
+    content: str
+    date: str
+
+
+@dataclass
 class Message:
     author: str
     title: str
@@ -82,14 +90,31 @@ def send_message(
     return {False, result}
 
 
-def message_content(token: Token, content_url: str) -> str:
+def unwrap_message_data(tr):
+    value = tr.select_one("td[class='left']")
+    return value.text if value is not None else ""
+
+
+def message_content(token: Token, content_url: str) -> MessageData:
     soup = no_access_check(
         BeautifulSoup(token.get(token.MESSAGE_URL + "/" + content_url).text, "lxml")
     )
+    message_data = soup.select_one("table[class='stretch']")
+    if message_data is None:
+        raise ParseError("Error in parsing message data.")
+    trs = message_data.select("tr")
+    if len(trs) < 3:
+        raise ParseError("Not enough values to unpack from message_data")
+    author, title, date = trs[:3]
     content = soup.find("div", attrs={"class": "container-message-content"})
     if content is None:
         raise ParseError("Error in parsing message content.")
-    return str(content.text)
+    return MessageData(
+        unwrap_message_data(author),
+        unwrap_message_data(title),
+        content,
+        unwrap_message_data(date),
+    )
 
 
 def parse_sent(message_soup: BeautifulSoup) -> List[Message]:
