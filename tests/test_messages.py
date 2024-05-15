@@ -1,5 +1,5 @@
 import pytest
-from librus_apix.messages import Message, get_recieved, get_sent, get_max_page_number, message_content
+from librus_apix.messages import Message, MessageData, get_recieved, get_sent, get_max_page_number, message_content
 
 def test_get_max_page(token):
     max_page = get_max_page_number(token)
@@ -22,5 +22,5 @@ def test_message_content(test_get_recieved_messages, token):
     if len(test_get_recieved_messages) == 0:
         pytest.skip("No messages to check")
     sample: Message = test_get_recieved_messages[0]
-    content = message_content(token, sample.href)
-    assert isinstance(content, str)
+    data = message_content(token, sample.href)
+    assert isinstance(data, MessageData)
