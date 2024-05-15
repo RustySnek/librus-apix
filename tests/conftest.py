@@ -1,5 +1,11 @@
 import pytest
 from librus_apix.get_token import Token
+import logging
+
+
+@pytest.fixture(scope="session")
+def log():
+    return logging.getLogger(__name__)
 
 
 def pytest_addoption(parser):
