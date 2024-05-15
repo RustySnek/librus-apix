@@ -1,6 +1,6 @@
-from typing import DefaultDict
 import pytest
 from datetime import datetime, timedelta
+from librus_apix.exceptions import DateError
 from librus_apix.timetable import get_timetable, Period
 
 today = datetime.now()
@@ -21,3 +21,9 @@ def test_get_timetable(token, monday):
     for weekday in timetable:
         assert isinstance(weekday, list)
         assert all(isinstance(period, Period) for period in weekday)
+
+def test_wrong_date_timetable(token):
+    non_monday = most_recent_monday + timedelta(days=1)
+    with pytest.raises(DateError):
+        get_timetable(token, non_monday)
+
