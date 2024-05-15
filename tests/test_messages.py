@@ -29,9 +29,12 @@ def test_get_recieved_messages(token):
     return recieved
 
 
-def test_message_content(test_get_recieved_messages, token):
+def test_message_content(test_get_recieved_messages, token, log):
     if len(test_get_recieved_messages) == 0:
         pytest.skip("No messages to check")
     sample: Message = test_get_recieved_messages[0]
     data = message_content(token, sample.href)
     assert isinstance(data, MessageData)
+    for key, value in data.__dict__.items():
+        if value == "":
+            log.warning(f"{key} value is empty")
