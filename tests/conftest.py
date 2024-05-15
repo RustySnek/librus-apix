@@ -17,6 +17,8 @@ def token(request):
         base = request.config.getoption('mock_url')
         grades = base + "/grades.html"
         timetable = base + "/timetable.html"
-        return Token(API_Key=mock_key, base_url=base, grades_url=grades, timetable_url=timetable)
+        messages = base + "/messages.html"
+        sent_messages = base + "/sent_messages.html"
+        return Token(API_Key=mock_key, base_url=base, grades_url=grades, timetable_url=timetable, message_url=messages, send_message_url=sent_messages)
     else:
         return Token(token)
