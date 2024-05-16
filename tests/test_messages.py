@@ -22,17 +22,20 @@ def test_get_sent_messages(token):
 
 
 @pytest.fixture
-def test_get_recieved_messages(token):
+def get_recieved_messages(token):
     recieved = get_recieved(token, 1)
-    assert isinstance(recieved, list)
-    assert all(isinstance(msg, Message) for msg in recieved)
     return recieved
 
 
-def test_message_content(test_get_recieved_messages, token, log):
-    if len(test_get_recieved_messages) == 0:
+def test_get_recieved_messages(get_recieved_messages):
+    assert isinstance(get_recieved_messages, list)
+    assert all(isinstance(msg, Message) for msg in get_recieved_messages)
+
+
+def test_message_content(get_recieved_messages, token, log):
+    if len(get_recieved_messages) == 0:
         pytest.skip("No messages to check")
-    sample: Message = test_get_recieved_messages[0]
+    sample: Message = get_recieved_messages[0]
     data = message_content(token, sample.href)
     assert isinstance(data, MessageData)
     for key, value in data.__dict__.items():

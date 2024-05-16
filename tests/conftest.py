@@ -33,6 +33,10 @@ def token(request):
         attendance = base + "/attendance.html"
         announcements = base + "/announcements.html"
         completed_lessons = base + "/completed.html"
+        schedule = base + "/schedule.html"
+        student_info = base + "/student_info.html"
+        homework = base + "/homework.html"
+        hw_detail = base + "/homework/"
 
         return Token(
             API_Key=mock_key,
@@ -43,7 +47,11 @@ def token(request):
             send_message_url=sent_messages,
             announcements_url=announcements,
             attendance_url=attendance,
-            completed_lessons_url=completed_lessons
+            completed_lessons_url=completed_lessons,
+            schedule_url=schedule,
+            info_url=student_info,
+            homework_url=homework,
+            homework_details_url=hw_detail,
         )
     else:
         return Token(token)
