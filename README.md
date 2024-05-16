@@ -4,13 +4,41 @@
 
 # Librus Synergia web scraper.
 
+
+> [!IMPORTANT]  
+> It's advised to [run all tests](#running-tests) before trying everything out.  Some schools have different librus setups which may cause errors/warnings  If you find any open an issue or contribute with a PR
+
 ## Installation
 
 ```sh
 pip install librus-apix
 ```
 
-## Quick Start
+## Running tests
+### First, follow the [steps to clone the repo and install librus-apix locally](#working-on-the-project), then install pytest.
+```bash
+  pip install pytest
+```
+### Run the tests
+  #### [Retrieve your token key](#save-and-load-token) and test on actual data  
+  
+  ```bash
+    pytest --token {output of token.API_Key}
+  ```
+  
+  #### [Dev] Test using a mock server
+  - For developing purposes I've created a [simple mock html server](https://github.com/RustySnek/librus-apix-mock)
+
+    ```bash
+      # generate all html pages and run server
+      python scripts/generate_all.py
+      python server.py
+      # now unless you've changed the server.py default port you should be good to go and run
+      pytest
+      # if you did change the port, you have to edit the tests/conftest.py file accordingly
+    ```
+
+# Quick Start
 
 ## Getting the Token
 ```py
@@ -177,7 +205,7 @@ token.proxy = {"https": "http://my-proxy.xyz"}
 token = Token(token_key, proxy={"https": "http://my-proxy.xyz"})
 ```
 
-## Working on the Project
+## Working On The Project
 
 ```sh
 git clone https://github.com/RustySnek/librus-apix
@@ -186,6 +214,5 @@ python -m venv venv
 source ./venv/bin/activate
 pip install requirements.txt
 # Installing library with editable flag
-sed -i "s/{{VERSION_PLACEHOLDER}}/1.0.0-dev/g" setup.cfg
 pip install -e .
 ```
