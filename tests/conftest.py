@@ -30,6 +30,10 @@ def token(request):
         timetable = base + "/timetable.html"
         messages = base + "/messages.html"
         sent_messages = base + "/sent_messages.html"
+        attendance = base + "/attendance.html"
+        announcements = base + "/announcements.html"
+        completed_lessons = base + "/completed.html"
+
         return Token(
             API_Key=mock_key,
             base_url=base,
@@ -37,6 +41,9 @@ def token(request):
             timetable_url=timetable,
             message_url=messages,
             send_message_url=sent_messages,
+            announcements_url=announcements,
+            attendance_url=attendance,
+            completed_lessons_url=completed_lessons
         )
     else:
         return Token(token)
