@@ -85,7 +85,13 @@ def get_completed(
         if attendance != "":
             attendance_href = line.select_one("td > p.box > a")
             attendance_href = (
-                attendance_href.text if attendance_href is not None else ""
+                attendance_href.attrs.get("onclick", "///")
+                .replace("otworz_w_nowym_oknie(", "")
+                .split(",")[0]
+                .replace("'", "")
+                .split("/")[3]
+                if attendance_href is not None
+                else ""
             )
         lesson = Lesson(
             subject,
