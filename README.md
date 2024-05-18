@@ -3,10 +3,8 @@
 </p>
 
 # Librus Synergia web scraper.
+### Be sure to visit the [documentation](https://rustysnek.github.io/librus-apix/).
 
-
-> [!IMPORTANT]  
-> It's advised to [run all tests](#running-tests) before trying everything out.  Some schools have different librus setups which may cause errors/warnings  If you find any open an issue or contribute with a PR
 
 ## Installation
 
@@ -14,28 +12,32 @@
 pip install librus-apix
 ```
 
+> [!IMPORTANT]  
+> It's advised to [run all tests](#running-tests) before trying everything out.  Some schools have different librus setups which may cause errors/warnings  If you find any open an issue or contribute with a PR
+
+
 ## Running tests
 ### First, follow the [steps to clone the repo and install librus-apix locally](#working-on-the-project), then install pytest.
 ```bash
-  pip install pytest
+pip install pytest
 ```
 ### Run the tests
   #### [Retrieve your token key](#save-and-load-token) and test on actual data  
   
   ```bash
-    pytest --token {output of token.API_Key}
+  pytest --token {output of token.API_Key}
   ```
   
   #### [Dev] Test using a mock server
   - For developing purposes I've created a [simple mock html server](https://github.com/RustySnek/librus-apix-mock)
 
     ```bash
-      # generate all html pages and run server
-      python scripts/generate_all.py
-      python server.py
-      # now unless you've changed the server.py default port you should be good to go and run
-      pytest
-      # if you did change the port, you have to edit the tests/conftest.py file accordingly
+    # generate all html pages and run server
+    python scripts/generate_all.py
+    python server.py
+    # now unless you've changed the server.py default port you should be good to go and run
+    pytest
+    # if you did change the port, you have to edit the tests/conftest.py file accordingly
     ```
 
 # Quick Start
