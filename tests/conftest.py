@@ -1,5 +1,5 @@
 import pytest
-from librus_apix.get_token import Token
+from librus_apix.client import Client, Token
 import logging
 
 
@@ -21,10 +21,11 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture(scope="session")
-def token(request):
-    token = request.config.getoption("token")
-    if token is None:
-        mock_key = "what:ever"
+def client(request) -> Client:
+    token_key = request.config.getoption("token")
+    token: Token = Token(API_Key=token_key)
+    if token_key is None:
+        token: Token = Token(API_Key="what:ever")
         base = request.config.getoption("mock_url")
         grades = base + "/grades.html"
         timetable = base + "/timetable.html"
@@ -38,8 +39,8 @@ def token(request):
         homework = base + "/homework.html"
         hw_detail = base + "/homework/"
 
-        return Token(
-            API_Key=mock_key,
+        return Client(
+            token=token,
             base_url=base,
             grades_url=grades,
             timetable_url=timetable,
@@ -54,4 +55,4 @@ def token(request):
             homework_details_url=hw_detail,
         )
     else:
-        return Token(token)
+        return Client(token)
