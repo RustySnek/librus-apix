@@ -2,6 +2,10 @@ class TokenKeyError(Exception):
     pass
 
 
+class ArgumentError(Exception):
+    pass
+
+
 class TokenError(Exception):
     pass
 

@@ -1,26 +1,48 @@
-from ctypes import ArgumentError
 import re
-from datetime import datetime
-from bs4 import BeautifulSoup
-from bs4.element import NavigableString
-from librus_apix.get_token import get_token, Token
+from bs4 import BeautifulSoup, Tag
+from librus_apix.client import Client
 from librus_apix.helpers import no_access_check
-from librus_apix.exceptions import TokenError, ParseError
-from librus_apix.urls import BASE_URL
-from typing import Union, Tuple, List, Dict
+from librus_apix.exceptions import ParseError, ArgumentError
+from typing import DefaultDict, Union, Tuple, List
 from dataclasses import dataclass
 from collections import defaultdict
 
 
 @dataclass
 class Gpa:
+    """
+    Represents the Semestral Grade for a specific semester and subject.
+
+    Attributes:
+        semester (int): The semester number (e.g., 1 for first semester, 2 for second semester).
+        gpa (float | str): The GPA value, which can be a float or a "-" string meaning it's empty.
+        subject (str): The subject for which the GPA is calculated.
+    """
+
     semester: int
-    gpa: float
+    gpa: float | str
     subject: str
 
 
 @dataclass
 class Grade:
+    """
+    Represents a single grade entry with detailed information.
+
+    Attributes:
+        title (str): The title of the grade.
+        grade (str): The grade string value (e.g., '2', '4+', etc.).
+        value (float): Property function. Returns calculated float of grade. (e.g., '4.5 for 4+', '2.75 for 3-')
+        counts (bool): Indicates whether the grade counts towards the GPA.
+        date (str): The date when the grade was given.
+        href (str): A URL suffix associated with the grade.
+        desc (str): A detailed description of the grade.
+        semester (int): The semester number (e.g., 1 for first semester, 2 for second semester).
+        category (str): The category of the grade (e.g., 'Homework', 'Exam').
+        teacher (str): The name of the teacher who gave the grade.
+        weight (int): The weight of the grade in calculating the final score.
+    """
+
     title: str
     grade: str
     counts: bool
@@ -34,15 +56,26 @@ class Grade:
 
     @property
     def value(self) -> Union[float, str]:
+        """
+        Calculates and returns the numeric value of the grade based on its string representation.
+
+        Returns:
+            Union[float, str]: The numeric value of the grade or a string indicating it doesn't count.
+        Raises:
+            ValueError: if grade's format is invalid ex. A+, B+ instead of 5+, 4+
+        """
         if self.counts is False:
             return "Does not count"
-        if len(self.grade) > 1:
-            grade_value = float(self.grade[0]) + float(
-                self.grade[1].replace("+", ".5").replace("-", "-0.25")
-            )
-        else:
-            grade_value = float(self.grade)
-        return grade_value
+        try:
+            if len(self.grade) > 1:
+                grade_value = float(self.grade[0]) + float(
+                    self.grade[1].replace("+", ".5").replace("-", "-0.25")
+                )
+            else:
+                grade_value = float(self.grade)
+            return grade_value
+        except ValueError:
+            raise ValueError("Invalid grade format in .value property func")
 
 
 @dataclass
@@ -57,8 +90,26 @@ class GradeDescriptive:
 
 
 def get_grades(
-    token: Token, sort_by: str = "all"
-) -> Tuple[List[Dict[str, Grade]], Dict[str, Gpa], List[Dict[str, GradeDescriptive]]]:
+    client: Client, sort_by: str = "all"
+) -> Tuple[
+    List[DefaultDict[str, List[Grade]]],
+    DefaultDict[str, List[Gpa]],
+    List[DefaultDict[str, List[GradeDescriptive]]],
+]:
+    """
+    Fetches and returns the grades, semestral averages and descriptive grades from librus.
+
+    Args:
+        client (Client): The client object used to interact with the server.
+        sort_by (str): The criteria to sort grades. Can be 'all', 'week', or 'last_login'.
+
+    Returns:
+        Tuple: A tuple containing lists of numeric and descriptive grades, and GPA information.
+
+    Raises:
+        ArgumentError: If an invalid sort_by value is provided.
+        ParseError: If there is an error in parsing the grades.
+    """
     SORT = {
         "all": "zmiany_logowanie_wszystkie",
         "week": "zmiany_logowanie_tydzien",
@@ -71,7 +122,7 @@ def get_grades(
 
     tr = no_access_check(
         BeautifulSoup(
-            token.post(token.GRADES_URL, data={SORT[sort_by]: 1}).text,
+            client.post(client.GRADES_URL, data={SORT[sort_by]: "1"}).text,
             "lxml",
         )
     ).find_all("tr", attrs={"class": ["line0", "line1"], "id": None})
@@ -83,45 +134,50 @@ def get_grades(
     return sem_grades, avg_grades, sem_grades_desc
 
 
-def _handle_subject(semester_grades):
+def _handle_subject(semester_grades) -> str:
     return semester_grades[0].text.replace("\n", "").strip()
 
 
-def get_desc_and_counts(a, grade, subject) -> Tuple[str, bool]:
+def _get_desc_and_counts(a: Tag, grade: str, subject: str) -> Tuple[str, bool]:
     desc = f"Ocena: {grade}\nPrzedmiot: {subject}\n"
     desc += re.sub(
         r"<br*>",
         "\n",
-        a.attrs["title"].replace("<br/>", "").replace("<br />", "\n"),
+        a.attrs.get("title", "").replace("<br/>", "").replace("<br />", "\n"),
     )
     gpacount = re.search("Licz do średniej: [a-zA-Z]{3}", desc)
     counts = False
-    if gpacount and gpacount[0].split(": ")[1] == "tak":
-        counts = True
+    if gpacount is not None:
+        pair = gpacount[0].split(": ")
+        if len(pair) >= 2 and pair[1] == "tak":
+            counts = True
     return desc, counts
 
 
-def _extract_grade_info(a, subject):
-    date = re.search("Data:.{11}", a.attrs["title"])
+def _extract_grade_info(
+    a: Tag, subject: str
+) -> Tuple[str, str, str, str, bool, str, str, int]:
+    date = re.search("Data:.{11}", a.attrs.get("title", ""))
     if date is None:
         raise ParseError("Error in getting grade's date.")
 
     attr_dict = {}
     for attr in a.attrs["title"].replace("<br/>", "<br>").split("<br>"):
-        if len(attr.strip()) > 2:
+        if len(attr.strip()) >= 2:
             key, value = attr.split(": ", 1)
             attr_dict[key] = value
-    category = attr_dict.get("Kategoria", "")
-    teacher = attr_dict.get("Nauczyciel", "")
-    weight = attr_dict.get("Waga", 0)
+    category: str = attr_dict.get("Kategoria", "")
+    teacher: str = attr_dict.get("Nauczyciel", "")
+    weight: int = int(attr_dict.get("Waga", 0))
 
     grade = a.text.replace("\xa0", "").replace("\n", "")
-    desc, counts = get_desc_and_counts(a, grade, subject)
-
+    desc, counts = _get_desc_and_counts(a, grade, subject)
+    date = date.group().split(" ")
+    date = date[1] if len(date) >= 2 else " ".join(date)
     return (
         grade,
-        date.group().split(" ")[1],
-        a.attrs["href"],
+        date,
+        a.attrs.get("href", ""),
         desc,
         counts,
         category,
@@ -130,27 +186,27 @@ def _extract_grade_info(a, subject):
     )
 
 
-def _extract_grades_numeric(table_rows):
+def _extract_grades_numeric(
+    table_rows: List[Tag],
+) -> Tuple[List[DefaultDict[str, List[Grade]]], DefaultDict[str, List[Gpa]]]:
     # list containing two dicts (for each semester)
     # key of each semester dict is subject, in each subject there is list of grades
-    sem_grades: List[Dict[str, List[Grade]]] = [{}, {}]
-    avg_grades = defaultdict(list)
+    sem_grades: List[DefaultDict[str, List[Grade]]] = [
+        defaultdict(list) for _ in range(2)
+    ]  # 2 semesters
+    avg_grades: DefaultDict[str, List[Gpa]] = defaultdict(list)
 
     for box in table_rows:
         if box.select_one("td[class='center micro screen-only']") is None:
             # row without grade data - skip
             continue
-        semester_grades = box.select(
-            'td[class!="center micro screen-only"]'  # [class!="right"]'
-        )
+        semester_grades = box.select('td[class!="center micro screen-only"]')
         if len(semester_grades) < 9:
             continue
         average_grades = list(map(lambda x: x.text, box.select("td.right")))
         semesters = [semester_grades[1:4], semester_grades[4:7]]
         subject = _handle_subject(semester_grades)
-        for sem, semester in enumerate(semesters):
-            if subject not in sem_grades[sem]:
-                sem_grades[sem][subject] = []
+        for semester_number, semester in enumerate(semesters):
             for sg in semester:
                 grade_a_improved = sg.select(
                     "td[class!='center'] > span > span.grade-box > a"
@@ -163,7 +219,7 @@ def _extract_grades_numeric(table_rows):
                     (
                         _grade,
                         date,
-                        href,
+                        _href,
                         desc,
                         counts,
                         category,
@@ -175,18 +231,20 @@ def _extract_grades_numeric(table_rows):
                         _grade,
                         counts,
                         date,
-                        a.attrs["href"],
+                        a.attrs.get("href", ""),
                         desc,
-                        sem + 1,
+                        semester_number + 1,
                         category,
                         teacher,
                         weight,
                     )
-                    sem_grades[sem][subject].append(g)
+                    sem_grades[semester_number][subject].append(g)
             avg_gr = (
-                average_grades[sem] if len(average_grades) >= sem else 0.0
+                average_grades[semester_number]
+                if len(average_grades) >= semester_number
+                else 0.0
             )  # might happen that the list is empty
-            gpa = Gpa(sem + 1, avg_gr, subject)
+            gpa = Gpa(semester_number + 1, avg_gr, subject)
             avg_grades[subject].append(gpa)
         avg_gr = (
             average_grades[-1] if len(average_grades) > 0 else 0.0
@@ -196,34 +254,25 @@ def _extract_grades_numeric(table_rows):
     return sem_grades, avg_grades
 
 
-def _extract_grades_descriptive(table_rows):
-    def get_desc(a, grade, subject) -> str:
-        desc = f"Ocena: {grade}\nPrzedmiot: {subject}\n"
-        desc += re.sub(
-            r"<br*>",
-            "\n",
-            a.attrs["title"].replace("<br/>", "").replace("<br />", "\n"),
-        )
-        return desc
-
+def _extract_grades_descriptive(
+    table_rows: List[Tag],
+) -> List[DefaultDict[str, List[GradeDescriptive]]]:
     # list containing two dicts (for each semester)
     # key of each semester dict is subject, in each subject there is list of grades
-    sem_grades_desc: List[Dict[str, List[GradeDescriptive]]] = [{}, {}]
+    sem_grades_desc: List[DefaultDict[str, List[GradeDescriptive]]] = [
+        defaultdict(list) for _ in range(2)
+    ]  # 2 semesters
 
     for box in table_rows:
         if box.select_one("td[class='micro center screen-only']") is None:
             # row without descriptive grade data - skip
             continue
-        semester_grades = box.select(
-            'td[class!="micro center screen-only"]'  # [class!="right"]'
-        )
+        semester_grades = box.select('td[class!="micro center screen-only"]')
         if len(semester_grades) < 3:
             continue
         semesters = [semester_grades[1], semester_grades[2]]
         subject = semester_grades[0].text.replace("\n", "").strip()
         for sem_index, sg in enumerate(semesters):
-            if subject not in sem_grades_desc[sem_index]:
-                sem_grades_desc[sem_index][subject] = []
             grade_a = sg.select("td[class!='center'] > span.grade-box > a")
             for a in grade_a:
                 (
@@ -232,9 +281,9 @@ def _extract_grades_descriptive(table_rows):
                     href,
                     desc,
                     _,
-                    category,
+                    _category,
                     teacher,
-                    weight,
+                    _weight,
                 ) = _extract_grade_info(a, subject)
                 if "javascript" in href:
                     # javascript content is not standard href - clear it
@@ -270,10 +319,16 @@ def _extract_grades_descriptive(table_rows):
             # header row found - next row will contain the description
             parse_next_row = True
             title_tag = header.select_one("strong")
+            if title_tag is None:
+                continue
             info = title_tag.next_sibling
+            if info is None:
+                continue
             summary_title = title_tag.text.strip()
-            summary_date = re.findall(r"opublikowano: (.+?) ", info)[0]  # get date only
-            summary_teacher = re.findall(r"nauczyciel: (.+?)\)", info)[0]
+            summary_date = re.findall(r"opublikowano: (.+?) ", info.text)[
+                0
+            ]  # get date only
+            summary_teacher = re.findall(r"nauczyciel: (.+?)\)", info.text)[0]
 
     if found_grade:
         sem_index = 0
