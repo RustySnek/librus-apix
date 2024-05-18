@@ -1,3 +1,7 @@
+class TokenKeyError(Exception):
+    pass
+
+
 class TokenError(Exception):
     pass
 

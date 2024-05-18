@@ -1,6 +1,6 @@
 from typing import List
 from bs4 import BeautifulSoup
-from librus_apix.get_token import Token
+from librus_apix.client import Client
 from librus_apix.helpers import no_access_check
 from dataclasses import dataclass
 from librus_apix.exceptions import ParseError
@@ -8,15 +8,37 @@ from librus_apix.exceptions import ParseError
 
 @dataclass
 class Announcement:
+    """
+    Represents an announcement.
+
+    Attributes:
+        title (str): The title of the announcement.
+        author (str): The author of the announcement.
+        description (str): The description of the announcement.
+        date (str): The date of the announcement.
+    """
+
     title: str = ""
     author: str = ""
     description: str = ""
     date: str = ""
 
 
-def get_announcements(token: Token) -> List[Announcement]:
+def get_announcements(client: Client) -> List[Announcement]:
+    """
+    Retrieves a list of announcements from the client.
+
+    Args:
+        client (Client): The client object used to make the request.
+
+    Returns:
+        List[Announcement]: A list of Announcement objects representing the retrieved announcements.
+
+    Raises:
+        ParseError: If there is an error parsing the announcements.
+    """
     soup = no_access_check(
-        BeautifulSoup(token.get(token.ANNOUNCEMENTS_URL).text, "lxml")
+        BeautifulSoup(client.get(client.ANNOUNCEMENTS_URL).text, "lxml")
     )
     announcements = []
     announcement_tables = soup.select("table.decorated.big.center.printable.margin-top")
@@ -32,6 +54,8 @@ def get_announcements(token: Token) -> List[Announcement]:
             else ""
             for line in table.find_all("tr", attrs={"class": ["line0", "line1"]})
         ]
+        if len(data) != 3:
+            raise ParseError(f"Expected 3 items in Announcement data, got {len(data)}")
         author, date, desc = data
         a = Announcement(title, author, desc, date)
         announcements.append(a)
