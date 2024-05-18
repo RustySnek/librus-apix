@@ -1,7 +1,7 @@
 from typing import List
 from dataclasses import dataclass
-from bs4 import BeautifulSoup
-from librus_apix.get_token import Token
+from bs4 import BeautifulSoup, Tag
+from librus_apix.client import Client
 from librus_apix.helpers import no_access_check
 from librus_apix.exceptions import ParseError
 import re
@@ -9,6 +9,21 @@ import re
 
 @dataclass
 class Lesson:
+    """
+    Represents a lesson.
+
+    Attributes:
+        subject (str): The subject of the lesson.
+        teacher (str): The teacher teaching the lesson.
+        topic (str): The topic or content of the lesson.
+        z_value (str): The z in librus. No clue what it stands for.
+        attendance_symbol (str): The symbol representing attendance for the lesson.
+        attendance_href (str): The URL associated with the attendance record for the lesson.
+        lesson_number (int): The number of the lesson.
+        weekday (str): The weekday on which the lesson occurs.
+        date (str): The date of the lesson.
+    """
+
     subject: str
     teacher: str
     topic: str
@@ -20,7 +35,21 @@ class Lesson:
     date: str
 
 
-def get_max_page_number(token: Token, date_from, date_to) -> int:
+def get_max_page_number(client: Client, date_from: str, date_to: str) -> int:
+    """
+    Retrieves the maximum page number for completed lessons within a specified date range.
+
+    Args:
+        client (Client): The client object used to fetch completed lesson data.
+        date_from (str): The start date of the date range (in format "YYYY-MM-DD").
+        date_to (str): The end date of the date range (in format "YYYY-MM-DD").
+
+    Returns:
+        int: The maximum page number for the completed lessons within the specified date range.
+
+    Raises:
+        ParseError: If there is an error while trying to retrieve the maximum page number.
+    """
     data = {
         "data1": date_from,
         "data2": date_to,
@@ -29,7 +58,7 @@ def get_max_page_number(token: Token, date_from, date_to) -> int:
         "porcjowanie_pojemnik1001": 1001,
     }
     soup = no_access_check(
-        BeautifulSoup(token.post(token.COMPLETED_LESSONS_URL, data=data).text, "lxml")
+        BeautifulSoup(client.post(client.COMPLETED_LESSONS_URL, data=data).text, "lxml")
     )
     try:
         pages = soup.select_one("div.pagination > span")
@@ -37,9 +66,10 @@ def get_max_page_number(token: Token, date_from, date_to) -> int:
             return 0
         max_pages = pages.text.replace("\xa0", "")
         try:
-            max_pages_number = int(
-                re.search("z[0-9]*", max_pages).group(0).replace("z", "")
-            )
+            max_pages_number_re = re.search("z[0-9]*", max_pages)
+            if max_pages_number_re is None:
+                return 0
+            max_pages_number = int(max_pages_number_re.group(0).replace("z", ""))
         except:
             max_pages_number = 0
     except:
@@ -47,17 +77,90 @@ def get_max_page_number(token: Token, date_from, date_to) -> int:
     return max_pages_number
 
 
+def _sanitize_onclick(onclick: str) -> str:
+    href = (
+        onclick.replace("otworz_w_nowym_oknie(", "")
+        .split(",")[0]
+        .replace("'", "")
+        .split("/")
+    )
+    if len(href) < 4:
+        return ""
+    return href[3]
+
+
+def _create_lesson(line: Tag):
+    """
+    Creates a Lesson object from a BeautifulSoup Tag representing a completed lesson.
+
+    Args:
+        line (Tag): The BeautifulSoup Tag representing a completed lesson.
+
+    Returns:
+        Lesson: A Lesson object representing the completed lesson.
+
+    Raises:
+        ParseError: If there is an error while parsing the completed lesson data.
+    """
+    date = line.select_one('td[class="center small"]')
+    date = date.text if date is not None else "01-01-2000"
+    weekday = line.select_one("td.tiny")
+    weekday = weekday.text if weekday is not None else ""
+    data = [td.text.strip() for td in line.find_all("td", attrs={"class": None})]
+    if len(data) != 5:
+        raise ParseError(
+            "Error while parsing Completed lesson's data. (data isn't 5 element long)"
+        )
+    lesson_number, subject_and_teacher, topic, z_value, attendance = data
+    subject_and_teacher = subject_and_teacher.split(", ")
+    if len(subject_and_teacher) != 2:
+        subject, teacher = (subject_and_teacher[0], subject_and_teacher[0])
+    else:
+        subject, teacher = subject_and_teacher
+    attendance_href = line.select_one("td > p.box > a")
+    if attendance_href is not None:
+        onclick = attendance_href.attrs.get("onclick", "")
+        attendance_href = _sanitize_onclick(onclick)
+    else:
+        attendance_href = ""
+
+    return Lesson(
+        subject,
+        teacher,
+        topic,
+        z_value,
+        attendance,
+        attendance_href,
+        lesson_number,
+        weekday,
+        date,
+    )
+
+
 def get_completed(
-    token: Token, date_from: str, date_to: str, page: int = 0
+    client: Client, date_from: str, date_to: str, page: int = 0
 ) -> List[Lesson]:
     """
-    date_from and date_to don't have a limit of how far apart they can be.
-    date_from and date_to can also excceed the current date and will just return an empty list.
-    If date_from or date_to is empty it should return the past week. (not exactly sure atm.)
+    Retrieves completed lessons within a specified date range and page number.
 
-    Each page contains 15 lessons. The maximum amount of pages can be retrieved by using get_max_page_number() function.
-    If page exceeds the max amount it will just default to max amount.
+    Args:
+        client (Client): The client object used to fetch completed lesson data.
+        date_from (str): The start date of the date range (in format "YYYY-MM-DD").
+        date_to (str): The end date of the date range (in format "YYYY-MM-DD").
+        page (int, optional): The page number of the completed lessons to retrieve.
+            Defaults to 0.
+
+    Returns:
+        List[Lesson]: A list of Lesson objects representing the completed lessons.
+
+    Notes:
+        - The date_from and date_to parameters do not have a limit on how far apart they can be.
+        - If date_from or date_to is empty, it returns completed lessons from the past week.
+        - Each page contains 15 lessons. The maximum number of pages can be retrieved using the get_max_page_number() function.
+        - If the specified page number exceeds the maximum, it defaults to the maximum available page.
+
     """
+
     data = {
         "data1": date_from,
         "data2": date_to,
@@ -67,42 +170,9 @@ def get_completed(
     }
     completed_lessons = []
     soup = no_access_check(
-        BeautifulSoup(token.post(token.COMPLETED_LESSONS_URL, data=data).text, "lxml")
+        BeautifulSoup(client.post(client.COMPLETED_LESSONS_URL, data=data).text, "lxml")
     )
 
     lines = soup.select('table[class="decorated"] > tbody > tr')
-    for line in lines:
-        date = line.select_one('td[class="center small"]')
-        date = date.text if date is not None else "01-01-2000"
-        weekday = line.select_one("td.tiny")
-        weekday = weekday.text if weekday is not None else ""
-        data = [td.text.strip() for td in line.find_all("td", attrs={"class": None})]
-        if len(data) < 5:
-            continue
-        lesson_number, subject_and_teacher, topic, z_value, attendance = data
-        subject, teacher = subject_and_teacher.split(", ")
-        attendance_href = ""
-        if attendance != "":
-            attendance_href = line.select_one("td > p.box > a")
-            attendance_href = (
-                attendance_href.attrs.get("onclick", "///")
-                .replace("otworz_w_nowym_oknie(", "")
-                .split(",")[0]
-                .replace("'", "")
-                .split("/")[3]
-                if attendance_href is not None
-                else ""
-            )
-        lesson = Lesson(
-            subject,
-            teacher,
-            topic,
-            z_value,
-            attendance,
-            attendance_href,
-            lesson_number,
-            weekday,
-            date,
-        )
-        completed_lessons.append(lesson)
+    completed_lessons = list(map(_create_lesson, lines))
     return completed_lessons

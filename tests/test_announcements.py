@@ -2,7 +2,7 @@ from logging import Logger
 import pytest
 
 from librus_apix.announcements import Announcement, get_announcements
-from librus_apix.get_token import Token
+from librus_apix.client import Client
 
 
 def _test_announcement_data(announcement: Announcement, log: Logger):
@@ -13,8 +13,8 @@ def _test_announcement_data(announcement: Announcement, log: Logger):
             log.warning(f"{key} is an empty string")
 
 
-def test_get_announcements(token: Token, log: Logger):
-    announcements = get_announcements(token)
+def test_get_announcements(client: Client, log: Logger):
+    announcements = get_announcements(client)
     assert isinstance(announcements, list)
     for a in announcements:
         assert isinstance(a, Announcement)

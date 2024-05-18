@@ -1,8 +1,9 @@
+from ctypes import ArgumentError
 from logging import Logger
 import pytest
 
 from librus_apix.attendance import Attendance, get_attendance
-from librus_apix.get_token import Token
+from librus_apix.client import Client
 
 
 def _test_attendance_data(attendance: Attendance, log: Logger):
@@ -20,11 +21,16 @@ def _test_attendance_data(attendance: Attendance, log: Logger):
 
 
 @pytest.mark.parametrize("opt", ["all", "week", "last_login"])
-def test_get_attendance(token: Token, opt: str, log: Logger):
-    first, second = get_attendance(token, opt)
+def test_get_attendance(client: Client, opt: str, log: Logger):
+    first, second = get_attendance(client, opt)
     assert isinstance(first, list)
     assert isinstance(second, list)
     attendance = first + second
     for a in attendance:
         assert isinstance(a, Attendance)
         _test_attendance_data(a, log)
+
+
+def test_wrong_opt(client: Client):
+    with pytest.raises(ArgumentError):
+        get_attendance(client, "this should fail")
