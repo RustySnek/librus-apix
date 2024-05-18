@@ -1,4 +1,7 @@
-HEADERS = {
+from typing import Union, Dict
+
+
+HEADERS: Dict[str, Union[str, bytes]] = {
     "User-Agent": "Mozilla/5.0 (Windows NT x.y; Win64; x64; rv:10.0) Gecko/20100101 Firefox/10.0",
     "Content-Type": "application/x-www-form-urlencoded",
 }
@@ -19,3 +22,4 @@ HOMEWORK_DETAILS_URL = f"{BASE_URL}/moje_zadania/podglad/"
 INFO_URL = f"{BASE_URL}/informacja"
 COMPLETED_LESSONS_URL = f"{BASE_URL}/zrealizowane_lekcje"
 GATEWAY_API_ATTENDANCE = f"{BASE_URL}/gateway/api/2.0/Attendances"
+REFRESH_OAUTH_URL = f"{BASE_URL}/refreshToken"
