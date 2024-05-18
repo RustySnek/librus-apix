@@ -1,3 +1,32 @@
+"""
+This module provides functions for managing completed lessons from the Librus site, including retrieval, parsing, and pagination.
+
+Classes:
+    - Lesson: Represents a completed lesson with attributes such as subject, teacher, topic, etc.
+
+Functions:
+    - get_max_page_number: Retrieves the maximum page number for completed lessons within a specified date range.
+    - get_completed: Retrieves completed lessons within a specified date range and page number.
+
+Usage:
+```python
+from librus_apix.client import new_client
+
+# Create a new client instance
+client = new_client()
+client.get_token(username, password)
+
+# Retrieve the maximum page number for completed lessons within a date range
+date_from = "YYYY-MM-DD"
+date_to = "YYYY-MM-DD"
+max_page_number = get_max_page_number(client, date_from, date_to)
+
+# Retrieve completed lessons within a specified date range and page number
+page_number = 0  # Specify the page number
+completed_lessons = get_completed(client, date_from, date_to, page=page_number)
+```
+"""
+
 from typing import List
 from dataclasses import dataclass
 from bs4 import BeautifulSoup, Tag

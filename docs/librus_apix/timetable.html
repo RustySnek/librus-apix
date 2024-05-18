@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>librus_apix.timetable API documentation</title>
+<meta name="description" content="Module: timetable_parser …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>librus_apix.timetable</code></h1>
+</header>
+<section id="section-intro">
+<p>Module: timetable_parser</p>
+<p>Description:
+This module provides functions for parsing and retrieving timetable data from an educational institution's website.</p>
+<h2 id="classes">Classes</h2>
+<ul>
+<li>Period: Represents a period of a class with relevant information.</li>
+</ul>
+<h2 id="functions">Functions</h2>
+<ul>
+<li>get_timetable: Retrieves the timetable for a given week starting from a Monday date.</li>
+</ul>
+<h2 id="exceptions">Exceptions</h2>
+<ul>
+<li>DateError: Raised when the provided date is not a Monday.</li>
+<li>ParseError: Raised when there's an error while parsing the timetable.</li>
+</ul>
+<p>Usage:</p>
+<pre><code class="language-python">from your_client_module import Client  # import your client module here
+
+# Example usage:
+client = Client()  # initialize your client
+monday_date = datetime(2024, 5, 13)  # example Monday date
+try:
+    timetable = get_timetable(client, monday_date)
+    for day in timetable:
+        for period in day:
+            print(period.subject, period.date, period.date_from, period.date_to)
+except DateError as e:
+    print(e)
+except ParseError as e:
+    print(e)
+</code></pre>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Module: timetable_parser
+
+Description:
+This module provides functions for parsing and retrieving timetable data from an educational institution&#39;s website.
+
+Classes:
+    - Period: Represents a period of a class with relevant information.
+
+Functions:
+    - get_timetable: Retrieves the timetable for a given week starting from a Monday date.
+
+Exceptions:
+    - DateError: Raised when the provided date is not a Monday.
+    - ParseError: Raised when there&#39;s an error while parsing the timetable.
+
+Usage:
+```python
+from your_client_module import Client  # import your client module here
+
+# Example usage:
+client = Client()  # initialize your client
+monday_date = datetime(2024, 5, 13)  # example Monday date
+try:
+    timetable = get_timetable(client, monday_date)
+    for day in timetable:
+        for period in day:
+            print(period.subject, period.date, period.date_from, period.date_to)
+except DateError as e:
+    print(e)
+except ParseError as e:
+    print(e)
+```
+&#34;&#34;&#34;
+from typing import List, Dict
+from librus_apix.client import Client
+from librus_apix.exceptions import ParseError, DateError
+from librus_apix.helpers import no_access_check
+from datetime import datetime, timedelta
+from bs4 import BeautifulSoup
+from dataclasses import dataclass
+
+
+@dataclass
+class Period:
+    &#34;&#34;&#34;
+    Represents a period of a class with relevant information.
+
+    Attributes:
+        subject (str): The subject of the class.
+        teacher_and_classroom (str): Combined information of teacher and classroom.
+        date (str): The date of the period.
+        date_from (str): Starting time of the period.
+        date_to (str): Ending time of the period.
+        weekday (str): The day of the week of the period.
+        info (Dict[str, str]): Additional information about the period.
+        number (int): The number of the period within a day.
+        next_recess_from (str | None): Starting time of the next recess, if any.
+        next_recess_to (str | None): Ending time of the next recess, if any.
+    &#34;&#34;&#34;
+
+    subject: str
+    teacher_and_classroom: str
+    date: str
+    date_from: str
+    date_to: str
+    weekday: str
+    info: Dict[str, str]
+    number: int
+    next_recess_from: str | None
+    next_recess_to: str | None
+
+
+def get_timetable(client: Client, monday_date: datetime) -&gt; List[List[Period]]:
+    &#34;&#34;&#34;
+    Retrieves the timetable for a given week starting from a Monday date.
+
+    Args:
+        client (Client): An instance of the client class for fetching data.
+        monday_date (datetime): The Monday date for the week&#39;s timetable.
+
+    Returns:
+        List[List[Period]]: A nested list containing periods for each day of the week.
+
+    Raises:
+        DateError: If the provided date is not a Monday.
+        ParseError: If there&#39;s an error while parsing the timetable.
+    &#34;&#34;&#34;
+    timetable: List[List[Period]] = []
+    if monday_date.strftime(&#34;%A&#34;) != &#34;Monday&#34;:
+        raise DateError(&#34;You must input a Monday date.&#34;)
+    sunday = monday_date + timedelta(days=6)
+    week = f&#34;{monday_date.strftime(&#39;%Y-%m-%d&#39;)}_{sunday.strftime(&#39;%Y-%m-%d&#39;)}&#34;
+    post = client.post(client.TIMETABLE_URL, data={&#34;tydzien&#34;: week})
+    soup = no_access_check(BeautifulSoup(post.text, &#34;lxml&#34;))
+    periods = soup.select(&#34;table.decorated.plan-lekcji &gt; tr.line1&#34;)
+    if len(periods) &lt; 1:
+        raise ParseError(&#34;Error in parsing timetable.&#34;)
+    recess = soup.select(&#34;table.decorated.plan-lekcji &gt; tr.line0&#34;)
+    for weekday in range(7):
+        timetable.append([])
+        for period in range(len(periods)):
+            [recess_from, recess_to] = [None, None]
+            if period &lt;= len(recess) - 1:
+                center = recess[period].select_one(&#34;td.center&#34;)
+                if center is None:
+                    raise ParseError(&#34;Error while parsing timetable (center)&#34;)
+                [recess_from, recess_to] = [
+                    x.strip()
+                    for x in center.text.replace(&#34;&amp;nbsp;&#34;, &#34;&#34;).strip().split(&#34;-&#34;, 1)
+                ]
+            lesson = periods[period].select(
+                &#39;td[id=&#34;timetableEntryBox&#34;][class=&#34;line1&#34;]&#39;
+            )[weekday]
+            td_center = periods[period].select_one(&#39;td[class=&#34;center&#34;]&#39;)
+            if td_center is None:
+                raise ParseError(&#34;Error while parsing lesson_number of period&#34;)
+            lesson_number = int(td_center.text)
+            tooltip = lesson.select_one(&#34;div.center.plan-lekcji-info&#34;)
+            a_href = lesson.select_one(&#34;a&#34;)
+            info = {}
+            if tooltip is not None:
+                if a_href is None:
+                    info[tooltip.text.strip()] = &#34;&#34;
+                else:
+                    attr_dict = {}
+                    for attr in (
+                        a_href.attrs[&#34;title&#34;]
+                        .replace(&#34;&lt;b&gt;&#34;, &#34;&#34;)
+                        .replace(&#34;&lt;/b&gt;&#34;, &#34;&#34;)
+                        .replace(&#34;\xa0&#34;, &#34; &#34;)
+                        .split(&#34;&lt;br&gt;&#34;)
+                    ):
+                        if len(attr.strip()) &gt; 2:
+                            key, value = attr.split(&#34;: &#34;, 1)
+                            attr_dict[key] = value
+
+                    info[tooltip.text.strip()] = {
+                        &#34;teacher_swap&#34;: attr_dict.get(&#34;Nauczyciel&#34;, &#34;&#34;),
+                        &#34;subject_swap&#34;: attr_dict.get(&#34;Przedmiot&#34;, &#34;&#34;),
+                        &#34;classroom_swap&#34;: attr_dict.get(&#34;Sala&#34;, &#34;&#34;),
+                        &#34;date_added&#34;: attr_dict.get(&#34;Data dodania&#34;, &#34;&#34;),
+                    }
+            date, date_from, date_to = [
+                val for key, val in lesson.attrs.items() if key.startswith(&#34;data&#34;)
+            ]
+            lesson = lesson.select_one(&#34;div.text&#34;)
+            if lesson is None:
+                subject = &#34;&#34;
+                teacher_and_classroom = &#34;&#34;
+            else:
+                subject = lesson.select_one(&#34;b&#34;)
+                subject = subject.text if subject is not None else &#34;&#34;
+                teacher_and_classroom = (
+                    lesson.text.replace(&#34;\xa0&#34;, &#34; &#34;)
+                    .replace(&#34;\n&#34;, &#34;&#34;)
+                    .replace(&#34;&amp;nbsp&#34;, &#34;&#34;)
+                    .split(&#34;-&#34;)
+                )
+                if len(teacher_and_classroom) &gt;= 2:
+                    teacher_and_classroom = &#34;-&#34;.join(teacher_and_classroom[1:])
+                else:
+                    teacher_and_classroom = &#34;&#34;
+
+            weekday_str = datetime.strptime(date, &#34;%Y-%m-%d&#34;).strftime(&#34;%A&#34;)
+            p = Period(
+                subject,
+                teacher_and_classroom,
+                date,
+                date_from,
+                date_to,
+                weekday_str,
+                info,
+                lesson_number,
+                recess_from,
+                recess_to,
+            )
+            timetable[weekday].append(p)
+    return timetable</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="librus_apix.timetable.get_timetable"><code class="name flex">
+<span>def <span class="ident">get_timetable</span></span>(<span>client: <a title="librus_apix.client.Client" href="client.html#librus_apix.client.Client">Client</a>, monday_date: datetime.datetime) ‑> List[List[<a title="librus_apix.timetable.Period" href="#librus_apix.timetable.Period">Period</a>]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieves the timetable for a given week starting from a Monday date.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>client</code></strong> :&ensp;<code>Client</code></dt>
+<dd>An instance of the client class for fetching data.</dd>
+<dt><strong><code>monday_date</code></strong> :&ensp;<code>datetime</code></dt>
+<dd>The Monday date for the week's timetable.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[List[<a title="librus_apix.timetable.Period" href="#librus_apix.timetable.Period">Period</a>]]</code></dt>
+<dd>A nested list containing periods for each day of the week.</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>DateError</code></dt>
+<dd>If the provided date is not a Monday.</dd>
+<dt><code>ParseError</code></dt>
+<dd>If there's an error while parsing the timetable.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_timetable(client: Client, monday_date: datetime) -&gt; List[List[Period]]:
+    &#34;&#34;&#34;
+    Retrieves the timetable for a given week starting from a Monday date.
+
+    Args:
+        client (Client): An instance of the client class for fetching data.
+        monday_date (datetime): The Monday date for the week&#39;s timetable.
+
+    Returns:
+        List[List[Period]]: A nested list containing periods for each day of the week.
+
+    Raises:
+        DateError: If the provided date is not a Monday.
+        ParseError: If there&#39;s an error while parsing the timetable.
+    &#34;&#34;&#34;
+    timetable: List[List[Period]] = []
+    if monday_date.strftime(&#34;%A&#34;) != &#34;Monday&#34;:
+        raise DateError(&#34;You must input a Monday date.&#34;)
+    sunday = monday_date + timedelta(days=6)
+    week = f&#34;{monday_date.strftime(&#39;%Y-%m-%d&#39;)}_{sunday.strftime(&#39;%Y-%m-%d&#39;)}&#34;
+    post = client.post(client.TIMETABLE_URL, data={&#34;tydzien&#34;: week})
+    soup = no_access_check(BeautifulSoup(post.text, &#34;lxml&#34;))
+    periods = soup.select(&#34;table.decorated.plan-lekcji &gt; tr.line1&#34;)
+    if len(periods) &lt; 1:
+        raise ParseError(&#34;Error in parsing timetable.&#34;)
+    recess = soup.select(&#34;table.decorated.plan-lekcji &gt; tr.line0&#34;)
+    for weekday in range(7):
+        timetable.append([])
+        for period in range(len(periods)):
+            [recess_from, recess_to] = [None, None]
+            if period &lt;= len(recess) - 1:
+                center = recess[period].select_one(&#34;td.center&#34;)
+                if center is None:
+                    raise ParseError(&#34;Error while parsing timetable (center)&#34;)
+                [recess_from, recess_to] = [
+                    x.strip()
+                    for x in center.text.replace(&#34;&amp;nbsp;&#34;, &#34;&#34;).strip().split(&#34;-&#34;, 1)
+                ]
+            lesson = periods[period].select(
+                &#39;td[id=&#34;timetableEntryBox&#34;][class=&#34;line1&#34;]&#39;
+            )[weekday]
+            td_center = periods[period].select_one(&#39;td[class=&#34;center&#34;]&#39;)
+            if td_center is None:
+                raise ParseError(&#34;Error while parsing lesson_number of period&#34;)
+            lesson_number = int(td_center.text)
+            tooltip = lesson.select_one(&#34;div.center.plan-lekcji-info&#34;)
+            a_href = lesson.select_one(&#34;a&#34;)
+            info = {}
+            if tooltip is not None:
+                if a_href is None:
+                    info[tooltip.text.strip()] = &#34;&#34;
+                else:
+                    attr_dict = {}
+                    for attr in (
+                        a_href.attrs[&#34;title&#34;]
+                        .replace(&#34;&lt;b&gt;&#34;, &#34;&#34;)
+                        .replace(&#34;&lt;/b&gt;&#34;, &#34;&#34;)
+                        .replace(&#34;\xa0&#34;, &#34; &#34;)
+                        .split(&#34;&lt;br&gt;&#34;)
+                    ):
+                        if len(attr.strip()) &gt; 2:
+                            key, value = attr.split(&#34;: &#34;, 1)
+                            attr_dict[key] = value
+
+                    info[tooltip.text.strip()] = {
+                        &#34;teacher_swap&#34;: attr_dict.get(&#34;Nauczyciel&#34;, &#34;&#34;),
+                        &#34;subject_swap&#34;: attr_dict.get(&#34;Przedmiot&#34;, &#34;&#34;),
+                        &#34;classroom_swap&#34;: attr_dict.get(&#34;Sala&#34;, &#34;&#34;),
+                        &#34;date_added&#34;: attr_dict.get(&#34;Data dodania&#34;, &#34;&#34;),
+                    }
+            date, date_from, date_to = [
+                val for key, val in lesson.attrs.items() if key.startswith(&#34;data&#34;)
+            ]
+            lesson = lesson.select_one(&#34;div.text&#34;)
+            if lesson is None:
+                subject = &#34;&#34;
+                teacher_and_classroom = &#34;&#34;
+            else:
+                subject = lesson.select_one(&#34;b&#34;)
+                subject = subject.text if subject is not None else &#34;&#34;
+                teacher_and_classroom = (
+                    lesson.text.replace(&#34;\xa0&#34;, &#34; &#34;)
+                    .replace(&#34;\n&#34;, &#34;&#34;)
+                    .replace(&#34;&amp;nbsp&#34;, &#34;&#34;)
+                    .split(&#34;-&#34;)
+                )
+                if len(teacher_and_classroom) &gt;= 2:
+                    teacher_and_classroom = &#34;-&#34;.join(teacher_and_classroom[1:])
+                else:
+                    teacher_and_classroom = &#34;&#34;
+
+            weekday_str = datetime.strptime(date, &#34;%Y-%m-%d&#34;).strftime(&#34;%A&#34;)
+            p = Period(
+                subject,
+                teacher_and_classroom,
+                date,
+                date_from,
+                date_to,
+                weekday_str,
+                info,
+                lesson_number,
+                recess_from,
+                recess_to,
+            )
+            timetable[weekday].append(p)
+    return timetable</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="librus_apix.timetable.Period"><code class="flex name class">
+<span>class <span class="ident">Period</span></span>
+<span>(</span><span>subject: str, teacher_and_classroom: str, date: str, date_from: str, date_to: str, weekday: str, info: Dict[str, str], number: int, next_recess_from: Optional[str], next_recess_to: Optional[str])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents a period of a class with relevant information.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>subject</code></strong> :&ensp;<code>str</code></dt>
+<dd>The subject of the class.</dd>
+<dt><strong><code>teacher_and_classroom</code></strong> :&ensp;<code>str</code></dt>
+<dd>Combined information of teacher and classroom.</dd>
+<dt><strong><code>date</code></strong> :&ensp;<code>str</code></dt>
+<dd>The date of the period.</dd>
+<dt><strong><code>date_from</code></strong> :&ensp;<code>str</code></dt>
+<dd>Starting time of the period.</dd>
+<dt><strong><code>date_to</code></strong> :&ensp;<code>str</code></dt>
+<dd>Ending time of the period.</dd>
+<dt><strong><code>weekday</code></strong> :&ensp;<code>str</code></dt>
+<dd>The day of the week of the period.</dd>
+<dt><strong><code>info</code></strong> :&ensp;<code>Dict[str, str]</code></dt>
+<dd>Additional information about the period.</dd>
+<dt><strong><code>number</code></strong> :&ensp;<code>int</code></dt>
+<dd>The number of the period within a day.</dd>
+</dl>
+<p>next_recess_from (str | None): Starting time of the next recess, if any.
+next_recess_to (str | None): Ending time of the next recess, if any.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class Period:
+    &#34;&#34;&#34;
+    Represents a period of a class with relevant information.
+
+    Attributes:
+        subject (str): The subject of the class.
+        teacher_and_classroom (str): Combined information of teacher and classroom.
+        date (str): The date of the period.
+        date_from (str): Starting time of the period.
+        date_to (str): Ending time of the period.
+        weekday (str): The day of the week of the period.
+        info (Dict[str, str]): Additional information about the period.
+        number (int): The number of the period within a day.
+        next_recess_from (str | None): Starting time of the next recess, if any.
+        next_recess_to (str | None): Ending time of the next recess, if any.
+    &#34;&#34;&#34;
+
+    subject: str
+    teacher_and_classroom: str
+    date: str
+    date_from: str
+    date_to: str
+    weekday: str
+    info: Dict[str, str]
+    number: int
+    next_recess_from: str | None
+    next_recess_to: str | None</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="librus_apix.timetable.Period.date"><code class="name">var <span class="ident">date</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.timetable.Period.date_from"><code class="name">var <span class="ident">date_from</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.timetable.Period.date_to"><code class="name">var <span class="ident">date_to</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.timetable.Period.info"><code class="name">var <span class="ident">info</span> : Dict[str, str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.timetable.Period.next_recess_from"><code class="name">var <span class="ident">next_recess_from</span> : Optional[str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.timetable.Period.next_recess_to"><code class="name">var <span class="ident">next_recess_to</span> : Optional[str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.timetable.Period.number"><code class="name">var <span class="ident">number</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.timetable.Period.subject"><code class="name">var <span class="ident">subject</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.timetable.Period.teacher_and_classroom"><code class="name">var <span class="ident">teacher_and_classroom</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.timetable.Period.weekday"><code class="name">var <span class="ident">weekday</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="librus_apix" href="index.html">librus_apix</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="librus_apix.timetable.get_timetable" href="#librus_apix.timetable.get_timetable">get_timetable</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="librus_apix.timetable.Period" href="#librus_apix.timetable.Period">Period</a></code></h4>
+<ul class="">
+<li><code><a title="librus_apix.timetable.Period.date" href="#librus_apix.timetable.Period.date">date</a></code></li>
+<li><code><a title="librus_apix.timetable.Period.date_from" href="#librus_apix.timetable.Period.date_from">date_from</a></code></li>
+<li><code><a title="librus_apix.timetable.Period.date_to" href="#librus_apix.timetable.Period.date_to">date_to</a></code></li>
+<li><code><a title="librus_apix.timetable.Period.info" href="#librus_apix.timetable.Period.info">info</a></code></li>
+<li><code><a title="librus_apix.timetable.Period.next_recess_from" href="#librus_apix.timetable.Period.next_recess_from">next_recess_from</a></code></li>
+<li><code><a title="librus_apix.timetable.Period.next_recess_to" href="#librus_apix.timetable.Period.next_recess_to">next_recess_to</a></code></li>
+<li><code><a title="librus_apix.timetable.Period.number" href="#librus_apix.timetable.Period.number">number</a></code></li>
+<li><code><a title="librus_apix.timetable.Period.subject" href="#librus_apix.timetable.Period.subject">subject</a></code></li>
+<li><code><a title="librus_apix.timetable.Period.teacher_and_classroom" href="#librus_apix.timetable.Period.teacher_and_classroom">teacher_and_classroom</a></code></li>
+<li><code><a title="librus_apix.timetable.Period.weekday" href="#librus_apix.timetable.Period.weekday">weekday</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

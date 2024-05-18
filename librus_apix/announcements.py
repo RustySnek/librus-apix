@@ -1,3 +1,26 @@
+"""
+This module provides functions for retrieving announcements from the Librus site and parsing them into Announcement objects.
+
+Classes:
+    - Announcement: Represents an announcement with attributes for title, author, description, and date.
+
+Functions:
+    - get_announcements: Retrieves a list of announcements from the Librus API using a Client object.
+
+Usage:
+```python
+from librus_apix.client import new_client
+
+# Create a new client instance
+client = new_client()
+client.get_token(username, password)
+
+# Retrieve announcements
+announcements = get_announcements(client)
+```
+"""
+
+
 from typing import List
 from bs4 import BeautifulSoup
 from librus_apix.client import Client

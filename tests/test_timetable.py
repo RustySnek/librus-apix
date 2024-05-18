@@ -2,6 +2,7 @@ from logging import Logger
 from typing import Union
 import pytest
 from datetime import datetime, timedelta
+from librus_apix.client import Client
 from librus_apix.exceptions import DateError
 from librus_apix.timetable import get_timetable, Period
 
@@ -33,8 +34,8 @@ def _test_period_data(period: Period, log: Logger):
         monday_from_next_month,
     ],
 )
-def test_get_timetable(token, monday, log: Logger):
-    timetable = get_timetable(token, monday)
+def test_get_timetable(client: Client, monday, log: Logger):
+    timetable = get_timetable(client, monday)
     assert isinstance(timetable, list)
     for weekday in timetable:
         assert isinstance(weekday, list)
@@ -43,7 +44,7 @@ def test_get_timetable(token, monday, log: Logger):
             _test_period_data(period, log)
 
 
-def test_wrong_date_timetable(token):
+def test_wrong_date_timetable(client: Client):
     non_monday = most_recent_monday + timedelta(days=1)
     with pytest.raises(DateError):
-        get_timetable(token, non_monday)
+        get_timetable(client, non_monday)

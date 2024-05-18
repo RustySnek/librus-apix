@@ -1,15 +1,59 @@
-from bs4 import BeautifulSoup
-from librus_apix.get_token import Token
+"""
+This module provides functions for retrieving schedule information from the Librus site, parsing it, and formatting it into a structured representation.
+
+Classes:
+    - Event: Represents an event in the schedule with various attributes like title, subject, day, etc.
+
+Functions:
+    - schedule_detail: Fetches detailed schedule information for a specific prefix and detail URL suffix.
+    - get_schedule: Fetches the schedule for a specific month and year.
+
+Usage:
+    ```python
+    from librus_apix.client import new_client
+
+    # Create a new client instance
+    client = new_client()
+    client.get_token(username, password)
+
+
+    # Fetch the schedule for a specific month and year
+    month = "01"
+    year = "2024"
+    include_empty = True
+    monthly_schedule = get_schedule(client, month, year, include_empty)
+
+    # Fetch detailed schedule information
+    day_one = monthly_schedule[1].href
+    prefix, suffix = day_one.split("/")
+    detailed_schedule = schedule_detail(client, prefix, detail_url)
+    ```
+"""
+from bs4 import BeautifulSoup, NavigableString, Tag
+from librus_apix.client import Client
 from librus_apix.exceptions import ParseError
 from librus_apix.helpers import no_access_check
 from collections import defaultdict
 from dataclasses import dataclass
 import re
-from typing import Union, List, Dict
+from typing import DefaultDict, Union, List, Dict
 
 
 @dataclass
 class Event:
+    """
+    Represents an event in the schedule.
+
+    Attributes:
+        title (str): The title of the event.
+        subject (str): The subject of the event.
+        data (dict): Additional data associated with the event.
+        day (str): The day on which the event occurs.
+        number (Union[int, str]): The number associated with the event.
+        hour (str): The hour at which the event occurs.
+        href (str): 'prefix'/'suffix' joined with a slash (this should be reworked...).
+    """
+
     title: str
     subject: str
     data: dict
@@ -19,28 +63,69 @@ class Event:
     href: str
 
 
-def schedule_detail(token: Token, prefix: str, detail_url: str) -> Dict[str, str]:
+def schedule_detail(client: Client, prefix: str, detail_url: str) -> Dict[str, str]:
+    """
+    Fetches the detailed schedule information for a specific prefix and detail URL suffix.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        prefix (str): The prefix of the schedule URL.
+        detail_url (str): The detail URL of the schedule.
+
+    Returns:
+        Dict[str, str]: A dictionary containing schedule details.
+    """
     schedule = {}
     div = no_access_check(
         BeautifulSoup(
-            token.get(token.SCHEDULE_URL + prefix + "/" + detail_url).text, "lxml"
-        ).find("div", attrs={"class": "container-background"})
-    )
-    if div is None:
+            client.get(client.SCHEDULE_URL + prefix + "/" + detail_url).text, "lxml"
+        )
+    ).find("div", attrs={"class": "container-background"})
+
+    if div is None or isinstance(div, NavigableString):
         raise ParseError("Error in parsing schedule details.")
-    tr = div.find_all("tr", attrs={"class": ["line0", "line1"]})
+    tr: List[Tag] = div.find_all("tr", attrs={"class": ["line0", "line1"]})
     for s in tr:
-        schedule[s.find("th").text.strip()] = s.find("td").text.strip()
+        th = s.find("th")
+        td = s.find("td")
+        if td is None or th is None:
+            continue
+        schedule[th.text.strip()] = td.text.strip()
     return schedule
 
 
+def _parse_title_into_pairs(title: str) -> Dict[str, str]:
+    additional_data = {}
+    pairs = [pair.split(":", 1) for pair in title.split("<br />")]
+    for pair in pairs:
+        if len(pair) != 2:
+            additional_data[pair[0].strip()] = "unknown"
+            continue
+        key, val = pair
+        additional_data[key.strip()] = val.strip()
+
+    return additional_data
+
+
 def get_schedule(
-    token: Token, month: str, year: str, include_empty: bool = False
-) -> Dict[int, List[Event]]:
+    client: Client, month: str, year: str, include_empty: bool = False
+) -> DefaultDict[int, List[Event]]:
+    """
+    Fetches the schedule for a specific month and year.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        month (str): The month for which the schedule is requested.
+        year (str): The year for which the schedule is requested.
+        include_empty (bool, optional): Flag to include empty schedules. Defaults to False.
+
+    Returns:
+        DefaultDict[int, List[Event]]: A dictionary containing the schedule for each day of the month.
+    """
     schedule = defaultdict(list)
     soup = no_access_check(
         BeautifulSoup(
-            token.post(token.SCHEDULE_URL, data={"rok": year, "miesiac": month}).text,
+            client.post(client.SCHEDULE_URL, data={"rok": year, "miesiac": month}).text,
             "lxml",
         )
     )
@@ -49,71 +134,61 @@ def get_schedule(
         raise ParseError("Error in parsing days of the schedule.")
     for day in days:
         try:
-            d = day.find("div", attrs={"class": "kalendarz-numer-dnia"}).text
+            d = int(day.find("div", attrs={"class": "kalendarz-numer-dnia"}).text)
         except:
             raise ParseError("Error while parsing day number")
         if include_empty == True:
-            schedule[int(d)] = []
-        tr = day.find_all("tr")
-        if tr:
-            for event in tr:
-                td = event.find("td")
-                if td is None:
-                    continue
-                title = td.attrs.get("title", "Nauczyciel: unknown<br />Opis: unknown")
-                additional_data = {}
-                pairs = [pair.split(":", 1) for pair in title.split("<br />")]
-                for pair in pairs:
-                    if len(pair) != 2:
-                        additional_data[pair[0].strip()] = "unknown"
-                        continue
-                    key, val = pair
-                    additional_data[key.strip()] = val.strip()
-                subject = "unspecified"
-                span = td.find("span")
-                if span:
-                    subject = span.text
-                    span.extract()
+            schedule[d] = []
+        tr: List[Tag] = day.find_all("tr")
+        for event in tr:
+            td = event.find("td")
+            if td is None or isinstance(td, NavigableString):
+                continue
+            title = td.attrs.get("title", "Nauczyciel: unknown<br />Opis: unknown")
+            additional_data = _parse_title_into_pairs(title)
+            subject = "unspecified"
+            span = td.find("span")
+            if span is not None:
+                subject = span.text
+                span.extract()
 
-                delimeter = "###"
-                for line in td.select("br"):
-                    line.replaceWith(delimeter)
-                data = (
-                    td.text.replace("\xa0", " ")
-                    .replace(", ", "")
-                    .replace("\n", "")
-                    .strip()
-                    .split(delimeter)
+            delimeter = "###"
+            for line in td.select("br"):
+                line.replaceWith(delimeter)
+            data = (
+                td.text.replace("\xa0", " ")
+                .replace(", ", "")
+                .replace("\n", "")
+                .strip()
+                .split(delimeter)
+            )
+            if subject == "unspecified":
+                subject = data[0]
+            if len(data) >= 2:
+                title = data[1]
+            else:
+                title = data[0]
+
+            number = "unknown"
+            hour = "unknown"
+            number_td = event.find("td")
+            if number_td is None or isinstance(number_td, NavigableString):
+                raise ParseError("Error while parsing td_number schedule.")
+            try:
+                number = int(
+                    re.findall(r": ?[0-99]?[0-99]", number_td.text)[0].replace(": ", "")
                 )
-                if subject == "unspecified":
-                    subject = data[0]
-                if len(data) >= 2:
-                    title = data[1]
-                else:
-                    title = data[0]
+            except ValueError:
+                hour = re.findall(r" ?[0-2]?[0-9]:?[0-5]?[0-9]", number_td.text)[0]
+            except IndexError:
+                pass
+            onclick = number_td.attrs.get("onclick", "'")
+            href = onclick.split("'")[1].split("/")
+            if len(href) >= 2:
+                href = "/".join(href[2:])
+            else:
+                href = ""
 
-                number = "unknown"
-                hour = "unknown"
-                try:
-                    number = int(
-                        re.findall(r": ?[0-99]?[0-99]", event.find("td").text)[
-                            0
-                        ].replace(": ", "")
-                    )
-                except ValueError:
-                    hour = re.findall(
-                        r" ?[0-2]?[0-9]:?[0-5]?[0-9]", event.find("td").text
-                    )[0]
-                except IndexError:
-                    pass
-                try:
-                    onclick = event.find("td").attrs["onclick"]
-                    href = "/".join(onclick.split("'")[1].split("/")[2:])
-                except KeyError:
-                    href = ""
-                except IndexError:
-                    href = ""
-
-                event = Event(title, subject, additional_data, d, number, hour, href)
-                schedule[int(d)].append(event)
+            event = Event(title, subject, additional_data, str(d), number, hour, href)
+            schedule[d].append(event)
     return schedule

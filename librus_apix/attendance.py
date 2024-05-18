@@ -1,9 +1,43 @@
-from ctypes import ArgumentError
+"""
+This module provides functions for retrieving attendance records from the Librus site, parsing them, and calculating attendance frequency.
+
+Classes:
+    - Attendance: Represents an attendance record with various attributes such as type, date, teacher, etc.
+
+Functions:
+    - get_detail: Retrieves attendance details from a specific URL suffix.
+    - get_gateway_attendance: Retrieves attendance data from the Librus gateway API.
+    - get_attendance_frequency: Calculates attendance frequency for each semester and overall.
+    - get_attendance: Retrieves attendance records from Librus based on specified sorting criteria.
+
+Usage:
+```python
+from librus_apix.client import new_client
+
+# Create a new client instance
+client = new_client()
+client.get_token(username, password)
+
+# Retrieve attendance details
+detail_url = "example_detail_url"
+attendance_details = get_detail(client, detail_url)
+
+# Retrieve attendance data from the gateway API
+gateway_attendance = get_gateway_attendance(client)
+
+# Calculate attendance frequency
+first_sem_freq, second_sem_freq, overall_freq = get_attendance_frequency(client)
+
+# Retrieve attendance records sorted by a specific criteria
+attendance_records = get_attendance(client, sort_by="all")
+```
+"""
+
 from typing import List, Dict, Tuple
 from bs4 import BeautifulSoup, NavigableString, Tag
 from librus_apix.client import Client
 from librus_apix.helpers import no_access_check
-from librus_apix.exceptions import ParseError
+from librus_apix.exceptions import ParseError, ArgumentError
 from dataclasses import dataclass
 
 

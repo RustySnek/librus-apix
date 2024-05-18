@@ -1,3 +1,31 @@
+"""
+This module defines functions and data classes for retrieving and managing grade-related data from the Librus API.
+
+Classes:
+    - Gpa: Represents the semestral grade for a specific semester and subject.
+    - Grade: Represents a single grade entry with detailed information.
+    - GradeDescriptive: Represents a descriptive grade entry with detailed information.
+
+Functions:
+    - get_grades: Fetches and returns the grades, semestral averages, and descriptive grades from Librus.
+
+Usage:
+```python
+from librus_apix.grades import get_grades
+
+try:
+    # Fetch grades data
+    numeric_grades, average_grades, descriptive_grades = get_grades(client, sort_by="all")
+    # Process the grades data as required
+    ...
+except ArgumentError as e:
+    # Handle invalid argument error
+    ...
+except ParseError as e:
+    # Handle parse error
+    ...
+```
+"""
 import re
 from bs4 import BeautifulSoup, Tag
 from librus_apix.client import Client

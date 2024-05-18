@@ -3,6 +3,7 @@ from logging import Logger
 from typing import Union
 import pytest
 
+from librus_apix.client import Client
 from librus_apix.schedule import Event, get_schedule
 
 now = datetime.now()
@@ -23,8 +24,8 @@ def _test_event_data(event: Event, log: Logger):
     "month",
     [now.month, (now + timedelta(days=31)).month, (now - timedelta(days=31)).month],
 )
-def test_get_schedule_with_empty_days(token, year, month, log: Logger):
-    schedule = get_schedule(token, month, year, True)
+def test_get_schedule_with_empty_days(client: Client, year, month, log: Logger):
+    schedule = get_schedule(client, month, year, True)
     assert isinstance(schedule, dict)
     assert len(schedule) > 20
     for day in schedule.values():
@@ -36,8 +37,8 @@ def test_get_schedule_with_empty_days(token, year, month, log: Logger):
     "month",
     [now.month, (now + timedelta(days=31)).month, (now - timedelta(days=31)).month],
 )
-def test_non_empty_schedule(token, year, month, log: Logger):
-    schedule = get_schedule(token, month, year, False)
+def test_non_empty_schedule(client: Client, year, month, log: Logger):
+    schedule = get_schedule(client, month, year, False)
     assert isinstance(schedule, dict)
     for day in schedule.values():
         assert len(day) > 0
