@@ -136,11 +136,11 @@ def _create_lesson(line: Tag):
     weekday = line.select_one("td.tiny")
     weekday = weekday.text if weekday is not None else ""
     data = [td.text.strip() for td in line.find_all("td", attrs={"class": None})]
-    if len(data) != 5:
+    if len(data) < 5:
         raise ParseError(
             "Error while parsing Completed lesson's data. (data isn't 5 element long)"
         )
-    lesson_number, subject_and_teacher, topic, z_value, attendance = data
+    lesson_number, subject_and_teacher, topic, z_value, attendance = data[:5]
     subject_and_teacher = subject_and_teacher.split(", ")
     if len(subject_and_teacher) != 2:
         subject, teacher = (subject_and_teacher[0], subject_and_teacher[0])

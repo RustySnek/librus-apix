@@ -44,6 +44,8 @@ client = Client(proxy=proxy)
 # or just pass it into your existing client
 client.proxy = proxy
 ```
+
+### in further docs will find AI slop. Be sure to report any inconsistencies in issues!
 """
 
 from importlib import metadata as importlib_metadata
