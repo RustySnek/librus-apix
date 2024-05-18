@@ -1,7 +1,7 @@
 from logging import Logger
 from typing import DefaultDict, Union
 import pytest
-from librus_apix.get_token import Token
+from librus_apix.client import Client
 from librus_apix.grades import Gpa, Grade, get_grades
 
 
@@ -15,8 +15,8 @@ def _test_grade_data(grade: Grade, log: Logger):
 
 
 @pytest.mark.parametrize("opt", ["all", "week", "last_login"])
-def test_get_grades(token: Token, opt: str, log: Logger):
-    grades, semester_grades, descriptive_grades = get_grades(token, opt)
+def test_get_grades(client: Client, opt: str, log: Logger):
+    grades, semester_grades, descriptive_grades = get_grades(client, opt)
     assert isinstance(grades, list)
     assert isinstance(descriptive_grades, list)
     assert isinstance(semester_grades, DefaultDict)
