@@ -45,7 +45,7 @@ client = Client(proxy=proxy)
 client.proxy = proxy
 ```
 
-### in further docs will find AI slop. Be sure to report any inconsistencies in issues!
+### in further docs you will find AI slop. Be sure to report any inconsistencies in issues!
 """
 
 from importlib import metadata as importlib_metadata
