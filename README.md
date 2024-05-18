@@ -40,22 +40,30 @@ pip install librus-apix
 
 # Quick Start
 
-## Getting the Token
+## Setting up client
 ```py
-from librus_apix.get_token import get_token
+from librus_apix.client import Client, Token, new_client
 
-token = get_token("Username", "Password")
+# create a new client with empty Token()
+client: Client = new_client()
+# update the token
+_token: Token = client.get_token("username", "password")
+# now you can pass your client to librus-apix functions
 ```
 ### Save and Load token
 ```py
-from librus_apix.get_token import get_token, Token
+from librus_apix.client import Token, Client, new_client
 
-token = get_token("Username", "Password")
+key = client.token.API_Key
 
-token_key = token.API_Key
-# you can store this key and later load it into Token class like this:
-token = Token(token_key)
-
+# you can store this key and later load it in ways like this:
+## Load directly into token object
+token = Token(API_Key=token_key)
+client: Client = new_client(token=token)
+## or put it into existing client
+client.token = token
+## or into empty token
+client.token.API_Key = key
 
 ```
 ### Getting the Math grades
@@ -63,7 +71,7 @@ token = Token(token_key)
 ```py
 from librus_apix.grades import get_grades
 
-grades, average_grades, descriptive_grades = get_grades(token)
+grades, average_grades, descriptive_grades = get_grades(client)
 
 for semester in grades:
   for mark in semester["Mathematics"]:
@@ -77,7 +85,7 @@ for semester in descriptive_grades:
 ```py
 from librus_apix.announcements import get_announcements
 
-announcements = get_announcements(token)
+announcements = get_announcements(client)
 
 for a in announcements:
   print(a.description)
@@ -88,7 +96,7 @@ for a in announcements:
 ```py
 from librus_apix.attendance import get_attendance
 
-first_semester, second_semester = get_attendance(token)
+first_semester, second_semester = get_attendance(client)
 
 for attendance in first_semester:
   print(attendance.symbol, attendance.date)
@@ -99,7 +107,7 @@ for attendance in first_semester:
 ```py
 from librus_apix.attendance import get_attendance_frequency
 
-first, second, overall = get_attendance_frequency(token)
+first, second, overall = get_attendance_frequency(client)
 print(f"{first*100}%")
 
 ```
@@ -112,12 +120,12 @@ from librus_apix.homework import get_homework, homework_detail
 date_from = '2023-03-02'
 date_to = '2023-03-30'
 
-homework = get_homework(token, date_from, date_to)
+homework = get_homework(client, date_from, date_to)
 
 for h in homework:
   print(h.lesson, h.completion_date)
   href = h.href
-  details = homework_detail(token, href)
+  details = homework_detail(client, href)
   print(details)
 
 ```
@@ -126,12 +134,12 @@ for h in homework:
 ```py
 from librus_apix.messages import recipient_groups, get_recipients, send_message
 
-groups = recipient_groups(token)
-recipients = get_recipients(token, groups[0])
+groups = recipient_groups(client)
+recipients = get_recipients(client, groups[0])
 my_recipient = recipients["John Brown"]
 my_second_recipient = recipients["Barbara Brown"]
 
-sent = send_message(token,
+sent = send_message(client,
                    "Message Title",
                    "Message\n content",
                    "teachers",
@@ -147,11 +155,11 @@ else:
 ```py
 from librus_apix.messages import get_recieved, message_content
 
-messages = get_recieved(token, page=1)
+messages = get_recieved(client, page=1)
 for message in messages:
   print(message.title)
   href = message.href
-  print(message_content(token, href))
+  print(message_content(client, href))
 
 ```
 
@@ -161,12 +169,12 @@ for message in messages:
 from librus_apix.schedule import get_schedule, schedule_detail
 month = '2'
 year = '2023'
-schedule = get_schedule(token, month, year)
+schedule = get_schedule(client, month, year)
 for day in schedule:
   for event in schedule[day]:
     print(event.title)
     prefix, href = event.href.split('/')
-    details = schedule_detail(token, prefix, href)
+    details = schedule_detail(client, prefix, href)
     print(details)
 
 ```
@@ -179,7 +187,7 @@ from librus_apix.timetable import get_timetable
 
 monday_date = '2023-04-3'
 monday_datetime = datetime.strptime(monday_date, '%Y-%m-%d')
-timetable = get_timetable(token, monday_datetime)
+timetable = get_timetable(client, monday_datetime)
 for weekday in timetable:
   for period in timetable[weekday]:
     print(period.subject, period.teacher_and_classroom)
@@ -191,18 +199,16 @@ for weekday in timetable:
 ```py
 from librus_apix.student_information import student_information
 
-info = student_information(token)
+info = student_information(client)
 print(info.lucky_number)
 ```
 
 ### Adding a proxy
 ```py
 # Proxy can be added with
-token = get_token(u, p, proxy={"https": "http://my-proxy.xyz"})
+client = new_client(proxy={"https": "http://my-proxy.xyz"})
 # or
-token.proxy = {"https": "http://my-proxy.xyz"}
-# or
-token = Token(token_key, proxy={"https": "http://my-proxy.xyz"})
+client.proxy = {"https": "http://my-proxy.xyz"}
 ```
 
 ## Working On The Project
