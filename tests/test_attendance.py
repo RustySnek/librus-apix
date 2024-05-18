@@ -1,4 +1,4 @@
-from ctypes import ArgumentError
+from librus_apix.exceptions import ArgumentError
 from logging import Logger
 import pytest
 

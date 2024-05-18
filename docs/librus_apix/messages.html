@@ -1,0 +1,1159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>librus_apix.messages API documentation</title>
+<meta name="description" content="This module provides functions for interacting with messages in the Librus messaging system, including sending, retrieving, and parsing messages …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>librus_apix.messages</code></h1>
+</header>
+<section id="section-intro">
+<p>This module provides functions for interacting with messages in the Librus messaging system, including sending, retrieving, and parsing messages.</p>
+<h2 id="classes">Classes</h2>
+<ul>
+<li>Message: Represents a message with details like author, title, date, etc.</li>
+<li>MessageData: Represents the data of a message content.</li>
+</ul>
+<h2 id="functions">Functions</h2>
+<ul>
+<li>recipient_groups: Retrieves the list of recipient groups available for sending messages.</li>
+<li>get_recipients: Retrieves the recipients belonging to a specific group.</li>
+<li>send_message: Sends a message to selected recipients.</li>
+<li>message_content: Retrieves the content of a message.</li>
+<li>get_max_page_number: Retrieves the maximum page number of messages.</li>
+<li>get_received: Retrieves received messages from a specific page.</li>
+<li>get_sent: Retrieves sent messages from a specific page.</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<pre><code class="language-py">
+    from librus_apix.client import new_client
+
+    # Create a new client instance
+    client = new_client()
+    client.get_token(username, password)
+
+    # Retrieve recipient groups and recipients
+    groups = recipient_groups(client)
+    recipients = get_recipients(client, groups[0])
+
+    # Send a message
+    title = &quot;Test Message&quot;
+    content = &quot;This is a test message.&quot;
+    recipient_ids = list(recipients.values())
+    success, result_message = send_message(client, title, content, recipient_ids)
+
+    # Get recieved/sent messages
+    messages = get_sent(client, page=1)
+    messages = get_recieved(client, page=1)
+    ...
+    # Retrieve content of a message
+    for message in messages:
+        content = message_content(client, message.href)
+        ...
+</code></pre>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+This module provides functions for interacting with messages in the Librus messaging system, including sending, retrieving, and parsing messages.
+
+Classes:
+    - Message: Represents a message with details like author, title, date, etc.
+    - MessageData: Represents the data of a message content.
+
+Functions:
+    - recipient_groups: Retrieves the list of recipient groups available for sending messages.
+    - get_recipients: Retrieves the recipients belonging to a specific group.
+    - send_message: Sends a message to selected recipients.
+    - message_content: Retrieves the content of a message.
+    - get_max_page_number: Retrieves the maximum page number of messages.
+    - get_received: Retrieves received messages from a specific page.
+    - get_sent: Retrieves sent messages from a specific page.
+
+Usage:
+    ```py
+
+        from librus_apix.client import new_client
+
+        # Create a new client instance
+        client = new_client()
+        client.get_token(username, password)
+
+        # Retrieve recipient groups and recipients
+        groups = recipient_groups(client)
+        recipients = get_recipients(client, groups[0])
+
+        # Send a message
+        title = &#34;Test Message&#34;
+        content = &#34;This is a test message.&#34;
+        recipient_ids = list(recipients.values())
+        success, result_message = send_message(client, title, content, recipient_ids)
+
+        # Get recieved/sent messages
+        messages = get_sent(client, page=1)
+        messages = get_recieved(client, page=1)
+        ...
+        # Retrieve content of a message
+        for message in messages:
+            content = message_content(client, message.href)
+            ...
+    ```
+&#34;&#34;&#34;
+
+from typing import List, Tuple
+from bs4 import BeautifulSoup, Tag
+from librus_apix.client import Client
+from librus_apix.exceptions import ParseError
+from librus_apix.helpers import no_access_check
+from dataclasses import dataclass
+import re
+
+
+@dataclass
+class MessageData:
+    &#34;&#34;&#34;
+    Represents the data of a message content.
+
+    Attributes:
+        author (str): The author of the message.
+        title (str): The title of the message.
+        content (str): The content of the message.
+        date (str): The date when the message was sent.
+    &#34;&#34;&#34;
+
+    author: str
+    title: str
+    content: str
+    date: str
+
+
+@dataclass
+class Message:
+    &#34;&#34;&#34;
+    Represents a message.
+
+    Attributes:
+        author (str): The author of the message.
+        title (str): The title of the message.
+        date (str): The date when the message was sent.
+        href (str): The URL reference to the message.
+        unread (bool): Indicates if the message is unread.
+        has_attachment (bool): Indicates if the message has attachments.
+    &#34;&#34;&#34;
+
+    author: str
+    title: str
+    date: str
+    href: str
+    unread: bool
+    has_attachment: bool
+
+
+def recipient_groups(client: Client) -&gt; List[str]:
+    &#34;&#34;&#34;
+    Retrieves the list of recipient groups available for sending messages.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+
+    Returns:
+        List[str]: A list of recipient group identifiers.
+    &#34;&#34;&#34;
+    soup = no_access_check(
+        BeautifulSoup(client.get(client.RECIPIENT_GROUPS_URL).text, &#34;lxml&#34;)
+    )
+    groups = []
+    trs = soup.select(&#34;table.message-recipients &gt; tbody &gt; tr&#34;)
+    for tr in trs:
+        radio = tr.select_one(&#34;input.recipiantTypeRadio&#34;)
+        if radio is None:
+            raise ParseError(&#34;Error getting groups (radio)&#34;)
+        groups.append(radio.attrs.get(&#34;value&#34;, &#34;&#34;))
+    return groups
+
+
+def get_recipients(client: Client, group: str):
+    &#34;&#34;&#34;
+    Retrieves the recipients belonging to a specific group.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        group (str): The identifier of the recipient group.
+
+    Returns:
+        dict: A dictionary mapping teacher names to their IDs.
+    &#34;&#34;&#34;
+    payload = {
+        &#34;typAdresata&#34;: group,
+        &#34;poprzednia&#34;: &#34;5&#34;,
+        &#34;tabZaznaczonych&#34;: &#34;&#34;,
+        &#34;czyWirtualneKlasy&#34;: False,
+        &#34;idGrupy&#34;: &#34;0&#34;,
+    }
+    soup = no_access_check(
+        BeautifulSoup(client.post(client.RECIPIENTS_URL, data=payload).text, &#34;lxml&#34;)
+    )
+    labels = soup.select(&#34;label&#34;)
+    teachers = {}
+    for label in labels:
+        teachers[label.text.replace(&#34;\xa0&#34;, &#34;&#34;)] = label.attrs.get(&#34;for&#34;, &#34;_&#34;).split(
+            &#34;_&#34;
+        )[-1]
+    return teachers
+
+
+def send_message(
+    client: Client,
+    title: str,
+    content: str,
+    recipient_ids: list[str],
+) -&gt; Tuple[bool, str]:
+    &#34;&#34;&#34;
+    Sends a message to selected recipients.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        title (str): The title of the message.
+        content (str): The content of the message.
+        recipient_ids (list[str]): The list of recipient IDs.
+
+    Returns:
+        Tuple[bool, str]: A tuple indicating whether the message was sent successfully
+        and the result message.
+    &#34;&#34;&#34;
+    payload = {
+        &#34;filtrUzytkownikow&#34;: &#34;0&#34;,
+        &#34;idPojemnika&#34;: &#34;&#34;,
+        &#34;DoKogo&#34;: recipient_ids,
+        &#34;Rodzaj&#34;: &#34;0&#34;,
+        &#34;temat&#34;: title,
+        &#34;tresc&#34;: content,
+        &#34;poprzednia&#34;: &#34;5&#34;,
+        &#34;fileStorageIdentifier&#34;: &#34;&#34;,
+        &#34;wyslij&#34;: &#34;Wyślij&#34;,
+    }
+    sent_message = no_access_check(
+        BeautifulSoup(client.post(client.SEND_MESSAGE_URL, data=payload).text, &#34;lxml&#34;)
+    )
+    result = sent_message.select_one(&#34;div.container-background &gt; p&#34;)
+    if result is None:
+        raise ParseError(&#34;Error getting the result of the message!&#34;)
+    result = result.text
+    if &#34;nie zostala&#34; in result:
+        return False, result
+    if sent_message.status_code == 200:
+        return True, result
+    return False, result
+
+
+def unwrap_message_data(tr: Tag) -&gt; str:
+    value = tr.select_one(&#34;td[class=&#39;left&#39;]&#34;)
+    return value.text if value is not None else &#34;&#34;
+
+
+def message_content(client: Client, content_url: str) -&gt; MessageData:
+    &#34;&#34;&#34;
+    Retrieves the content of a message.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        content_url (str): The URL of the message content.
+
+    Returns:
+        MessageData: An object containing the message details.
+    &#34;&#34;&#34;
+    soup = no_access_check(
+        BeautifulSoup(client.get(client.MESSAGE_URL + &#34;/&#34; + content_url).text, &#34;lxml&#34;)
+    )
+    message_data = soup.select_one(&#34;table[class=&#39;stretch&#39;]&#34;)
+    if message_data is None:
+        raise ParseError(&#34;Error in parsing message data.&#34;)
+    trs = message_data.select(&#34;tr&#34;)
+    if len(trs) &lt; 3:
+        raise ParseError(&#34;Not enough values to unpack from message_data&#34;)
+    author, title, date = trs[:3]
+    content = soup.find(&#34;div&#34;, attrs={&#34;class&#34;: &#34;container-message-content&#34;})
+    if content is None:
+        raise ParseError(&#34;Error in parsing message content.&#34;)
+    return MessageData(
+        unwrap_message_data(author),
+        unwrap_message_data(title),
+        content.text,
+        unwrap_message_data(date),
+    )
+
+
+def _sanitize_href(href: str) -&gt; str:
+    if len(href) &gt; 4:
+        return href.split(&#34;/&#34;)[4]
+    return &#34;&#34;
+
+
+def parse_sent(message_soup: BeautifulSoup) -&gt; List[Message]:
+    &#34;&#34;&#34;
+    Parses sent messages from the message soup.
+
+    Args:
+        message_soup (BeautifulSoup): The BeautifulSoup object containing message data.
+
+    Returns:
+        List[Message]: A list of Message objects representing sent messages.
+    &#34;&#34;&#34;
+    msgs: List[Message] = []
+    hasAttachment = False
+    soup = message_soup.find(&#34;table&#34;, attrs={&#34;class&#34;: &#34;decorated stretch&#34;})
+    if soup is None:
+        raise ParseError(&#34;Error in parsing messages.&#34;)
+    tbody = soup.find(&#34;tbody&#34;)
+    if not isinstance(tbody, Tag):
+        raise ParseError(&#34;Error in parsing messages (tbody).&#34;)
+    tds = tbody.find_all(&#34;tr&#34;, attrs={&#34;class&#34;: [&#34;line0&#34;, &#34;line1&#34;]})
+    if tds[0].text.strip() == &#34;Brak wiadomości&#34;:
+        return []
+    for td in tds:
+        hasAttachment = False
+        message_data: List[Tag] = td.find_all(&#34;td&#34;)
+        if len(message_data) &lt; 7:
+            raise ParseError(&#34;Message data has less than 7 elements&#34;)
+        _tick, attachment, author, title, date, unread, _trash = message_data[:7]
+        if attachment.find(&#34;img&#34;):
+            hasAttachment = True
+        unread = True if unread == &#34;NIE&#34; else False
+        author_a = author.find(&#34;a&#34;)
+        href = &#34;&#34;
+        if isinstance(author_a, Tag):
+            href = author_a.attrs.get(&#34;href&#34;, &#34;&#34;)
+            href = _sanitize_href(href)
+        author = author.text
+        title = title.text
+        date = date.text
+        m = Message(author, title, date, href, unread, hasAttachment)
+        msgs.append(m)
+    return msgs
+
+
+def parse(message_soup: BeautifulSoup) -&gt; List[Message]:
+    &#34;&#34;&#34;
+    Parses received messages from the message soup.
+
+    Args:
+        message_soup (BeautifulSoup): The BeautifulSoup object containing message data.
+
+    Returns:
+        List[Message]: A list of Message objects representing received messages.
+    &#34;&#34;&#34;
+    msgs: List[Message] = []
+    hasAttachment = False
+    soup = message_soup.find(&#34;table&#34;, attrs={&#34;class&#34;: &#34;decorated stretch&#34;})
+    if soup is None:
+        raise ParseError(&#34;Error in parsing messages.&#34;)
+    tbody = soup.find(&#34;tbody&#34;)
+    if not isinstance(tbody, Tag):
+        raise ParseError(&#34;Error in parsing messages (tbody).&#34;)
+    tds = tbody.find_all(&#34;tr&#34;, attrs={&#34;class&#34;: [&#34;line0&#34;, &#34;line1&#34;]})
+    if tds[0].text.strip() == &#34;Brak wiadomości&#34;:
+        return []
+    for td in tds:
+        unread = False
+        hasAttachment = False
+        message_data: List[Tag] = td.find_all(&#34;td&#34;)
+        if len(message_data) &lt; 6:
+            raise ParseError(&#34;Message data has less than 6 elements&#34;)
+        _tick, attachment, author, title, date, _trash = message_data[:6]
+        if attachment.find(&#34;img&#34;):
+            hasAttachment = True
+        style = title.get(&#34;style&#34;)
+        if not isinstance(style, List):
+            style = []
+        if &#34;font-weight: bold&#34; in style:
+            unread = True
+
+        author_a = author.find(&#34;a&#34;)
+        href = &#34;&#34;
+        if isinstance(author_a, Tag):
+            href = author_a.attrs.get(&#34;href&#34;, &#34;&#34;)
+            href = _sanitize_href(href)
+
+        author = author.text
+        title = title.text
+        date = date.text
+        m = Message(author, title, date, href, unread, hasAttachment)
+        msgs.append(m)
+    return msgs
+
+
+def get_max_page_number(client: Client) -&gt; int:
+    &#34;&#34;&#34;
+    Retrieves the maximum page number of messages.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+
+    Returns:
+        int: The maximum page number.
+    &#34;&#34;&#34;
+    soup = no_access_check(BeautifulSoup(client.get(client.MESSAGE_URL).text, &#34;lxml&#34;))
+    try:
+        pages = soup.select_one(&#34;div.pagination &gt; span&#34;)
+        if not pages:
+            return 0
+        max_pages = pages.text.replace(&#34;\xa0&#34;, &#34;&#34;)
+        max_pages_re = re.search(&#34;z[0-9]*&#34;, max_pages)
+        if max_pages_re is None:
+            return 0
+        max_pages_number = int(max_pages_re.group(0).replace(&#34;z&#34;, &#34;&#34;))
+    except:
+        raise ParseError(&#34;Error while trying to get max page number.&#34;)
+    return max_pages_number - 1
+
+
+def get_recieved(client: Client, page: int) -&gt; List[Message]:
+    &#34;&#34;&#34;
+    Retrieves received messages from a specific page.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        page (int): The page number of messages to retrieve.
+
+    Returns:
+        List[Message]: A list of received Message objects.
+    &#34;&#34;&#34;
+    payload = {
+        &#34;numer_strony105&#34;: page,
+        &#34;porcjowanie_pojemnik105&#34;: &#34;105&#34;,
+    }
+    response = client.post(client.MESSAGE_URL, data=payload)
+    soup = no_access_check(BeautifulSoup(response.text, &#34;lxml&#34;))
+    recieved_msgs = parse(soup)
+    return recieved_msgs
+
+
+def get_sent(client: Client, page: int) -&gt; List[Message]:
+    &#34;&#34;&#34;
+    Retrieves sent messages from a specific page.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        page (int): The page number of messages to retrieve.
+
+    Returns:
+        List[Message]: A list of sent Message objects.
+    &#34;&#34;&#34;
+    payload = {
+        &#34;numer_strony105&#34;: page,
+        &#34;porcjowanie_pojemnik105&#34;: &#34;105&#34;,
+    }
+    response = client.post(client.SEND_MESSAGE_URL, data=payload)
+    soup = no_access_check(BeautifulSoup(response.text, &#34;lxml&#34;))
+    recieved_msgs = parse_sent(soup)
+    return recieved_msgs</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="librus_apix.messages.get_max_page_number"><code class="name flex">
+<span>def <span class="ident">get_max_page_number</span></span>(<span>client: <a title="librus_apix.client.Client" href="client.html#librus_apix.client.Client">Client</a>) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieves the maximum page number of messages.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>client</code></strong> :&ensp;<code>Client</code></dt>
+<dd>The client object for making HTTP requests.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>int</code></dt>
+<dd>The maximum page number.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_max_page_number(client: Client) -&gt; int:
+    &#34;&#34;&#34;
+    Retrieves the maximum page number of messages.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+
+    Returns:
+        int: The maximum page number.
+    &#34;&#34;&#34;
+    soup = no_access_check(BeautifulSoup(client.get(client.MESSAGE_URL).text, &#34;lxml&#34;))
+    try:
+        pages = soup.select_one(&#34;div.pagination &gt; span&#34;)
+        if not pages:
+            return 0
+        max_pages = pages.text.replace(&#34;\xa0&#34;, &#34;&#34;)
+        max_pages_re = re.search(&#34;z[0-9]*&#34;, max_pages)
+        if max_pages_re is None:
+            return 0
+        max_pages_number = int(max_pages_re.group(0).replace(&#34;z&#34;, &#34;&#34;))
+    except:
+        raise ParseError(&#34;Error while trying to get max page number.&#34;)
+    return max_pages_number - 1</code></pre>
+</details>
+</dd>
+<dt id="librus_apix.messages.get_recieved"><code class="name flex">
+<span>def <span class="ident">get_recieved</span></span>(<span>client: <a title="librus_apix.client.Client" href="client.html#librus_apix.client.Client">Client</a>, page: int) ‑> List[<a title="librus_apix.messages.Message" href="#librus_apix.messages.Message">Message</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieves received messages from a specific page.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>client</code></strong> :&ensp;<code>Client</code></dt>
+<dd>The client object for making HTTP requests.</dd>
+<dt><strong><code>page</code></strong> :&ensp;<code>int</code></dt>
+<dd>The page number of messages to retrieve.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[<a title="librus_apix.messages.Message" href="#librus_apix.messages.Message">Message</a>]</code></dt>
+<dd>A list of received Message objects.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_recieved(client: Client, page: int) -&gt; List[Message]:
+    &#34;&#34;&#34;
+    Retrieves received messages from a specific page.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        page (int): The page number of messages to retrieve.
+
+    Returns:
+        List[Message]: A list of received Message objects.
+    &#34;&#34;&#34;
+    payload = {
+        &#34;numer_strony105&#34;: page,
+        &#34;porcjowanie_pojemnik105&#34;: &#34;105&#34;,
+    }
+    response = client.post(client.MESSAGE_URL, data=payload)
+    soup = no_access_check(BeautifulSoup(response.text, &#34;lxml&#34;))
+    recieved_msgs = parse(soup)
+    return recieved_msgs</code></pre>
+</details>
+</dd>
+<dt id="librus_apix.messages.get_recipients"><code class="name flex">
+<span>def <span class="ident">get_recipients</span></span>(<span>client: <a title="librus_apix.client.Client" href="client.html#librus_apix.client.Client">Client</a>, group: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieves the recipients belonging to a specific group.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>client</code></strong> :&ensp;<code>Client</code></dt>
+<dd>The client object for making HTTP requests.</dd>
+<dt><strong><code>group</code></strong> :&ensp;<code>str</code></dt>
+<dd>The identifier of the recipient group.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>A dictionary mapping teacher names to their IDs.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_recipients(client: Client, group: str):
+    &#34;&#34;&#34;
+    Retrieves the recipients belonging to a specific group.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        group (str): The identifier of the recipient group.
+
+    Returns:
+        dict: A dictionary mapping teacher names to their IDs.
+    &#34;&#34;&#34;
+    payload = {
+        &#34;typAdresata&#34;: group,
+        &#34;poprzednia&#34;: &#34;5&#34;,
+        &#34;tabZaznaczonych&#34;: &#34;&#34;,
+        &#34;czyWirtualneKlasy&#34;: False,
+        &#34;idGrupy&#34;: &#34;0&#34;,
+    }
+    soup = no_access_check(
+        BeautifulSoup(client.post(client.RECIPIENTS_URL, data=payload).text, &#34;lxml&#34;)
+    )
+    labels = soup.select(&#34;label&#34;)
+    teachers = {}
+    for label in labels:
+        teachers[label.text.replace(&#34;\xa0&#34;, &#34;&#34;)] = label.attrs.get(&#34;for&#34;, &#34;_&#34;).split(
+            &#34;_&#34;
+        )[-1]
+    return teachers</code></pre>
+</details>
+</dd>
+<dt id="librus_apix.messages.get_sent"><code class="name flex">
+<span>def <span class="ident">get_sent</span></span>(<span>client: <a title="librus_apix.client.Client" href="client.html#librus_apix.client.Client">Client</a>, page: int) ‑> List[<a title="librus_apix.messages.Message" href="#librus_apix.messages.Message">Message</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieves sent messages from a specific page.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>client</code></strong> :&ensp;<code>Client</code></dt>
+<dd>The client object for making HTTP requests.</dd>
+<dt><strong><code>page</code></strong> :&ensp;<code>int</code></dt>
+<dd>The page number of messages to retrieve.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[<a title="librus_apix.messages.Message" href="#librus_apix.messages.Message">Message</a>]</code></dt>
+<dd>A list of sent Message objects.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_sent(client: Client, page: int) -&gt; List[Message]:
+    &#34;&#34;&#34;
+    Retrieves sent messages from a specific page.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        page (int): The page number of messages to retrieve.
+
+    Returns:
+        List[Message]: A list of sent Message objects.
+    &#34;&#34;&#34;
+    payload = {
+        &#34;numer_strony105&#34;: page,
+        &#34;porcjowanie_pojemnik105&#34;: &#34;105&#34;,
+    }
+    response = client.post(client.SEND_MESSAGE_URL, data=payload)
+    soup = no_access_check(BeautifulSoup(response.text, &#34;lxml&#34;))
+    recieved_msgs = parse_sent(soup)
+    return recieved_msgs</code></pre>
+</details>
+</dd>
+<dt id="librus_apix.messages.message_content"><code class="name flex">
+<span>def <span class="ident">message_content</span></span>(<span>client: <a title="librus_apix.client.Client" href="client.html#librus_apix.client.Client">Client</a>, content_url: str) ‑> <a title="librus_apix.messages.MessageData" href="#librus_apix.messages.MessageData">MessageData</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieves the content of a message.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>client</code></strong> :&ensp;<code>Client</code></dt>
+<dd>The client object for making HTTP requests.</dd>
+<dt><strong><code>content_url</code></strong> :&ensp;<code>str</code></dt>
+<dd>The URL of the message content.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="librus_apix.messages.MessageData" href="#librus_apix.messages.MessageData">MessageData</a></code></dt>
+<dd>An object containing the message details.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def message_content(client: Client, content_url: str) -&gt; MessageData:
+    &#34;&#34;&#34;
+    Retrieves the content of a message.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        content_url (str): The URL of the message content.
+
+    Returns:
+        MessageData: An object containing the message details.
+    &#34;&#34;&#34;
+    soup = no_access_check(
+        BeautifulSoup(client.get(client.MESSAGE_URL + &#34;/&#34; + content_url).text, &#34;lxml&#34;)
+    )
+    message_data = soup.select_one(&#34;table[class=&#39;stretch&#39;]&#34;)
+    if message_data is None:
+        raise ParseError(&#34;Error in parsing message data.&#34;)
+    trs = message_data.select(&#34;tr&#34;)
+    if len(trs) &lt; 3:
+        raise ParseError(&#34;Not enough values to unpack from message_data&#34;)
+    author, title, date = trs[:3]
+    content = soup.find(&#34;div&#34;, attrs={&#34;class&#34;: &#34;container-message-content&#34;})
+    if content is None:
+        raise ParseError(&#34;Error in parsing message content.&#34;)
+    return MessageData(
+        unwrap_message_data(author),
+        unwrap_message_data(title),
+        content.text,
+        unwrap_message_data(date),
+    )</code></pre>
+</details>
+</dd>
+<dt id="librus_apix.messages.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>message_soup: bs4.BeautifulSoup) ‑> List[<a title="librus_apix.messages.Message" href="#librus_apix.messages.Message">Message</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parses received messages from the message soup.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>message_soup</code></strong> :&ensp;<code>BeautifulSoup</code></dt>
+<dd>The BeautifulSoup object containing message data.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[<a title="librus_apix.messages.Message" href="#librus_apix.messages.Message">Message</a>]</code></dt>
+<dd>A list of Message objects representing received messages.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(message_soup: BeautifulSoup) -&gt; List[Message]:
+    &#34;&#34;&#34;
+    Parses received messages from the message soup.
+
+    Args:
+        message_soup (BeautifulSoup): The BeautifulSoup object containing message data.
+
+    Returns:
+        List[Message]: A list of Message objects representing received messages.
+    &#34;&#34;&#34;
+    msgs: List[Message] = []
+    hasAttachment = False
+    soup = message_soup.find(&#34;table&#34;, attrs={&#34;class&#34;: &#34;decorated stretch&#34;})
+    if soup is None:
+        raise ParseError(&#34;Error in parsing messages.&#34;)
+    tbody = soup.find(&#34;tbody&#34;)
+    if not isinstance(tbody, Tag):
+        raise ParseError(&#34;Error in parsing messages (tbody).&#34;)
+    tds = tbody.find_all(&#34;tr&#34;, attrs={&#34;class&#34;: [&#34;line0&#34;, &#34;line1&#34;]})
+    if tds[0].text.strip() == &#34;Brak wiadomości&#34;:
+        return []
+    for td in tds:
+        unread = False
+        hasAttachment = False
+        message_data: List[Tag] = td.find_all(&#34;td&#34;)
+        if len(message_data) &lt; 6:
+            raise ParseError(&#34;Message data has less than 6 elements&#34;)
+        _tick, attachment, author, title, date, _trash = message_data[:6]
+        if attachment.find(&#34;img&#34;):
+            hasAttachment = True
+        style = title.get(&#34;style&#34;)
+        if not isinstance(style, List):
+            style = []
+        if &#34;font-weight: bold&#34; in style:
+            unread = True
+
+        author_a = author.find(&#34;a&#34;)
+        href = &#34;&#34;
+        if isinstance(author_a, Tag):
+            href = author_a.attrs.get(&#34;href&#34;, &#34;&#34;)
+            href = _sanitize_href(href)
+
+        author = author.text
+        title = title.text
+        date = date.text
+        m = Message(author, title, date, href, unread, hasAttachment)
+        msgs.append(m)
+    return msgs</code></pre>
+</details>
+</dd>
+<dt id="librus_apix.messages.parse_sent"><code class="name flex">
+<span>def <span class="ident">parse_sent</span></span>(<span>message_soup: bs4.BeautifulSoup) ‑> List[<a title="librus_apix.messages.Message" href="#librus_apix.messages.Message">Message</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Parses sent messages from the message soup.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>message_soup</code></strong> :&ensp;<code>BeautifulSoup</code></dt>
+<dd>The BeautifulSoup object containing message data.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[<a title="librus_apix.messages.Message" href="#librus_apix.messages.Message">Message</a>]</code></dt>
+<dd>A list of Message objects representing sent messages.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse_sent(message_soup: BeautifulSoup) -&gt; List[Message]:
+    &#34;&#34;&#34;
+    Parses sent messages from the message soup.
+
+    Args:
+        message_soup (BeautifulSoup): The BeautifulSoup object containing message data.
+
+    Returns:
+        List[Message]: A list of Message objects representing sent messages.
+    &#34;&#34;&#34;
+    msgs: List[Message] = []
+    hasAttachment = False
+    soup = message_soup.find(&#34;table&#34;, attrs={&#34;class&#34;: &#34;decorated stretch&#34;})
+    if soup is None:
+        raise ParseError(&#34;Error in parsing messages.&#34;)
+    tbody = soup.find(&#34;tbody&#34;)
+    if not isinstance(tbody, Tag):
+        raise ParseError(&#34;Error in parsing messages (tbody).&#34;)
+    tds = tbody.find_all(&#34;tr&#34;, attrs={&#34;class&#34;: [&#34;line0&#34;, &#34;line1&#34;]})
+    if tds[0].text.strip() == &#34;Brak wiadomości&#34;:
+        return []
+    for td in tds:
+        hasAttachment = False
+        message_data: List[Tag] = td.find_all(&#34;td&#34;)
+        if len(message_data) &lt; 7:
+            raise ParseError(&#34;Message data has less than 7 elements&#34;)
+        _tick, attachment, author, title, date, unread, _trash = message_data[:7]
+        if attachment.find(&#34;img&#34;):
+            hasAttachment = True
+        unread = True if unread == &#34;NIE&#34; else False
+        author_a = author.find(&#34;a&#34;)
+        href = &#34;&#34;
+        if isinstance(author_a, Tag):
+            href = author_a.attrs.get(&#34;href&#34;, &#34;&#34;)
+            href = _sanitize_href(href)
+        author = author.text
+        title = title.text
+        date = date.text
+        m = Message(author, title, date, href, unread, hasAttachment)
+        msgs.append(m)
+    return msgs</code></pre>
+</details>
+</dd>
+<dt id="librus_apix.messages.recipient_groups"><code class="name flex">
+<span>def <span class="ident">recipient_groups</span></span>(<span>client: <a title="librus_apix.client.Client" href="client.html#librus_apix.client.Client">Client</a>) ‑> List[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Retrieves the list of recipient groups available for sending messages.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>client</code></strong> :&ensp;<code>Client</code></dt>
+<dd>The client object for making HTTP requests.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[str]</code></dt>
+<dd>A list of recipient group identifiers.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def recipient_groups(client: Client) -&gt; List[str]:
+    &#34;&#34;&#34;
+    Retrieves the list of recipient groups available for sending messages.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+
+    Returns:
+        List[str]: A list of recipient group identifiers.
+    &#34;&#34;&#34;
+    soup = no_access_check(
+        BeautifulSoup(client.get(client.RECIPIENT_GROUPS_URL).text, &#34;lxml&#34;)
+    )
+    groups = []
+    trs = soup.select(&#34;table.message-recipients &gt; tbody &gt; tr&#34;)
+    for tr in trs:
+        radio = tr.select_one(&#34;input.recipiantTypeRadio&#34;)
+        if radio is None:
+            raise ParseError(&#34;Error getting groups (radio)&#34;)
+        groups.append(radio.attrs.get(&#34;value&#34;, &#34;&#34;))
+    return groups</code></pre>
+</details>
+</dd>
+<dt id="librus_apix.messages.send_message"><code class="name flex">
+<span>def <span class="ident">send_message</span></span>(<span>client: <a title="librus_apix.client.Client" href="client.html#librus_apix.client.Client">Client</a>, title: str, content: str, recipient_ids: list[str]) ‑> Tuple[bool, str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sends a message to selected recipients.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>client</code></strong> :&ensp;<code>Client</code></dt>
+<dd>The client object for making HTTP requests.</dd>
+<dt><strong><code>title</code></strong> :&ensp;<code>str</code></dt>
+<dd>The title of the message.</dd>
+<dt><strong><code>content</code></strong> :&ensp;<code>str</code></dt>
+<dd>The content of the message.</dd>
+<dt><strong><code>recipient_ids</code></strong> :&ensp;<code>list[str]</code></dt>
+<dd>The list of recipient IDs.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Tuple[bool, str]</code></dt>
+<dd>A tuple indicating whether the message was sent successfully</dd>
+</dl>
+<p>and the result message.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def send_message(
+    client: Client,
+    title: str,
+    content: str,
+    recipient_ids: list[str],
+) -&gt; Tuple[bool, str]:
+    &#34;&#34;&#34;
+    Sends a message to selected recipients.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        title (str): The title of the message.
+        content (str): The content of the message.
+        recipient_ids (list[str]): The list of recipient IDs.
+
+    Returns:
+        Tuple[bool, str]: A tuple indicating whether the message was sent successfully
+        and the result message.
+    &#34;&#34;&#34;
+    payload = {
+        &#34;filtrUzytkownikow&#34;: &#34;0&#34;,
+        &#34;idPojemnika&#34;: &#34;&#34;,
+        &#34;DoKogo&#34;: recipient_ids,
+        &#34;Rodzaj&#34;: &#34;0&#34;,
+        &#34;temat&#34;: title,
+        &#34;tresc&#34;: content,
+        &#34;poprzednia&#34;: &#34;5&#34;,
+        &#34;fileStorageIdentifier&#34;: &#34;&#34;,
+        &#34;wyslij&#34;: &#34;Wyślij&#34;,
+    }
+    sent_message = no_access_check(
+        BeautifulSoup(client.post(client.SEND_MESSAGE_URL, data=payload).text, &#34;lxml&#34;)
+    )
+    result = sent_message.select_one(&#34;div.container-background &gt; p&#34;)
+    if result is None:
+        raise ParseError(&#34;Error getting the result of the message!&#34;)
+    result = result.text
+    if &#34;nie zostala&#34; in result:
+        return False, result
+    if sent_message.status_code == 200:
+        return True, result
+    return False, result</code></pre>
+</details>
+</dd>
+<dt id="librus_apix.messages.unwrap_message_data"><code class="name flex">
+<span>def <span class="ident">unwrap_message_data</span></span>(<span>tr: bs4.element.Tag) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unwrap_message_data(tr: Tag) -&gt; str:
+    value = tr.select_one(&#34;td[class=&#39;left&#39;]&#34;)
+    return value.text if value is not None else &#34;&#34;</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="librus_apix.messages.Message"><code class="flex name class">
+<span>class <span class="ident">Message</span></span>
+<span>(</span><span>author: str, title: str, date: str, href: str, unread: bool, has_attachment: bool)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents a message.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>author</code></strong> :&ensp;<code>str</code></dt>
+<dd>The author of the message.</dd>
+<dt><strong><code>title</code></strong> :&ensp;<code>str</code></dt>
+<dd>The title of the message.</dd>
+<dt><strong><code>date</code></strong> :&ensp;<code>str</code></dt>
+<dd>The date when the message was sent.</dd>
+<dt><strong><code>href</code></strong> :&ensp;<code>str</code></dt>
+<dd>The URL reference to the message.</dd>
+<dt><strong><code>unread</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Indicates if the message is unread.</dd>
+<dt><strong><code>has_attachment</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Indicates if the message has attachments.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class Message:
+    &#34;&#34;&#34;
+    Represents a message.
+
+    Attributes:
+        author (str): The author of the message.
+        title (str): The title of the message.
+        date (str): The date when the message was sent.
+        href (str): The URL reference to the message.
+        unread (bool): Indicates if the message is unread.
+        has_attachment (bool): Indicates if the message has attachments.
+    &#34;&#34;&#34;
+
+    author: str
+    title: str
+    date: str
+    href: str
+    unread: bool
+    has_attachment: bool</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="librus_apix.messages.Message.author"><code class="name">var <span class="ident">author</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.messages.Message.date"><code class="name">var <span class="ident">date</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.messages.Message.has_attachment"><code class="name">var <span class="ident">has_attachment</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.messages.Message.href"><code class="name">var <span class="ident">href</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.messages.Message.title"><code class="name">var <span class="ident">title</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.messages.Message.unread"><code class="name">var <span class="ident">unread</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="librus_apix.messages.MessageData"><code class="flex name class">
+<span>class <span class="ident">MessageData</span></span>
+<span>(</span><span>author: str, title: str, content: str, date: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents the data of a message content.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>author</code></strong> :&ensp;<code>str</code></dt>
+<dd>The author of the message.</dd>
+<dt><strong><code>title</code></strong> :&ensp;<code>str</code></dt>
+<dd>The title of the message.</dd>
+<dt><strong><code>content</code></strong> :&ensp;<code>str</code></dt>
+<dd>The content of the message.</dd>
+<dt><strong><code>date</code></strong> :&ensp;<code>str</code></dt>
+<dd>The date when the message was sent.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class MessageData:
+    &#34;&#34;&#34;
+    Represents the data of a message content.
+
+    Attributes:
+        author (str): The author of the message.
+        title (str): The title of the message.
+        content (str): The content of the message.
+        date (str): The date when the message was sent.
+    &#34;&#34;&#34;
+
+    author: str
+    title: str
+    content: str
+    date: str</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="librus_apix.messages.MessageData.author"><code class="name">var <span class="ident">author</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.messages.MessageData.content"><code class="name">var <span class="ident">content</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.messages.MessageData.date"><code class="name">var <span class="ident">date</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.messages.MessageData.title"><code class="name">var <span class="ident">title</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="librus_apix" href="index.html">librus_apix</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="librus_apix.messages.get_max_page_number" href="#librus_apix.messages.get_max_page_number">get_max_page_number</a></code></li>
+<li><code><a title="librus_apix.messages.get_recieved" href="#librus_apix.messages.get_recieved">get_recieved</a></code></li>
+<li><code><a title="librus_apix.messages.get_recipients" href="#librus_apix.messages.get_recipients">get_recipients</a></code></li>
+<li><code><a title="librus_apix.messages.get_sent" href="#librus_apix.messages.get_sent">get_sent</a></code></li>
+<li><code><a title="librus_apix.messages.message_content" href="#librus_apix.messages.message_content">message_content</a></code></li>
+<li><code><a title="librus_apix.messages.parse" href="#librus_apix.messages.parse">parse</a></code></li>
+<li><code><a title="librus_apix.messages.parse_sent" href="#librus_apix.messages.parse_sent">parse_sent</a></code></li>
+<li><code><a title="librus_apix.messages.recipient_groups" href="#librus_apix.messages.recipient_groups">recipient_groups</a></code></li>
+<li><code><a title="librus_apix.messages.send_message" href="#librus_apix.messages.send_message">send_message</a></code></li>
+<li><code><a title="librus_apix.messages.unwrap_message_data" href="#librus_apix.messages.unwrap_message_data">unwrap_message_data</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="librus_apix.messages.Message" href="#librus_apix.messages.Message">Message</a></code></h4>
+<ul class="two-column">
+<li><code><a title="librus_apix.messages.Message.author" href="#librus_apix.messages.Message.author">author</a></code></li>
+<li><code><a title="librus_apix.messages.Message.date" href="#librus_apix.messages.Message.date">date</a></code></li>
+<li><code><a title="librus_apix.messages.Message.has_attachment" href="#librus_apix.messages.Message.has_attachment">has_attachment</a></code></li>
+<li><code><a title="librus_apix.messages.Message.href" href="#librus_apix.messages.Message.href">href</a></code></li>
+<li><code><a title="librus_apix.messages.Message.title" href="#librus_apix.messages.Message.title">title</a></code></li>
+<li><code><a title="librus_apix.messages.Message.unread" href="#librus_apix.messages.Message.unread">unread</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="librus_apix.messages.MessageData" href="#librus_apix.messages.MessageData">MessageData</a></code></h4>
+<ul class="">
+<li><code><a title="librus_apix.messages.MessageData.author" href="#librus_apix.messages.MessageData.author">author</a></code></li>
+<li><code><a title="librus_apix.messages.MessageData.content" href="#librus_apix.messages.MessageData.content">content</a></code></li>
+<li><code><a title="librus_apix.messages.MessageData.date" href="#librus_apix.messages.MessageData.date">date</a></code></li>
+<li><code><a title="librus_apix.messages.MessageData.title" href="#librus_apix.messages.MessageData.title">title</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

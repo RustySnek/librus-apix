@@ -1,5 +1,28 @@
-from http.cookiejar import CookieJar
-from typing import Optional, Union, Dict
+"""
+
+This module provides classes and functions for managing API tokens, handling HTTP operations, and creating client instances for interacting with the Librus API.
+
+Classes:
+    - Token: A class to manage and store API tokens.
+    - Client: A class to handle HTTP operations using tokens.
+
+Functions:
+    - new_client: Function to create a new instance of the Client class.
+
+Usage:
+```python
+my_client: Client = new_client()
+_token: Token = my_client.get_token(username, password) # update the client token
+
+
+#Alternatively, you can use the classes directly:
+my_token = Token(API_Key="your_api_key")
+my_client = Client(token=my_token)
+```
+"""
+
+
+from typing import Optional, Dict
 from requests.models import Response
 from requests import Session
 from requests.sessions import RequestsCookieJar
@@ -254,7 +277,7 @@ class Client:
                 raise AuthorizationError("Authorization cookies were not found")
 
             token = Token(dzienniks=dzienniks, sdzienniks=sdzienniks)
-
+            self.token = token
             return token
 
     def refresh_oauth(self) -> str:
@@ -317,7 +340,7 @@ class Client:
 
 
 def new_client(
-    token: Optional[Token] = None,
+    token: Token = Token(),
     base_url: str = urls.BASE_URL,
     api_url: str = urls.API_URL,
     grades_url: str = urls.GRADES_URL,

@@ -1,7 +1,7 @@
 from logging import Logger
 from typing import Union
 import pytest
-from librus_apix.get_token import Token
+from librus_apix.client import Client
 from librus_apix.student_information import StudentInformation, get_student_information
 
 
@@ -17,7 +17,7 @@ def _test_student_data(si: StudentInformation, log: Logger):
             log.warning(f"{key} is an empty string")
 
 
-def test_student_information(token: Token, log: Logger):
-    info = get_student_information(token)
+def test_student_information(client: Client, log: Logger):
+    info = get_student_information(client)
     assert isinstance(info, StudentInformation)
     _test_student_data(info, log)

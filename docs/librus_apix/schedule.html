@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>librus_apix.schedule API documentation</title>
+<meta name="description" content="This module provides functions for retrieving schedule information from the Librus site, parsing it, and formatting it into a structured representation …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>librus_apix.schedule</code></h1>
+</header>
+<section id="section-intro">
+<p>This module provides functions for retrieving schedule information from the Librus site, parsing it, and formatting it into a structured representation.</p>
+<h2 id="classes">Classes</h2>
+<ul>
+<li>Event: Represents an event in the schedule with various attributes like title, subject, day, etc.</li>
+</ul>
+<h2 id="functions">Functions</h2>
+<ul>
+<li>schedule_detail: Fetches detailed schedule information for a specific prefix and detail URL suffix.</li>
+<li>get_schedule: Fetches the schedule for a specific month and year.</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<pre><code class="language-python">from librus_apix.client import new_client
+
+# Create a new client instance
+client = new_client()
+client.get_token(username, password)
+
+
+# Fetch the schedule for a specific month and year
+month = &quot;01&quot;
+year = &quot;2024&quot;
+include_empty = True
+monthly_schedule = get_schedule(client, month, year, include_empty)
+
+# Fetch detailed schedule information
+day_one = monthly_schedule[1].href
+prefix, suffix = day_one.split(&quot;/&quot;)
+detailed_schedule = schedule_detail(client, prefix, detail_url)
+</code></pre>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+This module provides functions for retrieving schedule information from the Librus site, parsing it, and formatting it into a structured representation.
+
+Classes:
+    - Event: Represents an event in the schedule with various attributes like title, subject, day, etc.
+
+Functions:
+    - schedule_detail: Fetches detailed schedule information for a specific prefix and detail URL suffix.
+    - get_schedule: Fetches the schedule for a specific month and year.
+
+Usage:
+    ```python
+    from librus_apix.client import new_client
+
+    # Create a new client instance
+    client = new_client()
+    client.get_token(username, password)
+
+
+    # Fetch the schedule for a specific month and year
+    month = &#34;01&#34;
+    year = &#34;2024&#34;
+    include_empty = True
+    monthly_schedule = get_schedule(client, month, year, include_empty)
+
+    # Fetch detailed schedule information
+    day_one = monthly_schedule[1].href
+    prefix, suffix = day_one.split(&#34;/&#34;)
+    detailed_schedule = schedule_detail(client, prefix, detail_url)
+    ```
+&#34;&#34;&#34;
+from bs4 import BeautifulSoup, NavigableString, Tag
+from librus_apix.client import Client
+from librus_apix.exceptions import ParseError
+from librus_apix.helpers import no_access_check
+from collections import defaultdict
+from dataclasses import dataclass
+import re
+from typing import DefaultDict, Union, List, Dict
+
+
+@dataclass
+class Event:
+    &#34;&#34;&#34;
+    Represents an event in the schedule.
+
+    Attributes:
+        title (str): The title of the event.
+        subject (str): The subject of the event.
+        data (dict): Additional data associated with the event.
+        day (str): The day on which the event occurs.
+        number (Union[int, str]): The number associated with the event.
+        hour (str): The hour at which the event occurs.
+        href (str): &#39;prefix&#39;/&#39;suffix&#39; joined with a slash (this should be reworked...).
+    &#34;&#34;&#34;
+
+    title: str
+    subject: str
+    data: dict
+    day: str
+    number: Union[int, str]
+    hour: str
+    href: str
+
+
+def schedule_detail(client: Client, prefix: str, detail_url: str) -&gt; Dict[str, str]:
+    &#34;&#34;&#34;
+    Fetches the detailed schedule information for a specific prefix and detail URL suffix.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        prefix (str): The prefix of the schedule URL.
+        detail_url (str): The detail URL of the schedule.
+
+    Returns:
+        Dict[str, str]: A dictionary containing schedule details.
+    &#34;&#34;&#34;
+    schedule = {}
+    div = no_access_check(
+        BeautifulSoup(
+            client.get(client.SCHEDULE_URL + prefix + &#34;/&#34; + detail_url).text, &#34;lxml&#34;
+        )
+    ).find(&#34;div&#34;, attrs={&#34;class&#34;: &#34;container-background&#34;})
+
+    if div is None or isinstance(div, NavigableString):
+        raise ParseError(&#34;Error in parsing schedule details.&#34;)
+    tr: List[Tag] = div.find_all(&#34;tr&#34;, attrs={&#34;class&#34;: [&#34;line0&#34;, &#34;line1&#34;]})
+    for s in tr:
+        th = s.find(&#34;th&#34;)
+        td = s.find(&#34;td&#34;)
+        if td is None or th is None:
+            continue
+        schedule[th.text.strip()] = td.text.strip()
+    return schedule
+
+
+def _parse_title_into_pairs(title: str) -&gt; Dict[str, str]:
+    additional_data = {}
+    pairs = [pair.split(&#34;:&#34;, 1) for pair in title.split(&#34;&lt;br /&gt;&#34;)]
+    for pair in pairs:
+        if len(pair) != 2:
+            additional_data[pair[0].strip()] = &#34;unknown&#34;
+            continue
+        key, val = pair
+        additional_data[key.strip()] = val.strip()
+
+    return additional_data
+
+
+def get_schedule(
+    client: Client, month: str, year: str, include_empty: bool = False
+) -&gt; DefaultDict[int, List[Event]]:
+    &#34;&#34;&#34;
+    Fetches the schedule for a specific month and year.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        month (str): The month for which the schedule is requested.
+        year (str): The year for which the schedule is requested.
+        include_empty (bool, optional): Flag to include empty schedules. Defaults to False.
+
+    Returns:
+        DefaultDict[int, List[Event]]: A dictionary containing the schedule for each day of the month.
+    &#34;&#34;&#34;
+    schedule = defaultdict(list)
+    soup = no_access_check(
+        BeautifulSoup(
+            client.post(client.SCHEDULE_URL, data={&#34;rok&#34;: year, &#34;miesiac&#34;: month}).text,
+            &#34;lxml&#34;,
+        )
+    )
+    days = soup.find_all(&#34;div&#34;, attrs={&#34;class&#34;: &#34;kalendarz-dzien&#34;})
+    if len(days) &lt; 1:
+        raise ParseError(&#34;Error in parsing days of the schedule.&#34;)
+    for day in days:
+        try:
+            d = int(day.find(&#34;div&#34;, attrs={&#34;class&#34;: &#34;kalendarz-numer-dnia&#34;}).text)
+        except:
+            raise ParseError(&#34;Error while parsing day number&#34;)
+        if include_empty == True:
+            schedule[d] = []
+        tr: List[Tag] = day.find_all(&#34;tr&#34;)
+        for event in tr:
+            td = event.find(&#34;td&#34;)
+            if td is None or isinstance(td, NavigableString):
+                continue
+            title = td.attrs.get(&#34;title&#34;, &#34;Nauczyciel: unknown&lt;br /&gt;Opis: unknown&#34;)
+            additional_data = _parse_title_into_pairs(title)
+            subject = &#34;unspecified&#34;
+            span = td.find(&#34;span&#34;)
+            if span is not None:
+                subject = span.text
+                span.extract()
+
+            delimeter = &#34;###&#34;
+            for line in td.select(&#34;br&#34;):
+                line.replaceWith(delimeter)
+            data = (
+                td.text.replace(&#34;\xa0&#34;, &#34; &#34;)
+                .replace(&#34;, &#34;, &#34;&#34;)
+                .replace(&#34;\n&#34;, &#34;&#34;)
+                .strip()
+                .split(delimeter)
+            )
+            if subject == &#34;unspecified&#34;:
+                subject = data[0]
+            if len(data) &gt;= 2:
+                title = data[1]
+            else:
+                title = data[0]
+
+            number = &#34;unknown&#34;
+            hour = &#34;unknown&#34;
+            number_td = event.find(&#34;td&#34;)
+            if number_td is None or isinstance(number_td, NavigableString):
+                raise ParseError(&#34;Error while parsing td_number schedule.&#34;)
+            try:
+                number = int(
+                    re.findall(r&#34;: ?[0-99]?[0-99]&#34;, number_td.text)[0].replace(&#34;: &#34;, &#34;&#34;)
+                )
+            except ValueError:
+                hour = re.findall(r&#34; ?[0-2]?[0-9]:?[0-5]?[0-9]&#34;, number_td.text)[0]
+            except IndexError:
+                pass
+            onclick = number_td.attrs.get(&#34;onclick&#34;, &#34;&#39;&#34;)
+            href = onclick.split(&#34;&#39;&#34;)[1].split(&#34;/&#34;)
+            if len(href) &gt;= 2:
+                href = &#34;/&#34;.join(href[2:])
+            else:
+                href = &#34;&#34;
+
+            event = Event(title, subject, additional_data, str(d), number, hour, href)
+            schedule[d].append(event)
+    return schedule</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="librus_apix.schedule.get_schedule"><code class="name flex">
+<span>def <span class="ident">get_schedule</span></span>(<span>client: <a title="librus_apix.client.Client" href="client.html#librus_apix.client.Client">Client</a>, month: str, year: str, include_empty: bool = False) ‑> DefaultDict[int, List[<a title="librus_apix.schedule.Event" href="#librus_apix.schedule.Event">Event</a>]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fetches the schedule for a specific month and year.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>client</code></strong> :&ensp;<code>Client</code></dt>
+<dd>The client object for making HTTP requests.</dd>
+<dt><strong><code>month</code></strong> :&ensp;<code>str</code></dt>
+<dd>The month for which the schedule is requested.</dd>
+<dt><strong><code>year</code></strong> :&ensp;<code>str</code></dt>
+<dd>The year for which the schedule is requested.</dd>
+<dt><strong><code>include_empty</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Flag to include empty schedules. Defaults to False.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>DefaultDict[int, List[<a title="librus_apix.schedule.Event" href="#librus_apix.schedule.Event">Event</a>]]</code></dt>
+<dd>A dictionary containing the schedule for each day of the month.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_schedule(
+    client: Client, month: str, year: str, include_empty: bool = False
+) -&gt; DefaultDict[int, List[Event]]:
+    &#34;&#34;&#34;
+    Fetches the schedule for a specific month and year.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        month (str): The month for which the schedule is requested.
+        year (str): The year for which the schedule is requested.
+        include_empty (bool, optional): Flag to include empty schedules. Defaults to False.
+
+    Returns:
+        DefaultDict[int, List[Event]]: A dictionary containing the schedule for each day of the month.
+    &#34;&#34;&#34;
+    schedule = defaultdict(list)
+    soup = no_access_check(
+        BeautifulSoup(
+            client.post(client.SCHEDULE_URL, data={&#34;rok&#34;: year, &#34;miesiac&#34;: month}).text,
+            &#34;lxml&#34;,
+        )
+    )
+    days = soup.find_all(&#34;div&#34;, attrs={&#34;class&#34;: &#34;kalendarz-dzien&#34;})
+    if len(days) &lt; 1:
+        raise ParseError(&#34;Error in parsing days of the schedule.&#34;)
+    for day in days:
+        try:
+            d = int(day.find(&#34;div&#34;, attrs={&#34;class&#34;: &#34;kalendarz-numer-dnia&#34;}).text)
+        except:
+            raise ParseError(&#34;Error while parsing day number&#34;)
+        if include_empty == True:
+            schedule[d] = []
+        tr: List[Tag] = day.find_all(&#34;tr&#34;)
+        for event in tr:
+            td = event.find(&#34;td&#34;)
+            if td is None or isinstance(td, NavigableString):
+                continue
+            title = td.attrs.get(&#34;title&#34;, &#34;Nauczyciel: unknown&lt;br /&gt;Opis: unknown&#34;)
+            additional_data = _parse_title_into_pairs(title)
+            subject = &#34;unspecified&#34;
+            span = td.find(&#34;span&#34;)
+            if span is not None:
+                subject = span.text
+                span.extract()
+
+            delimeter = &#34;###&#34;
+            for line in td.select(&#34;br&#34;):
+                line.replaceWith(delimeter)
+            data = (
+                td.text.replace(&#34;\xa0&#34;, &#34; &#34;)
+                .replace(&#34;, &#34;, &#34;&#34;)
+                .replace(&#34;\n&#34;, &#34;&#34;)
+                .strip()
+                .split(delimeter)
+            )
+            if subject == &#34;unspecified&#34;:
+                subject = data[0]
+            if len(data) &gt;= 2:
+                title = data[1]
+            else:
+                title = data[0]
+
+            number = &#34;unknown&#34;
+            hour = &#34;unknown&#34;
+            number_td = event.find(&#34;td&#34;)
+            if number_td is None or isinstance(number_td, NavigableString):
+                raise ParseError(&#34;Error while parsing td_number schedule.&#34;)
+            try:
+                number = int(
+                    re.findall(r&#34;: ?[0-99]?[0-99]&#34;, number_td.text)[0].replace(&#34;: &#34;, &#34;&#34;)
+                )
+            except ValueError:
+                hour = re.findall(r&#34; ?[0-2]?[0-9]:?[0-5]?[0-9]&#34;, number_td.text)[0]
+            except IndexError:
+                pass
+            onclick = number_td.attrs.get(&#34;onclick&#34;, &#34;&#39;&#34;)
+            href = onclick.split(&#34;&#39;&#34;)[1].split(&#34;/&#34;)
+            if len(href) &gt;= 2:
+                href = &#34;/&#34;.join(href[2:])
+            else:
+                href = &#34;&#34;
+
+            event = Event(title, subject, additional_data, str(d), number, hour, href)
+            schedule[d].append(event)
+    return schedule</code></pre>
+</details>
+</dd>
+<dt id="librus_apix.schedule.schedule_detail"><code class="name flex">
+<span>def <span class="ident">schedule_detail</span></span>(<span>client: <a title="librus_apix.client.Client" href="client.html#librus_apix.client.Client">Client</a>, prefix: str, detail_url: str) ‑> Dict[str, str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fetches the detailed schedule information for a specific prefix and detail URL suffix.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>client</code></strong> :&ensp;<code>Client</code></dt>
+<dd>The client object for making HTTP requests.</dd>
+<dt><strong><code>prefix</code></strong> :&ensp;<code>str</code></dt>
+<dd>The prefix of the schedule URL.</dd>
+<dt><strong><code>detail_url</code></strong> :&ensp;<code>str</code></dt>
+<dd>The detail URL of the schedule.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Dict[str, str]</code></dt>
+<dd>A dictionary containing schedule details.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def schedule_detail(client: Client, prefix: str, detail_url: str) -&gt; Dict[str, str]:
+    &#34;&#34;&#34;
+    Fetches the detailed schedule information for a specific prefix and detail URL suffix.
+
+    Args:
+        client (Client): The client object for making HTTP requests.
+        prefix (str): The prefix of the schedule URL.
+        detail_url (str): The detail URL of the schedule.
+
+    Returns:
+        Dict[str, str]: A dictionary containing schedule details.
+    &#34;&#34;&#34;
+    schedule = {}
+    div = no_access_check(
+        BeautifulSoup(
+            client.get(client.SCHEDULE_URL + prefix + &#34;/&#34; + detail_url).text, &#34;lxml&#34;
+        )
+    ).find(&#34;div&#34;, attrs={&#34;class&#34;: &#34;container-background&#34;})
+
+    if div is None or isinstance(div, NavigableString):
+        raise ParseError(&#34;Error in parsing schedule details.&#34;)
+    tr: List[Tag] = div.find_all(&#34;tr&#34;, attrs={&#34;class&#34;: [&#34;line0&#34;, &#34;line1&#34;]})
+    for s in tr:
+        th = s.find(&#34;th&#34;)
+        td = s.find(&#34;td&#34;)
+        if td is None or th is None:
+            continue
+        schedule[th.text.strip()] = td.text.strip()
+    return schedule</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="librus_apix.schedule.Event"><code class="flex name class">
+<span>class <span class="ident">Event</span></span>
+<span>(</span><span>title: str, subject: str, data: dict, day: str, number: Union[int, str], hour: str, href: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents an event in the schedule.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>title</code></strong> :&ensp;<code>str</code></dt>
+<dd>The title of the event.</dd>
+<dt><strong><code>subject</code></strong> :&ensp;<code>str</code></dt>
+<dd>The subject of the event.</dd>
+<dt><strong><code>data</code></strong> :&ensp;<code>dict</code></dt>
+<dd>Additional data associated with the event.</dd>
+<dt><strong><code>day</code></strong> :&ensp;<code>str</code></dt>
+<dd>The day on which the event occurs.</dd>
+<dt><strong><code>number</code></strong> :&ensp;<code>Union[int, str]</code></dt>
+<dd>The number associated with the event.</dd>
+<dt><strong><code>hour</code></strong> :&ensp;<code>str</code></dt>
+<dd>The hour at which the event occurs.</dd>
+<dt><strong><code>href</code></strong> :&ensp;<code>str</code></dt>
+<dd>'prefix'/'suffix' joined with a slash (this should be reworked&hellip;).</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class Event:
+    &#34;&#34;&#34;
+    Represents an event in the schedule.
+
+    Attributes:
+        title (str): The title of the event.
+        subject (str): The subject of the event.
+        data (dict): Additional data associated with the event.
+        day (str): The day on which the event occurs.
+        number (Union[int, str]): The number associated with the event.
+        hour (str): The hour at which the event occurs.
+        href (str): &#39;prefix&#39;/&#39;suffix&#39; joined with a slash (this should be reworked...).
+    &#34;&#34;&#34;
+
+    title: str
+    subject: str
+    data: dict
+    day: str
+    number: Union[int, str]
+    hour: str
+    href: str</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="librus_apix.schedule.Event.data"><code class="name">var <span class="ident">data</span> : dict</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.schedule.Event.day"><code class="name">var <span class="ident">day</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.schedule.Event.hour"><code class="name">var <span class="ident">hour</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.schedule.Event.href"><code class="name">var <span class="ident">href</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.schedule.Event.number"><code class="name">var <span class="ident">number</span> : Union[int, str]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.schedule.Event.subject"><code class="name">var <span class="ident">subject</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="librus_apix.schedule.Event.title"><code class="name">var <span class="ident">title</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="librus_apix" href="index.html">librus_apix</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="librus_apix.schedule.get_schedule" href="#librus_apix.schedule.get_schedule">get_schedule</a></code></li>
+<li><code><a title="librus_apix.schedule.schedule_detail" href="#librus_apix.schedule.schedule_detail">schedule_detail</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="librus_apix.schedule.Event" href="#librus_apix.schedule.Event">Event</a></code></h4>
+<ul class="two-column">
+<li><code><a title="librus_apix.schedule.Event.data" href="#librus_apix.schedule.Event.data">data</a></code></li>
+<li><code><a title="librus_apix.schedule.Event.day" href="#librus_apix.schedule.Event.day">day</a></code></li>
+<li><code><a title="librus_apix.schedule.Event.hour" href="#librus_apix.schedule.Event.hour">hour</a></code></li>
+<li><code><a title="librus_apix.schedule.Event.href" href="#librus_apix.schedule.Event.href">href</a></code></li>
+<li><code><a title="librus_apix.schedule.Event.number" href="#librus_apix.schedule.Event.number">number</a></code></li>
+<li><code><a title="librus_apix.schedule.Event.subject" href="#librus_apix.schedule.Event.subject">subject</a></code></li>
+<li><code><a title="librus_apix.schedule.Event.title" href="#librus_apix.schedule.Event.title">title</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
