@@ -38,6 +38,7 @@ def client(request) -> Client:
         student_info = base + "/student_info.html"
         homework = base + "/homework.html"
         hw_detail = base + "/homework/"
+        notifications = base + "/notifications.html"
 
         return Client(
             token=token,
@@ -53,6 +54,7 @@ def client(request) -> Client:
             info_url=student_info,
             homework_url=homework,
             homework_details_url=hw_detail,
+            index_url=notifications
         )
     else:
         return Client(token)
