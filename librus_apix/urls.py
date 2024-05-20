@@ -4,6 +4,7 @@ Constants:
     - HEADERS: A dictionary containing HTTP headers for making requests.
     - BASE_URL: The base URL for the Librus website.
     - API_URL: The base URL for the Librus API.
+    - INDEX_URL: Student Index url
     - GRADES_URL: URL for accessing grades.
     - TIMETABLE_URL: URL for accessing the timetable.
     - ANNOUNCEMENTS_URL: URL for accessing announcements.
@@ -32,6 +33,7 @@ HEADERS: Dict[str, Union[str, bytes]] = {
 }
 BASE_URL = "https://synergia.librus.pl"
 API_URL = "https://api.librus.pl"
+INDEX_URL = BASE_URL + "/uczen/index"
 GRADES_URL = BASE_URL + "/przegladaj_oceny/uczen"
 TIMETABLE_URL = f"{BASE_URL}/przegladaj_plan_lekcji"
 ANNOUNCEMENTS_URL = f"{BASE_URL}/ogloszenia"

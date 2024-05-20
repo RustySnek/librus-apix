@@ -143,6 +143,7 @@ class Client:
         GATEWAY_API_ATTENDANCE (str): The URL for gateway API attendance.
         RECIPIENTS_URL (str): The URL for recipients.
         RECIPIENT_GROUPS_URL (str): The URL for recipient groups.
+        INDEX_URL (str): Url for student index
         cookies (RequestsCookieJar): additional cookies
         _session (Session): The requests session for making HTTP calls.
 
@@ -176,6 +177,7 @@ class Client:
         completed_lessons_url: str = urls.COMPLETED_LESSONS_URL,
         gateway_api_attendance: str = urls.GATEWAY_API_ATTENDANCE,
         refresh_oauth_url: str = urls.REFRESH_OAUTH_URL,
+        index_url: str = urls.INDEX_URL,
         proxy: Dict[str, str] = {},
         extra_cookies: RequestsCookieJar = RequestsCookieJar(),
     ):
@@ -199,6 +201,7 @@ class Client:
         self.RECIPIENTS_URL = recipients_url
         self.RECIPIENT_GROUPS_URL = recipient_groups_url
         self.REFRESH_URL = refresh_oauth_url
+        self.INDEX_URL = index_url
         self.cookies = extra_cookies
         self._session = Session()
         """
@@ -359,6 +362,7 @@ def new_client(
     completed_lessons_url: str = urls.COMPLETED_LESSONS_URL,
     gateway_api_attendance: str = urls.GATEWAY_API_ATTENDANCE,
     refresh_oauth_url: str = urls.REFRESH_OAUTH_URL,
+    index_url: str = urls.INDEX_URL,
     proxy: dict[str, str] = {},
 ):
     """
@@ -384,6 +388,7 @@ def new_client(
         completed_lessons_url (str, optional): The URL of the completed lessons endpoint. Defaults to urls.COMPLETED_LESSONS_URL.
         gateway_api_attendance (str, optional): The URL of the gateway API attendance endpoint. Defaults to urls.GATEWAY_API_ATTENDANCE.
         refresh_oauth_url (str, optional): The URL of the refresh OAuth endpoint. Defaults to urls.REFRESH_OAUTH_URL.
+        index_url (str, optional): The url for student index
         proxy (dict[str, str], optional): A dictionary containing proxy settings. Defaults to an empty dictionary.
 
     Returns:
@@ -411,5 +416,6 @@ def new_client(
         completed_lessons_url,
         gateway_api_attendance,
         refresh_oauth_url,
+        index_url,
         proxy,
     )
