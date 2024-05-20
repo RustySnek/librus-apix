@@ -1,5 +1,5 @@
 """
-This module provides functionality to interact with the Librus API and extract notifications from the user's dashboard.
+This module provides functionality to interact with the Librus site and extract notifications from the user's dashboard.
 
 It defines a `Notification` dataclass to encapsulate notification details and includes a function, `get_notifications`,
 to fetch and parse notifications from the user's dashboard.

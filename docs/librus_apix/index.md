@@ -45,7 +45,7 @@ client = Client(proxy=proxy)
 client.proxy = proxy
 ```
 
-### in further docs will find AI slop. Be sure to report any inconsistencies in issues!
+### in further docs you will find AI slop. Be sure to report any inconsistencies in issues!
 
 Sub-modules
 -----------
@@ -58,6 +58,7 @@ Sub-modules
 * librus_apix.helpers
 * librus_apix.homework
 * librus_apix.messages
+* librus_apix.notifications
 * librus_apix.schedule
 * librus_apix.student_information
 * librus_apix.timetable
