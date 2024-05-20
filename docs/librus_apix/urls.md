@@ -5,6 +5,7 @@ Constants:
     - HEADERS: A dictionary containing HTTP headers for making requests.
     - BASE_URL: The base URL for the Librus website.
     - API_URL: The base URL for the Librus API.
+    - INDEX_URL: Student Index url
     - GRADES_URL: URL for accessing grades.
     - TIMETABLE_URL: URL for accessing the timetable.
     - ANNOUNCEMENTS_URL: URL for accessing announcements.

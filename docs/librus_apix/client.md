@@ -23,7 +23,7 @@ Functions
 ---------
 
     
-`new_client(token: librus_apix.client.Token = , base_url: str = 'https://synergia.librus.pl', api_url: str = 'https://api.librus.pl', grades_url: str = 'https://synergia.librus.pl/przegladaj_oceny/uczen', timetable_url: str = 'https://synergia.librus.pl/przegladaj_plan_lekcji', announcements_url: str = 'https://synergia.librus.pl/ogloszenia', message_url: str = 'https://synergia.librus.pl/wiadomosci/1/5', send_message_url: str = 'https://synergia.librus.pl/wiadomosci/1/6', attendance_url: str = 'https://synergia.librus.pl/przegladaj_nb/uczen', attendance_details_url: str = 'https://synergia.librus.pl/przegladaj_nb/szczegoly/', schedule_url: str = 'https://synergia.librus.pl/terminarz/', homework_url: str = 'https://synergia.librus.pl/moje_zadania', homework_details_url: str = 'https://synergia.librus.pl/moje_zadania/podglad/', info_url: str = 'https://synergia.librus.pl/informacja', recipients_url: str = 'https://synergia.librus.pl/getRecipients', recipient_groups_url: str = 'https://synergia.librus.pl/wiadomosci/2/6', completed_lessons_url: str = 'https://synergia.librus.pl/zrealizowane_lekcje', gateway_api_attendance: str = 'https://synergia.librus.pl/gateway/api/2.0/Attendances', refresh_oauth_url: str = 'https://synergia.librus.pl/refreshToken', proxy: dict[str, str] = {})`
+`new_client(token: librus_apix.client.Token = , base_url: str = 'https://synergia.librus.pl', api_url: str = 'https://api.librus.pl', grades_url: str = 'https://synergia.librus.pl/przegladaj_oceny/uczen', timetable_url: str = 'https://synergia.librus.pl/przegladaj_plan_lekcji', announcements_url: str = 'https://synergia.librus.pl/ogloszenia', message_url: str = 'https://synergia.librus.pl/wiadomosci/1/5', send_message_url: str = 'https://synergia.librus.pl/wiadomosci/1/6', attendance_url: str = 'https://synergia.librus.pl/przegladaj_nb/uczen', attendance_details_url: str = 'https://synergia.librus.pl/przegladaj_nb/szczegoly/', schedule_url: str = 'https://synergia.librus.pl/terminarz/', homework_url: str = 'https://synergia.librus.pl/moje_zadania', homework_details_url: str = 'https://synergia.librus.pl/moje_zadania/podglad/', info_url: str = 'https://synergia.librus.pl/informacja', recipients_url: str = 'https://synergia.librus.pl/getRecipients', recipient_groups_url: str = 'https://synergia.librus.pl/wiadomosci/2/6', completed_lessons_url: str = 'https://synergia.librus.pl/zrealizowane_lekcje', gateway_api_attendance: str = 'https://synergia.librus.pl/gateway/api/2.0/Attendances', refresh_oauth_url: str = 'https://synergia.librus.pl/refreshToken', index_url: str = 'https://synergia.librus.pl/uczen/index', proxy: dict[str, str] = {})`
 :   Creates a new instance of the Client class.
     
     Args:
@@ -46,6 +46,7 @@ Functions
         completed_lessons_url (str, optional): The URL of the completed lessons endpoint. Defaults to urls.COMPLETED_LESSONS_URL.
         gateway_api_attendance (str, optional): The URL of the gateway API attendance endpoint. Defaults to urls.GATEWAY_API_ATTENDANCE.
         refresh_oauth_url (str, optional): The URL of the refresh OAuth endpoint. Defaults to urls.REFRESH_OAUTH_URL.
+        index_url (str, optional): The url for student index
         proxy (dict[str, str], optional): A dictionary containing proxy settings. Defaults to an empty dictionary.
     
     Returns:
@@ -54,7 +55,7 @@ Functions
 Classes
 -------
 
-`Client(token: librus_apix.client.Token, base_url: str = 'https://synergia.librus.pl', api_url: str = 'https://api.librus.pl', grades_url: str = 'https://synergia.librus.pl/przegladaj_oceny/uczen', timetable_url: str = 'https://synergia.librus.pl/przegladaj_plan_lekcji', announcements_url: str = 'https://synergia.librus.pl/ogloszenia', message_url: str = 'https://synergia.librus.pl/wiadomosci/1/5', send_message_url: str = 'https://synergia.librus.pl/wiadomosci/1/6', attendance_url: str = 'https://synergia.librus.pl/przegladaj_nb/uczen', attendance_details_url: str = 'https://synergia.librus.pl/przegladaj_nb/szczegoly/', schedule_url: str = 'https://synergia.librus.pl/terminarz/', homework_url: str = 'https://synergia.librus.pl/moje_zadania', homework_details_url: str = 'https://synergia.librus.pl/moje_zadania/podglad/', info_url: str = 'https://synergia.librus.pl/informacja', recipients_url: str = 'https://synergia.librus.pl/getRecipients', recipient_groups_url: str = 'https://synergia.librus.pl/wiadomosci/2/6', completed_lessons_url: str = 'https://synergia.librus.pl/zrealizowane_lekcje', gateway_api_attendance: str = 'https://synergia.librus.pl/gateway/api/2.0/Attendances', refresh_oauth_url: str = 'https://synergia.librus.pl/refreshToken', proxy: Dict[str, str] = {}, extra_cookies: requests.cookies.RequestsCookieJar = <RequestsCookieJar[]>)`
+`Client(token: librus_apix.client.Token, base_url: str = 'https://synergia.librus.pl', api_url: str = 'https://api.librus.pl', grades_url: str = 'https://synergia.librus.pl/przegladaj_oceny/uczen', timetable_url: str = 'https://synergia.librus.pl/przegladaj_plan_lekcji', announcements_url: str = 'https://synergia.librus.pl/ogloszenia', message_url: str = 'https://synergia.librus.pl/wiadomosci/1/5', send_message_url: str = 'https://synergia.librus.pl/wiadomosci/1/6', attendance_url: str = 'https://synergia.librus.pl/przegladaj_nb/uczen', attendance_details_url: str = 'https://synergia.librus.pl/przegladaj_nb/szczegoly/', schedule_url: str = 'https://synergia.librus.pl/terminarz/', homework_url: str = 'https://synergia.librus.pl/moje_zadania', homework_details_url: str = 'https://synergia.librus.pl/moje_zadania/podglad/', info_url: str = 'https://synergia.librus.pl/informacja', recipients_url: str = 'https://synergia.librus.pl/getRecipients', recipient_groups_url: str = 'https://synergia.librus.pl/wiadomosci/2/6', completed_lessons_url: str = 'https://synergia.librus.pl/zrealizowane_lekcje', gateway_api_attendance: str = 'https://synergia.librus.pl/gateway/api/2.0/Attendances', refresh_oauth_url: str = 'https://synergia.librus.pl/refreshToken', index_url: str = 'https://synergia.librus.pl/uczen/index', proxy: Dict[str, str] = {}, extra_cookies: requests.cookies.RequestsCookieJar = <RequestsCookieJar[]>)`
 :   A class to handle HTTP operations using the tokens.
     
     Attributes:
@@ -77,6 +78,7 @@ Classes
         GATEWAY_API_ATTENDANCE (str): The URL for gateway API attendance.
         RECIPIENTS_URL (str): The URL for recipients.
         RECIPIENT_GROUPS_URL (str): The URL for recipient groups.
+        INDEX_URL (str): Url for student index
         cookies (RequestsCookieJar): additional cookies
         _session (Session): The requests session for making HTTP calls.
     
