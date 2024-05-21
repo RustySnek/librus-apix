@@ -16,7 +16,7 @@ pdoc3==0.10.0
 pluggy==1.5.0
 Pygments==2.18.0
 pytest==8.2.0
-requests==2.31.0
+requests==2.32.0
 soupsieve==2.5
 tomli==2.0.1
 urllib3==2.2.1
