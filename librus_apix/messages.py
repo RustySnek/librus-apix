@@ -307,7 +307,7 @@ def parse(message_soup: BeautifulSoup) -> List[Message]:
         if attachment.find("img"):
             hasAttachment = True
         style = title.get("style")
-        if not isinstance(style, List):
+        if not isinstance(style, List) or not isinstance(style, str):
             style = []
         if "font-weight: bold" in style:
             unread = True
