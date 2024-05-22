@@ -54,7 +54,7 @@ def client(request) -> Client:
             info_url=student_info,
             homework_url=homework,
             homework_details_url=hw_detail,
-            index_url=notifications
+            index_url=notifications,
         )
     else:
         return Client(token)
