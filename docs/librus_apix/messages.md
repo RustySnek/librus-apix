@@ -34,9 +34,9 @@ Usage:
         recipient_ids = list(recipients.values())
         success, result_message = send_message(client, title, content, recipient_ids)
 
-        # Get recieved/sent messages
+        # Get received/sent messages
         messages = get_sent(client, page=1)
-        messages = get_recieved(client, page=1)
+        messages = get_received(client, page=1)
         ...
         # Retrieve content of a message
         for message in messages:
@@ -58,7 +58,7 @@ Functions
         int: The maximum page number.
 
     
-`get_recieved(client: librus_apix.client.Client, page: int) ‑> List[librus_apix.messages.Message]`
+`get_received(client: librus_apix.client.Client, page: int) ‑> List[librus_apix.messages.Message]`
 :   Retrieves received messages from a specific page.
     
     Args:

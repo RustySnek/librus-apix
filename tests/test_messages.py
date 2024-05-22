@@ -5,7 +5,7 @@ from librus_apix.client import Client
 from librus_apix.messages import (
     Message,
     MessageData,
-    get_recieved,
+    get_received,
     get_sent,
     get_max_page_number,
     message_content,
@@ -37,24 +37,24 @@ def test_get_sent_messages(client: Client, log: Logger):
 
 
 @pytest.fixture
-def get_recieved_messages(client: Client) -> List[Message]:
-    recieved = get_recieved(client, 1)
-    return recieved
+def get_received_messages(client: Client) -> List[Message]:
+    received = get_received(client, 1)
+    return received
 
 
-def test_get_recieved_messages(get_recieved_messages: List[Message], log: Logger):
-    assert isinstance(get_recieved_messages, List)
-    for msg in get_recieved_messages:
+def test_get_received_messages(get_received_messages: List[Message], log: Logger):
+    assert isinstance(get_received_messages, List)
+    for msg in get_received_messages:
         assert isinstance(msg, Message)
         _test_message_data(msg, log)
 
 
 def test_message_content(
-    get_recieved_messages: List[Message], client: Client, log: Logger
+    get_received_messages: List[Message], client: Client, log: Logger
 ):
-    if len(get_recieved_messages) == 0:
+    if len(get_received_messages) == 0:
         pytest.skip("No messages to check")
-    sample: Message = get_recieved_messages[0]
+    sample: Message = get_received_messages[0]
     data = message_content(client, sample.href)
     assert isinstance(data, MessageData)
     for key, value in data.__dict__.items():

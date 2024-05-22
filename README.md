@@ -155,9 +155,9 @@ else:
 
 ### Getting the Messages
 ```py
-from librus_apix.messages import get_recieved, message_content
+from librus_apix.messages import get_received, message_content
 
-messages = get_recieved(client, page=1)
+messages = get_received(client, page=1)
 for message in messages:
   print(message.title)
   href = message.href

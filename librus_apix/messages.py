@@ -33,9 +33,9 @@ Usage:
         recipient_ids = list(recipients.values())
         success, result_message = send_message(client, title, content, recipient_ids)
 
-        # Get recieved/sent messages
+        # Get received/sent messages
         messages = get_sent(client, page=1)
-        messages = get_recieved(client, page=1)
+        messages = get_received(client, page=1)
         ...
         # Retrieve content of a message
         for message in messages:
@@ -351,7 +351,7 @@ def get_max_page_number(client: Client) -> int:
     return max_pages_number - 1
 
 
-def get_recieved(client: Client, page: int) -> List[Message]:
+def get_received(client: Client, page: int) -> List[Message]:
     """
     Retrieves received messages from a specific page.
 
@@ -368,8 +368,8 @@ def get_recieved(client: Client, page: int) -> List[Message]:
     }
     response = client.post(client.MESSAGE_URL, data=payload)
     soup = no_access_check(BeautifulSoup(response.text, "lxml"))
-    recieved_msgs = parse(soup)
-    return recieved_msgs
+    received_msgs = parse(soup)
+    return received_msgs
 
 
 def get_sent(client: Client, page: int) -> List[Message]:
@@ -389,5 +389,5 @@ def get_sent(client: Client, page: int) -> List[Message]:
     }
     response = client.post(client.SEND_MESSAGE_URL, data=payload)
     soup = no_access_check(BeautifulSoup(response.text, "lxml"))
-    recieved_msgs = parse_sent(soup)
-    return recieved_msgs
+    received_msgs = parse_sent(soup)
+    return received_msgs

@@ -103,7 +103,7 @@
                     <a class="function" href="#get_max_page_number">get_max_page_number</a>
             </li>
             <li>
-                    <a class="function" href="#get_recieved">get_recieved</a>
+                    <a class="function" href="#get_received">get_received</a>
             </li>
             <li>
                     <a class="function" href="#get_sent">get_sent</a>
@@ -157,9 +157,9 @@
         <span class="n">recipient_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">recipients</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="n">success</span><span class="p">,</span> <span class="n">result_message</span> <span class="o">=</span> <span class="n">send_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">recipient_ids</span><span class="p">)</span>
  <br />
-        <span class="c1"># Get recieved/sent messages</span>
+        <span class="c1"># Get received/sent messages</span>
         <span class="n">messages</span> <span class="o">=</span> <span class="n">get_sent</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">messages</span> <span class="o">=</span> <span class="n">get_recieved</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">messages</span> <span class="o">=</span> <span class="n">get_received</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="o">...</span>
         <span class="c1"># Retrieve content of a message</span>
         <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
@@ -208,9 +208,9 @@
 </span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">        recipient_ids = list(recipients.values())</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">        success, result_message = send_message(client, title, content, recipient_ids)</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">        # Get recieved/sent messages</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">        # Get received/sent messages</span>
 </span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">        messages = get_sent(client, page=1)</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">        messages = get_recieved(client, page=1)</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">        messages = get_received(client, page=1)</span>
 </span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">        ...</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">        # Retrieve content of a message</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">        for message in messages:</span>
@@ -526,7 +526,7 @@
 </span><span id="L-351"><a href="#L-351"><span class="linenos">351</span></a>    <span class="k">return</span> <span class="n">max_pages_number</span> <span class="o">-</span> <span class="mi">1</span>
 </span><span id="L-352"><a href="#L-352"><span class="linenos">352</span></a>
 </span><span id="L-353"><a href="#L-353"><span class="linenos">353</span></a>
-</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a><span class="k">def</span> <span class="nf">get_recieved</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">page</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Message</span><span class="p">]:</span>
+</span><span id="L-354"><a href="#L-354"><span class="linenos">354</span></a><span class="k">def</span> <span class="nf">get_received</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">page</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Message</span><span class="p">]:</span>
 </span><span id="L-355"><a href="#L-355"><span class="linenos">355</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-356"><a href="#L-356"><span class="linenos">356</span></a><span class="sd">    Retrieves received messages from a specific page.</span>
 </span><span id="L-357"><a href="#L-357"><span class="linenos">357</span></a>
@@ -543,8 +543,8 @@
 </span><span id="L-368"><a href="#L-368"><span class="linenos">368</span></a>    <span class="p">}</span>
 </span><span id="L-369"><a href="#L-369"><span class="linenos">369</span></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">MESSAGE_URL</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
 </span><span id="L-370"><a href="#L-370"><span class="linenos">370</span></a>    <span class="n">soup</span> <span class="o">=</span> <span class="n">no_access_check</span><span class="p">(</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">))</span>
-</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>    <span class="n">recieved_msgs</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
-</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>    <span class="k">return</span> <span class="n">recieved_msgs</span>
+</span><span id="L-371"><a href="#L-371"><span class="linenos">371</span></a>    <span class="n">received_msgs</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
+</span><span id="L-372"><a href="#L-372"><span class="linenos">372</span></a>    <span class="k">return</span> <span class="n">received_msgs</span>
 </span><span id="L-373"><a href="#L-373"><span class="linenos">373</span></a>
 </span><span id="L-374"><a href="#L-374"><span class="linenos">374</span></a>
 </span><span id="L-375"><a href="#L-375"><span class="linenos">375</span></a><span class="k">def</span> <span class="nf">get_sent</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">page</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Message</span><span class="p">]:</span>
@@ -564,8 +564,8 @@
 </span><span id="L-389"><a href="#L-389"><span class="linenos">389</span></a>    <span class="p">}</span>
 </span><span id="L-390"><a href="#L-390"><span class="linenos">390</span></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">SEND_MESSAGE_URL</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
 </span><span id="L-391"><a href="#L-391"><span class="linenos">391</span></a>    <span class="n">soup</span> <span class="o">=</span> <span class="n">no_access_check</span><span class="p">(</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">))</span>
-</span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>    <span class="n">recieved_msgs</span> <span class="o">=</span> <span class="n">parse_sent</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
-</span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>    <span class="k">return</span> <span class="n">recieved_msgs</span>
+</span><span id="L-392"><a href="#L-392"><span class="linenos">392</span></a>    <span class="n">received_msgs</span> <span class="o">=</span> <span class="n">parse_sent</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
+</span><span id="L-393"><a href="#L-393"><span class="linenos">393</span></a>    <span class="k">return</span> <span class="n">received_msgs</span>
 </span></pre></div>
 
 
@@ -1228,36 +1228,36 @@
 
 
                 </section>
-                <section id="get_recieved">
-                            <input id="get_recieved-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="get_received">
+                            <input id="get_received-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_recieved</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">client</span><span class="p">:</span> <span class="n"><a href="client.html#Client">librus_apix.client.Client</a></span>,</span><span class="param">	<span class="n">page</span><span class="p">:</span> <span class="nb">int</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Message">Message</a></span><span class="p">]</span>:</span></span>
+        <span class="name">get_received</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">client</span><span class="p">:</span> <span class="n"><a href="client.html#Client">librus_apix.client.Client</a></span>,</span><span class="param">	<span class="n">page</span><span class="p">:</span> <span class="nb">int</span></span><span class="return-annotation">) -> <span class="n">List</span><span class="p">[</span><span class="n"><a href="#Message">Message</a></span><span class="p">]</span>:</span></span>
 
-                <label class="view-source-button" for="get_recieved-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="get_received-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#get_recieved"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_recieved-355"><a href="#get_recieved-355"><span class="linenos">355</span></a><span class="k">def</span> <span class="nf">get_recieved</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">page</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Message</span><span class="p">]:</span>
-</span><span id="get_recieved-356"><a href="#get_recieved-356"><span class="linenos">356</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="get_recieved-357"><a href="#get_recieved-357"><span class="linenos">357</span></a><span class="sd">    Retrieves received messages from a specific page.</span>
-</span><span id="get_recieved-358"><a href="#get_recieved-358"><span class="linenos">358</span></a>
-</span><span id="get_recieved-359"><a href="#get_recieved-359"><span class="linenos">359</span></a><span class="sd">    Args:</span>
-</span><span id="get_recieved-360"><a href="#get_recieved-360"><span class="linenos">360</span></a><span class="sd">        client (Client): The client object for making HTTP requests.</span>
-</span><span id="get_recieved-361"><a href="#get_recieved-361"><span class="linenos">361</span></a><span class="sd">        page (int): The page number of messages to retrieve.</span>
-</span><span id="get_recieved-362"><a href="#get_recieved-362"><span class="linenos">362</span></a>
-</span><span id="get_recieved-363"><a href="#get_recieved-363"><span class="linenos">363</span></a><span class="sd">    Returns:</span>
-</span><span id="get_recieved-364"><a href="#get_recieved-364"><span class="linenos">364</span></a><span class="sd">        List[Message]: A list of received Message objects.</span>
-</span><span id="get_recieved-365"><a href="#get_recieved-365"><span class="linenos">365</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="get_recieved-366"><a href="#get_recieved-366"><span class="linenos">366</span></a>    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="get_recieved-367"><a href="#get_recieved-367"><span class="linenos">367</span></a>        <span class="s2">&quot;numer_strony105&quot;</span><span class="p">:</span> <span class="n">page</span><span class="p">,</span>
-</span><span id="get_recieved-368"><a href="#get_recieved-368"><span class="linenos">368</span></a>        <span class="s2">&quot;porcjowanie_pojemnik105&quot;</span><span class="p">:</span> <span class="s2">&quot;105&quot;</span><span class="p">,</span>
-</span><span id="get_recieved-369"><a href="#get_recieved-369"><span class="linenos">369</span></a>    <span class="p">}</span>
-</span><span id="get_recieved-370"><a href="#get_recieved-370"><span class="linenos">370</span></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">MESSAGE_URL</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
-</span><span id="get_recieved-371"><a href="#get_recieved-371"><span class="linenos">371</span></a>    <span class="n">soup</span> <span class="o">=</span> <span class="n">no_access_check</span><span class="p">(</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">))</span>
-</span><span id="get_recieved-372"><a href="#get_recieved-372"><span class="linenos">372</span></a>    <span class="n">recieved_msgs</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
-</span><span id="get_recieved-373"><a href="#get_recieved-373"><span class="linenos">373</span></a>    <span class="k">return</span> <span class="n">recieved_msgs</span>
+    <a class="headerlink" href="#get_received"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_received-355"><a href="#get_received-355"><span class="linenos">355</span></a><span class="k">def</span> <span class="nf">get_received</span><span class="p">(</span><span class="n">client</span><span class="p">:</span> <span class="n">Client</span><span class="p">,</span> <span class="n">page</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Message</span><span class="p">]:</span>
+</span><span id="get_received-356"><a href="#get_received-356"><span class="linenos">356</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="get_received-357"><a href="#get_received-357"><span class="linenos">357</span></a><span class="sd">    Retrieves received messages from a specific page.</span>
+</span><span id="get_received-358"><a href="#get_received-358"><span class="linenos">358</span></a>
+</span><span id="get_received-359"><a href="#get_received-359"><span class="linenos">359</span></a><span class="sd">    Args:</span>
+</span><span id="get_received-360"><a href="#get_received-360"><span class="linenos">360</span></a><span class="sd">        client (Client): The client object for making HTTP requests.</span>
+</span><span id="get_received-361"><a href="#get_received-361"><span class="linenos">361</span></a><span class="sd">        page (int): The page number of messages to retrieve.</span>
+</span><span id="get_received-362"><a href="#get_received-362"><span class="linenos">362</span></a>
+</span><span id="get_received-363"><a href="#get_received-363"><span class="linenos">363</span></a><span class="sd">    Returns:</span>
+</span><span id="get_received-364"><a href="#get_received-364"><span class="linenos">364</span></a><span class="sd">        List[Message]: A list of received Message objects.</span>
+</span><span id="get_received-365"><a href="#get_received-365"><span class="linenos">365</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_received-366"><a href="#get_received-366"><span class="linenos">366</span></a>    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="get_received-367"><a href="#get_received-367"><span class="linenos">367</span></a>        <span class="s2">&quot;numer_strony105&quot;</span><span class="p">:</span> <span class="n">page</span><span class="p">,</span>
+</span><span id="get_received-368"><a href="#get_received-368"><span class="linenos">368</span></a>        <span class="s2">&quot;porcjowanie_pojemnik105&quot;</span><span class="p">:</span> <span class="s2">&quot;105&quot;</span><span class="p">,</span>
+</span><span id="get_received-369"><a href="#get_received-369"><span class="linenos">369</span></a>    <span class="p">}</span>
+</span><span id="get_received-370"><a href="#get_received-370"><span class="linenos">370</span></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">MESSAGE_URL</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+</span><span id="get_received-371"><a href="#get_received-371"><span class="linenos">371</span></a>    <span class="n">soup</span> <span class="o">=</span> <span class="n">no_access_check</span><span class="p">(</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">))</span>
+</span><span id="get_received-372"><a href="#get_received-372"><span class="linenos">372</span></a>    <span class="n">received_msgs</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
+</span><span id="get_received-373"><a href="#get_received-373"><span class="linenos">373</span></a>    <span class="k">return</span> <span class="n">received_msgs</span>
 </span></pre></div>
 
 
@@ -1301,8 +1301,8 @@
 </span><span id="get_sent-390"><a href="#get_sent-390"><span class="linenos">390</span></a>    <span class="p">}</span>
 </span><span id="get_sent-391"><a href="#get_sent-391"><span class="linenos">391</span></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">SEND_MESSAGE_URL</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
 </span><span id="get_sent-392"><a href="#get_sent-392"><span class="linenos">392</span></a>    <span class="n">soup</span> <span class="o">=</span> <span class="n">no_access_check</span><span class="p">(</span><span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;lxml&quot;</span><span class="p">))</span>
-</span><span id="get_sent-393"><a href="#get_sent-393"><span class="linenos">393</span></a>    <span class="n">recieved_msgs</span> <span class="o">=</span> <span class="n">parse_sent</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
-</span><span id="get_sent-394"><a href="#get_sent-394"><span class="linenos">394</span></a>    <span class="k">return</span> <span class="n">recieved_msgs</span>
+</span><span id="get_sent-393"><a href="#get_sent-393"><span class="linenos">393</span></a>    <span class="n">received_msgs</span> <span class="o">=</span> <span class="n">parse_sent</span><span class="p">(</span><span class="n">soup</span><span class="p">)</span>
+</span><span id="get_sent-394"><a href="#get_sent-394"><span class="linenos">394</span></a>    <span class="k">return</span> <span class="n">received_msgs</span>
 </span></pre></div>
 
 
