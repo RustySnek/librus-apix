@@ -27,13 +27,15 @@ except ParseError as e:
 ```
 """
 import re
-from bs4 import BeautifulSoup, Tag
-from librus_apix.client import Client
-from librus_apix.helpers import no_access_check
-from librus_apix.exceptions import ParseError, ArgumentError
-from typing import DefaultDict, Union, Tuple, List
-from dataclasses import dataclass
 from collections import defaultdict
+from dataclasses import dataclass
+from typing import DefaultDict, List, Tuple, Union
+
+from bs4 import BeautifulSoup, Tag
+
+from librus_apix.client import Client
+from librus_apix.exceptions import ArgumentError, ParseError
+from librus_apix.helpers import no_access_check
 
 
 @dataclass
@@ -235,6 +237,8 @@ def _extract_grades_numeric(
         semesters = [semester_grades[1:4], semester_grades[4:7]]
         subject = _handle_subject(semester_grades)
         for semester_number, semester in enumerate(semesters):
+            if subject not in sem_grades[semester_number]:
+                sem_grades[semester_number][subject] = []
             for sg in semester:
                 grade_a_improved = sg.select(
                     "td[class!='center'] > span > span.grade-box > a"
