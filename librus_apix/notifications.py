@@ -227,6 +227,7 @@ class NotificationData:
         schedule (List[Event]): A list of schedule notifications.
         homework (List[Homework]): A list of homework notifications.
     """
+
     grades: List[Grade]
     attendance: List[Attendance]
     messages: List[Message]
@@ -248,6 +249,7 @@ class NotificationIds:
         schedule (List[str]): A list of schedule notification IDs.
         homework (List[str]): A list of homework notification IDs.
     """
+
     grades: List[str]
     attendance: List[str]
     messages: List[str]
