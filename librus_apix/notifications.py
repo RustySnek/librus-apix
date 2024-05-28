@@ -150,7 +150,7 @@ def _parse_grades_notifications(
                 href = grade.href
                 if _compare_hrefs(href, seen_ids):
                     continue
-                new_grades.append(grades)
+                new_grades.append(grade)
                 seen_ids.append(href)
     return new_grades, seen_ids
 
