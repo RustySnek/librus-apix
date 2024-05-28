@@ -5,11 +5,13 @@ The notification bubbles are bound to token, and their amount doesn't change unl
 request every individual last_login endpoint and retrieve stuff from there.
 
 Classes:
-    - Notification: Represents a notification with a destination and an amount.
+    - NotificationAmount: Represents a notification with a destination and an amount.
+    - NotificationData: Represents data of various notifications including grades, attendance, messages, announcements, schedule, and homework.
+    - NotificationIds: Represents the IDs of various notifications to track seen notifications.
 
 Functions:
-    - _extract_name_from_id(id: str) -> str: Extracts a name or identifier from a given ID string.
-    - get_notifications(client: Client) -> List[Notification]: Fetches and parses notifications from the user's dashboard on the Librus platform.
+    - get_initial_notification_data(client: Client) -> Tuple[NotificationData, NotificationIds]: Fetches and parses the initial notification data and their IDs for a new token.
+    - get_new_notification_data(client: Client, seen_notifications: NotificationIds) -> Tuple[NotificationData, NotificationIds]: Fetches and parses new notifications using NotificationIds, returns data and updates seen notification IDs.
 """
 
 from dataclasses import dataclass
@@ -47,14 +49,13 @@ class NotificationAmount:
 
 def get_new_token_notification_amounts(client: Client) -> List[NotificationAmount]:
     """
-    ! Should only be ran once on every new Token. The notifications are stored inside Token and won't update.
-    Fetches and parses notifications amounts from the user's dashboard on the Librus platform.
+    Fetches and parses notification amounts from the user's dashboard on the Librus platform.
 
     Args:
         client (Client): An instance of `librus_apix.client.Client` used to make requests to the Librus platform.
 
     Returns:
-        List[Notification]: A list of `Notification` objects representing the notifications found on the user's dashboard.
+        List[NotificationAmount]: A list of `NotificationAmount` objects representing the notifications found on the user's dashboard.
     """
     soup = no_access_check(BeautifulSoup(client.get(client.INDEX_URL).text, "lxml"))
     notifications = []
@@ -215,6 +216,17 @@ def parse_basic_amount(
 
 @dataclass
 class NotificationData:
+    """
+    Represents data of various notifications.
+
+    Attributes:
+        grades (List[Grade]): A list of grade notifications.
+        attendance (List[Attendance]): A list of attendance notifications.
+        messages (List[Message]): A list of message notifications.
+        announcements (List[Announcement]): A list of announcement notifications.
+        schedule (List[Event]): A list of schedule notifications.
+        homework (List[Homework]): A list of homework notifications.
+    """
     grades: List[Grade]
     attendance: List[Attendance]
     messages: List[Message]
@@ -225,6 +237,17 @@ class NotificationData:
 
 @dataclass
 class NotificationIds:
+    """
+    Represents the IDs (mostly .href) of various notifications to track seen notifications.
+
+    Attributes:
+        grades (List[str]): A list of grade notification IDs.
+        attendance (List[str]): A list of attendance notification IDs.
+        messages (List[str]): A list of message notification IDs.
+        announcements (List[str]): A list of announcement notification IDs (title+data) concat.
+        schedule (List[str]): A list of schedule notification IDs.
+        homework (List[str]): A list of homework notification IDs.
+    """
     grades: List[str]
     attendance: List[str]
     messages: List[str]
@@ -235,7 +258,14 @@ class NotificationIds:
 
 def get_initial_notification_data(client: Client):
     """
+    Fetches and parses the initial notification data and their IDs for a new token.
     ! Should only be ran once on every new Token. The notifications are stored inside Token and won't update.
+
+    Args:
+        client (Client): An instance of `librus_apix.client.Client`.
+
+    Returns:
+        Tuple[NotificationData, NotificationIds]: A tuple containing the initial notification data and their IDs.
     """
     amounts = get_new_token_notification_amounts(client)
     amounts = map(lambda amount: parse_basic_amount(client, amount), amounts)
@@ -249,6 +279,16 @@ def get_initial_notification_data(client: Client):
 
 
 def get_new_notification_data(client: Client, seen_notifications: NotificationIds):
+    """
+    Fetches and parses new notification data and updates seen notification IDs based on given NotificationIds.
+
+    Args:
+        client (Client): An instance of `librus_apix.client.Client`.
+        seen_notifications (NotificationIds): A `NotificationIds` object representing the seen notifications.
+
+    Returns:
+        Tuple[NotificationData, NotificationIds]: A tuple containing the new notification data and updated seen notification IDs.
+    """
     grades, _, _ = get_grades(client, "last_login")
     attendance = get_attendance(client, "last_login")
     messages = get_received(client, 0)
