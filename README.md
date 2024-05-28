@@ -144,7 +144,6 @@ my_second_recipient = recipients["Barbara Brown"]
 sent = send_message(client,
                    "Message Title",
                    "Message\n content",
-                   "teachers",
                    [my_recipient, my_second_recipient]
 )
 if sent == True:
@@ -196,6 +195,15 @@ for weekday in timetable:
 
 ```
 
+### Notifications (a.k.a. spamming endpoints)
+```
+# initial should be always called with a new token
+initial_notifications, new_ids = get_initial_notification_data(client)
+sleep(150)
+# after that you retrieve the new Notifications with new_ids filtered out 
+new_notifications, new_ids = get_new_notification_data(client, new_ids)
+# see more in docs
+```
 
 ### Getting the lucky number
 ```py
