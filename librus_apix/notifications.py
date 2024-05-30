@@ -28,7 +28,7 @@ from librus_apix.grades import Grade, get_grades
 from librus_apix.helpers import no_access_check
 from librus_apix.homework import Homework, get_homework
 from librus_apix.messages import Message, get_received
-from librus_apix.schedule import Event
+from librus_apix.schedule import RecentEvent, get_recently_added_schedule
 
 
 @dataclass
@@ -64,7 +64,19 @@ def get_new_token_notification_amounts(client: Client) -> List[NotificationAmoun
         name = circle.text.replace("\n", "").strip()
         destination = circle.attrs.get("href", "/")
         amount = 0
-        if name == "Widok alternatywny" or "javascript" in destination:
+        if (
+            name == "Widok alternatywny"
+            or "javascript" in destination
+            or destination
+            not in [
+                "/ogloszenia",
+                "/moje_zadania",
+                "/wiadomosci",
+                "/przegladaj_oceny/uczen",
+                "/przegladaj_nb/uczen",
+                "/terminarz",
+            ]
+        ):
             continue
 
         if isinstance(circle.parent, Tag):
@@ -119,7 +131,7 @@ def _parse_messages_notification(messages: List[Message], seen_ids: List[str] = 
             continue
         new_ids.append(href)
         new_messages.append(message)
-    if len(messages) > 0 and len(new_ids) == 0:
+    if len(messages) > 0 and len(seen_ids) == 0:
         seen_ids.append(messages[0].href)
     else:
         seen_ids.extend(new_ids)
@@ -175,12 +187,10 @@ def parse_basic_amount(
             messages = get_received(client, 0)
             top_two_msgs = messages[:2]
             if len(top_two_msgs) == 0:
-                newest = [messages[0]]
-                _, ids = _parse_messages_notification(newest)
-                return [], ids
+                return [], []
             else:
                 return _parse_messages_notification(top_two_msgs)
-            return _parse_messages_notification(top_two_msgs)
+
         case "/ogloszenia":
             announcements = get_announcements(client)
             newest = announcements[: amount.amount]
@@ -192,8 +202,8 @@ def parse_basic_amount(
                 return _parse_announcements_notification(newest)
 
         case "/terminarz":
-            # TODO implement the last_login one when I get the chance to see it's html
-            return [], []
+            schedule = get_recently_added_schedule(client)
+            return schedule, []
         case "/moje_zadania":
             today = datetime.now()
             hw_amount = -amount.amount
@@ -224,7 +234,7 @@ class NotificationData:
         attendance (List[Attendance]): A list of attendance notifications.
         messages (List[Message]): A list of message notifications.
         announcements (List[Announcement]): A list of announcement notifications.
-        schedule (List[Event]): A list of schedule notifications.
+        schedule (List[RecentEvent]): A list of schedule notifications.
         homework (List[Homework]): A list of homework notifications.
     """
 
@@ -232,7 +242,7 @@ class NotificationData:
     attendance: List[Attendance]
     messages: List[Message]
     announcements: List[Announcement]
-    schedule: List[Event]
+    schedule: List[RecentEvent]
     homework: List[Homework]
 
 
@@ -277,6 +287,8 @@ def get_initial_notification_data(client: Client):
         notify_data.append(data)
         notify_ids.append(ids)
 
+    if len(notify_data) != 6:
+        raise ParseError("notification length doenst match expected 6")
     return NotificationData(*notify_data), NotificationIds(*notify_ids)
 
 
@@ -302,6 +314,7 @@ def get_new_notification_data(client: Client, seen_notifications: NotificationId
         today.strftime("%Y-%m-%d"),
     )[::-1]
 
+    new_schedule = get_recently_added_schedule(client)
     new_grades, seen_grades = _parse_grades_notifications(
         grades, seen_notifications.grades
     )
@@ -317,8 +330,6 @@ def get_new_notification_data(client: Client, seen_notifications: NotificationId
     new_homework, seen_homework = _parse_homework_notification(
         homework, seen_notifications.homework
     )
-    # TODO TODO OTODODOOTFOFTOFTOOTODRTOTDODODTODOTO
-    new_schedule, seen_schedule = ([], [])
 
     return NotificationData(
         new_grades,
@@ -332,9 +343,6 @@ def get_new_notification_data(client: Client, seen_notifications: NotificationId
         seen_attendance,
         seen_messages,
         seen_announcements,
-        seen_schedule,
+        [],
         seen_homework,
     )
-
-
-# TODO https://synergia.librus.pl/terminarz/dodane_od_ostatniego_logowania
