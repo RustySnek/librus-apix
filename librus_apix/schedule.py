@@ -29,14 +29,16 @@ Usage:
     detailed_schedule = schedule_detail(client, prefix, detail_url)
     ```
 """
+import re
+from collections import defaultdict
+from dataclasses import dataclass
+from typing import DefaultDict, Dict, List, Union
+
 from bs4 import BeautifulSoup, NavigableString, Tag
+
 from librus_apix.client import Client
 from librus_apix.exceptions import ParseError
 from librus_apix.helpers import no_access_check
-from collections import defaultdict
-from dataclasses import dataclass
-import re
-from typing import DefaultDict, Union, List, Dict
 
 
 @dataclass
@@ -192,3 +194,58 @@ def get_schedule(
             event = Event(title, subject, additional_data, str(d), number, hour, href)
             schedule[d].append(event)
     return schedule
+
+
+@dataclass
+class RecentEvent:
+    """
+    The events inside recent_schedule differ a little bit
+    the .data should contain event name, date from to and duration
+    I might be able to extract into separate values if I get html
+    """
+
+    date_added: str
+    type: str
+    data: str
+
+
+def _sanitize_data(data: str) -> str:
+    return (
+        data.replace("&nbsp;", " ")
+        .replace("<br/>", "<br>")
+        .replace("<br>", "\n")
+        .strip()
+    )
+
+
+def get_recently_added_schedule(client: Client) -> List[RecentEvent]:
+    """
+    Events can be viewed only once here, any subsequent call won't have same events
+    Made blindly based on a screenshot, still untested...
+    """
+    events = []
+    soup = no_access_check(
+        BeautifulSoup(
+            client.get(client.RECENT_SCHEDULE_URL).text,
+            "lxml",
+        )
+    )
+    bg = soup.select_one("div.container-background")
+    if bg is None:
+        raise ParseError("Unable to locate recent schedule container-background")
+    table = soup.select_one("table")
+    if table is None:
+        return []
+    rows = table.select("tr")
+    for row in rows:
+        tds = row.select("td")
+        if len(tds) != 4:
+            continue
+        _, date_added, _type, data = tds
+        data = _sanitize_data(data.text)
+        # unsure about that so we'll check
+        if "czas dodania" in date_added and "rodzaj zdarzenia" in _type:
+            continue
+        event = RecentEvent(date_added.text.strip(), _type.text.strip(), data)
+        events.append(event)
+    return events

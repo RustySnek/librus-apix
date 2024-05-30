@@ -22,17 +22,15 @@ my_client = Client(token=my_token)
 """
 
 
-from typing import Optional, Dict
-from requests.models import Response
+from typing import Dict, Optional
+
 from requests import Session
+from requests.models import Response
 from requests.sessions import RequestsCookieJar
 from requests.utils import cookiejar_from_dict, dict_from_cookiejar
+
 import librus_apix.urls as urls
-from librus_apix.exceptions import (
-    AuthorizationError,
-    MaintananceError,
-    TokenKeyError,
-)
+from librus_apix.exceptions import AuthorizationError, MaintananceError, TokenKeyError
 
 
 class Token:
@@ -169,6 +167,7 @@ class Client:
         attendance_url: str = urls.ATTENDANCE_URL,
         attendance_details_url: str = urls.ATTENDANCE_DETAILS_URL,
         schedule_url: str = urls.SCHEDULE_URL,
+        recent_schedule_url: str = urls.RECENT_SCHEDULE_URL,
         homework_url: str = urls.HOMEWORK_URL,
         homework_details_url: str = urls.HOMEWORK_DETAILS_URL,
         info_url: str = urls.INFO_URL,
@@ -193,6 +192,7 @@ class Client:
         self.ATTENDANCE_URL = attendance_url
         self.ATTENDANCE_DETAILS_URL = attendance_details_url
         self.SCHEDULE_URL = schedule_url
+        self.RECENT_SCHEDULE_URL = recent_schedule_url
         self.HOMEWORK_URL = homework_url
         self.HOMEWORK_DETAILS_URL = homework_details_url
         self.INFO_URL = info_url
@@ -354,6 +354,7 @@ def new_client(
     attendance_url: str = urls.ATTENDANCE_URL,
     attendance_details_url: str = urls.ATTENDANCE_DETAILS_URL,
     schedule_url: str = urls.SCHEDULE_URL,
+    recent_schedule_url: str = urls.RECENT_SCHEDULE_URL,
     homework_url: str = urls.HOMEWORK_URL,
     homework_details_url: str = urls.HOMEWORK_DETAILS_URL,
     info_url: str = urls.INFO_URL,
@@ -408,6 +409,7 @@ def new_client(
         attendance_url,
         attendance_details_url,
         schedule_url,
+        recent_schedule_url,
         homework_url,
         homework_details_url,
         info_url,
