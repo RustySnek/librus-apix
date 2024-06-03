@@ -16,6 +16,7 @@ Functions:
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from hashlib import md5
 from typing import Any, DefaultDict, List, Tuple
 
 from bs4 import BeautifulSoup, Tag
@@ -94,6 +95,20 @@ def get_new_token_notification_amounts(client: Client) -> List[NotificationAmoun
 
 def _compare_hrefs(object_href: str, href_ids: List[str]):
     return object_href in href_ids
+
+
+def _parse_recent_schedule_notification(
+    schedule: List[RecentEvent], seen_ids: List[str] = []
+):
+    new_schedule = []
+    for event in schedule:
+        data_bytes = event.data.encode("utf-8")
+        _id = md5(data_bytes).hexdigest()
+        if _compare_hrefs(_id, seen_ids):
+            continue
+        seen_ids.append(_id)
+        new_schedule.append(event)
+    return new_schedule, seen_ids
 
 
 def _parse_announcements_notification(
@@ -314,7 +329,11 @@ def get_new_notification_data(client: Client, seen_notifications: NotificationId
         today.strftime("%Y-%m-%d"),
     )[::-1]
 
-    new_schedule = get_recently_added_schedule(client)
+    schedule = get_recently_added_schedule(client)
+
+    new_schedule, seen_events = _parse_recent_schedule_notification(
+        schedule, seen_notifications.schedule
+    )
     new_grades, seen_grades = _parse_grades_notifications(
         grades, seen_notifications.grades
     )
@@ -343,6 +362,6 @@ def get_new_notification_data(client: Client, seen_notifications: NotificationId
         seen_attendance,
         seen_messages,
         seen_announcements,
-        [],
+        seen_events,
         seen_homework,
     )
