@@ -26,6 +26,7 @@ for homework in homework_assignments:
     homework_details = homework_detail(client, homework.href)
 ```
 """
+
 from typing import List, Dict
 from bs4 import BeautifulSoup, NavigableString
 from librus_apix.client import Client

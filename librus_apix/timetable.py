@@ -32,6 +32,7 @@ except ParseError as e:
     print(e)
 ```
 """
+
 from typing import List, Dict
 from librus_apix.client import Client
 from librus_apix.exceptions import ParseError, DateError

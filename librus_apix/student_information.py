@@ -25,6 +25,7 @@ Usage:
     print(student_info.lucky_number)
     ```
 """
+
 from typing import Union
 from bs4 import BeautifulSoup
 from dataclasses import dataclass

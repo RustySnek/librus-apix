@@ -21,7 +21,6 @@ my_client = Client(token=my_token)
 ```
 """
 
-
 from typing import Dict, Optional
 
 from requests import Session

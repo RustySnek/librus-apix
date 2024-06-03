@@ -20,7 +20,6 @@ announcements = get_announcements(client)
 ```
 """
 
-
 from typing import List
 from bs4 import BeautifulSoup
 from librus_apix.client import Client
@@ -72,9 +71,11 @@ def get_announcements(client: Client) -> List[Announcement]:
         title = title.text if title is not None else ""
 
         data = [
-            line.select_one("td").text.strip()
-            if line.select_one("td") is not None
-            else ""
+            (
+                line.select_one("td").text.strip()
+                if line.select_one("td") is not None
+                else ""
+            )
             for line in table.find_all("tr", attrs={"class": ["line0", "line1"]})
         ]
         if len(data) != 3:

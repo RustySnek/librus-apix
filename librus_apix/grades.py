@@ -26,6 +26,7 @@ except ParseError as e:
     ...
 ```
 """
+
 import re
 from collections import defaultdict
 from dataclasses import dataclass
@@ -119,9 +120,7 @@ class GradeDescriptive:
     teacher: str
 
 
-def get_grades(
-    client: Client, sort_by: str = "all"
-) -> Tuple[
+def get_grades(client: Client, sort_by: str = "all") -> Tuple[
     List[DefaultDict[str, List[Grade]]],
     DefaultDict[str, List[Gpa]],
     List[DefaultDict[str, List[GradeDescriptive]]],

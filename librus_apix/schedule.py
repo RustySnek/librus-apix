@@ -29,6 +29,7 @@ Usage:
     detailed_schedule = schedule_detail(client, prefix, detail_url)
     ```
 """
+
 import re
 from collections import defaultdict
 from dataclasses import dataclass
