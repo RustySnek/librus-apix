@@ -20,12 +20,14 @@ announcements = get_announcements(client)
 ```
 """
 
-from typing import List
-from bs4 import BeautifulSoup
-from librus_apix.client import Client
-from librus_apix.helpers import no_access_check
 from dataclasses import dataclass
+from typing import List
+
+from bs4 import BeautifulSoup
+
+from librus_apix.client import Client
 from librus_apix.exceptions import ParseError
+from librus_apix.helpers import no_access_check
 
 
 @dataclass
@@ -62,6 +64,8 @@ def get_announcements(client: Client) -> List[Announcement]:
     soup = no_access_check(
         BeautifulSoup(client.get(client.ANNOUNCEMENTS_URL).text, "lxml")
     )
+    if soup.select_one("div.container.border-red.resizeable.center > div > p"):
+        return []
     announcements = []
     announcement_tables = soup.select("table.decorated.big.center.printable.margin-top")
     if len(announcement_tables) < 1:
