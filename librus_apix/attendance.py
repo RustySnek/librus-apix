@@ -33,12 +33,14 @@ attendance_records = get_attendance(client, sort_by="all")
 ```
 """
 
-from typing import List, Dict, Tuple
-from bs4 import BeautifulSoup, NavigableString, Tag
-from librus_apix.client import Client
-from librus_apix.helpers import no_access_check
-from librus_apix.exceptions import ParseError, ArgumentError
 from dataclasses import dataclass
+from typing import Dict, List, Tuple
+
+from bs4 import BeautifulSoup, NavigableString, Tag
+
+from librus_apix.client import Client
+from librus_apix.exceptions import ArgumentError, ParseError
+from librus_apix.helpers import no_access_check
 
 
 @dataclass
@@ -317,5 +319,10 @@ def get_attendance(client: Client, sort_by: str = "all") -> List[List[Attendance
                 attendance_semesters[semester].append(
                     _create_attendance(single, semester)
                 )
-    # returned reverse so first semester is first. Might break if there is only one semester? but idk
-    return list(reversed(attendance_semesters))
+    match semester:
+        case 0:
+            return list(attendance_semesters)
+        case 1:
+            return list(reversed(attendance_semesters))
+        case _:
+            raise ParseError("Couldn't find attendance semester")
