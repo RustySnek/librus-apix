@@ -179,7 +179,7 @@ def get_attendance_frequency(client: Client) -> Tuple[float, float, float]:
     second_semester = [a for a in attendance if a[2] == 2]
     f_attended = len([a for a in first_semester if a[0][0] in ["wy", "ob", "sp"]])
     s_attended = len([a for a in second_semester if a[0][0] in ["wy", "ob", "sp"]])
-    f_freq = f_attended / len(first_semester) if len(second_semester) != 0 else 1
+    f_freq = f_attended / len(first_semester) if len(first_semester) != 0 else 1
     s_freq = s_attended / len(second_semester) if len(second_semester) != 0 else 1
     overall_freq = (
         len([a for a in attendance if a[0][0] in ["wy", "ob", "sp"]]) / len(attendance)
