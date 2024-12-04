@@ -33,9 +33,13 @@ attendance_records = get_attendance(client, sort_by="all")
 ```
 """
 
+import asyncio
+from collections import defaultdict
+from collections.abc import Coroutine
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
+from aiohttp import ClientSession
 from bs4 import BeautifulSoup, NavigableString, Tag
 
 from librus_apix.client import Client
@@ -105,6 +109,72 @@ def get_detail(client: Client, detail_url: str) -> Dict[str, str]:
             continue
         details[l.find("th").text] = l.find("td").text
     return details
+
+def _get_subject_attendance(client: Client):
+    types = {
+        "1": {"short": "nb", "name": "Nieobecność"},
+        "2": {"short": "sp", "name": "Spóźnienie"},
+        "3": {"short": "u", "name": "Nieobecność uspr."},
+        "4": {"short": "zw", "name": "Zwolnienie"},
+        "100": {"short": "ob", "name": "Obecność"},
+        "1266": {"short": "wy", "name": "Wycieczka"},
+        "2022": {"short": "k", "name": "Konkurs szkolny"},
+        "2829": {"short": "sz", "name": "Szkolenie"},
+    }
+    client.refresh_oauth()
+    captured_lessons = {}
+    cookies = client._session.cookies
+    headers = client._session.headers
+    async def req(url, retries=5, delay=0.5) -> Coroutine[Any, Any, Any]:
+        async with ClientSession(cookies=cookies, headers=headers) as session:
+            for attempt in range(retries):
+                try:
+                    async with session.get(url) as response:
+                        response.raise_for_status()
+                        return await response.json()
+                except:
+                    if attempt == retries - 1:
+                        raise
+                    await asyncio.sleep(delay * (2 ** attempt))
+        raise
+
+    async def _lesson_attendance(attendance):
+        lesson_id = attendance["Lesson"]["Id"]
+        absence_type = types[str(attendance["Type"]["Id"])]["short"]
+        if lesson := captured_lessons.get(lesson_id, None):
+            return (lesson, absence_type)
+        resp = await req(f"{client.BASE_URL}/gateway/api/2.0/Lessons/{lesson_id}")
+        sub_id = resp["Lesson"]['Subject']['Id']
+        resp = await req(
+            f"{client.BASE_URL}/gateway/api/2.0/Subjects/{sub_id}"
+        )
+        captured_lessons[lesson_id] = resp["Subject"]["Name"]
+        return (resp["Subject"]["Name"], absence_type)
+
+
+
+    attendances = client.get(client.GATEWAY_API_ATTENDANCE).json()["Attendances"]
+    async def gather():
+        return await asyncio.gather(*[_lesson_attendance(attendance) for attendance in attendances])
+    result = asyncio.run(gather())
+    counts = defaultdict(lambda: defaultdict(int))
+    for subject, absence in result:
+        counts[subject][absence] += 1
+    result = {key: dict(value) for key, value in counts.items()}
+    return result
+
+
+def get_subject_frequency(client: Client) -> Dict[str, float]:
+    res = _get_subject_attendance(client)
+    frequency = {}
+    for sub in res:
+        attended = res[sub].get("ob", 0) + res[sub].get("sp", 0)
+        unattended = (
+            res[sub].get("nb", 0) + res[sub].get("u", 0) + res[sub].get("zw", 0)
+        )
+        total = attended + unattended
+        frequency[sub] = round(attended/total*100, 2) if total > 0 else 100.0
+    return frequency
 
 
 def get_gateway_attendance(client: Client) -> List[Tuple[Tuple[str, str], str, str]]:
