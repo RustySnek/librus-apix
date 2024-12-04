@@ -109,7 +109,7 @@ for attendance in first_semester:
 ```py
 from librus_apix.attendance import get_subject_frequency
 
-freq = get_attendance_frequency(client)
+freq = get_subject_frequency(client)
 for subject, f in freq.items():
   print(f"{f}%")
 ```
