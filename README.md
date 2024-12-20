@@ -3,6 +3,7 @@
 </p>
 
 # Librus Synergia web scraper.
+[![PyPI Downloads](https://static.pepy.tech/badge/librus-apix)](https://pepy.tech/projects/librus-apix)
 ### Be sure to visit the [documentation](https://rustysnek.github.io/librus-apix/).
 
 
