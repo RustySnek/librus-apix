@@ -110,62 +110,66 @@ def get_detail(client: Client, detail_url: str) -> Dict[str, str]:
         details[l.find("th").text] = l.find("td").text
     return details
 
-def _get_subject_attendance(client: Client):
+async def _get_subject_attendance(client):
     types = {
-        "1": {"short": "nb", "name": "Nieobecność"},
-        "2": {"short": "sp", "name": "Spóźnienie"},
-        "3": {"short": "u", "name": "Nieobecność uspr."},
-        "4": {"short": "zw", "name": "Zwolnienie"},
-        "100": {"short": "ob", "name": "Obecność"},
-        "1266": {"short": "wy", "name": "Wycieczka"},
-        "2022": {"short": "k", "name": "Konkurs szkolny"},
-        "2829": {"short": "sz", "name": "Szkolenie"},
+        "1": "nb", "2": "sp", "3": "u", "4": "zw",
+        "100": "ob", "1266": "wy", "2022": "k", "2829": "sz",
     }
+
     client.refresh_oauth()
-    captured_lessons = {}
+    attendances = client.get(client.GATEWAY_API_ATTENDANCE).json()["Attendances"]
+
     cookies = client._session.cookies
     headers = client._session.headers
-    async def req(url, retries=5, delay=0.5) -> Coroutine[Any, Any, Any]:
-        async with ClientSession(cookies=cookies, headers=headers) as session:
-            for attempt in range(retries):
-                try:
-                    async with session.get(url) as response:
-                        response.raise_for_status()
-                        return await response.json()
-                except:
-                    if attempt == retries - 1:
-                        raise
-                    await asyncio.sleep(delay * (2 ** attempt))
-        raise
+    base_url = client.BASE_URL
 
-    async def _lesson_attendance(attendance):
+    lesson_cache = {}
+    subject_cache = {}
+
+    async def req(session: ClientSession, url: str, retries=5, delay=0.5):
+        for attempt in range(retries):
+            try:
+                async with session.get(url) as response:
+                    response.raise_for_status()
+                    return await response.json()
+            except:
+                if attempt == retries - 1:
+                    raise
+                await asyncio.sleep(delay * (2 ** attempt))
+
+    async def _lesson_attendance(session: ClientSession, attendance: dict):
         lesson_id = attendance["Lesson"]["Id"]
-        absence_type = types[str(attendance["Type"]["Id"])]["short"]
-        if lesson := captured_lessons.get(lesson_id, None):
-            return (lesson, absence_type)
-        resp = await req(f"{client.BASE_URL}/gateway/api/2.0/Lessons/{lesson_id}")
-        sub_id = resp["Lesson"]['Subject']['Id']
-        resp = await req(
-            f"{client.BASE_URL}/gateway/api/2.0/Subjects/{sub_id}"
+        absence_type = types.get(str(attendance["Type"]["Id"]), "unknown")
+
+        if lesson_id in lesson_cache:
+            return (lesson_cache[lesson_id], absence_type)
+
+        lesson_resp = await req(session, f"{base_url}/gateway/api/2.0/Lessons/{lesson_id}")
+        sub_id = lesson_resp["Lesson"]["Subject"]["Id"]
+
+        if sub_id in subject_cache:
+            subject_name = subject_cache[sub_id]
+        else:
+            sub_resp = await req(session, f"{base_url}/gateway/api/2.0/Subjects/{sub_id}")
+            subject_name = sub_resp["Subject"]["Name"]
+            subject_cache[sub_id] = subject_name
+
+        lesson_cache[lesson_id] = subject_name
+        return (subject_name, absence_type)
+
+    async with ClientSession(cookies=cookies, headers=headers) as session:
+        results = await asyncio.gather(
+            *[_lesson_attendance(session, attendance) for attendance in attendances]
         )
-        captured_lessons[lesson_id] = resp["Subject"]["Name"]
-        return (resp["Subject"]["Name"], absence_type)
 
-
-
-    attendances = client.get(client.GATEWAY_API_ATTENDANCE).json()["Attendances"]
-    async def gather():
-        return await asyncio.gather(*[_lesson_attendance(attendance) for attendance in attendances])
-    result = asyncio.run(gather())
     counts = defaultdict(lambda: defaultdict(int))
-    for subject, absence in result:
+    for subject, absence in results:
         counts[subject][absence] += 1
-    result = {key: dict(value) for key, value in counts.items()}
-    return result
 
+    return {subject: dict(types) for subject, types in counts.items()}
 
 def get_subject_frequency(client: Client) -> Dict[str, float]:
-    res = _get_subject_attendance(client)
+    res = asyncio.run(_get_subject_attendance(client))
     frequency = {}
     for sub in res:
         attended = res[sub].get("ob", 0) + res[sub].get("sp", 0)
