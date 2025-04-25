@@ -110,10 +110,17 @@ def get_detail(client: Client, detail_url: str) -> Dict[str, str]:
         details[l.find("th").text] = l.find("td").text
     return details
 
+
 async def _get_subject_attendance(client):
     types = {
-        "1": "nb", "2": "sp", "3": "u", "4": "zw",
-        "100": "ob", "1266": "wy", "2022": "k", "2829": "sz",
+        "1": "nb",
+        "2": "sp",
+        "3": "u",
+        "4": "zw",
+        "100": "ob",
+        "1266": "wy",
+        "2022": "k",
+        "2829": "sz",
     }
 
     client.refresh_oauth()
@@ -135,7 +142,7 @@ async def _get_subject_attendance(client):
             except:
                 if attempt == retries - 1:
                     raise
-                await asyncio.sleep(delay * (2 ** attempt))
+                await asyncio.sleep(delay * (2**attempt))
 
     async def _lesson_attendance(session: ClientSession, attendance: dict):
         lesson_id = attendance["Lesson"]["Id"]
@@ -144,13 +151,17 @@ async def _get_subject_attendance(client):
         if lesson_id in lesson_cache:
             return (lesson_cache[lesson_id], absence_type)
 
-        lesson_resp = await req(session, f"{base_url}/gateway/api/2.0/Lessons/{lesson_id}")
+        lesson_resp = await req(
+            session, f"{base_url}/gateway/api/2.0/Lessons/{lesson_id}"
+        )
         sub_id = lesson_resp["Lesson"]["Subject"]["Id"]
 
         if sub_id in subject_cache:
             subject_name = subject_cache[sub_id]
         else:
-            sub_resp = await req(session, f"{base_url}/gateway/api/2.0/Subjects/{sub_id}")
+            sub_resp = await req(
+                session, f"{base_url}/gateway/api/2.0/Subjects/{sub_id}"
+            )
             subject_name = sub_resp["Subject"]["Name"]
             subject_cache[sub_id] = subject_name
 
@@ -168,6 +179,7 @@ async def _get_subject_attendance(client):
 
     return {subject: dict(types) for subject, types in counts.items()}
 
+
 def get_subject_frequency(client: Client) -> Dict[str, float]:
     res = asyncio.run(_get_subject_attendance(client))
     frequency = {}
@@ -177,7 +189,7 @@ def get_subject_frequency(client: Client) -> Dict[str, float]:
             res[sub].get("nb", 0) + res[sub].get("u", 0) + res[sub].get("zw", 0)
         )
         total = attended + unattended
-        frequency[sub] = round(attended/total*100, 2) if total > 0 else 100.0
+        frequency[sub] = round(attended / total * 100, 2) if total > 0 else 100.0
     return frequency
 
 
