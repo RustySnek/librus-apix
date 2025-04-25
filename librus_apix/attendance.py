@@ -184,10 +184,10 @@ def get_subject_frequency(client: Client, attendances=None) -> Dict[str, float]:
     if not attendances:
         attendances = asyncio.run(_get_subject_attendance(client))
     frequency = {}
-    for sub in res:
-        attended = res[sub].get("ob", 0) + res[sub].get("sp", 0)
+    for sub in attendances:
+        attended = attendances[sub].get("ob", 0) + attendances[sub].get("sp", 0)
         unattended = (
-            res[sub].get("nb", 0) + res[sub].get("u", 0) + res[sub].get("zw", 0)
+            attendances[sub].get("nb", 0) + attendances[sub].get("u", 0) + attendances[sub].get("zw", 0)
         )
         total = attended + unattended
         frequency[sub] = round(attended / total * 100, 2) if total > 0 else 100.0
