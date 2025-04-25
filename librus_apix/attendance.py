@@ -180,8 +180,9 @@ async def _get_subject_attendance(client):
     return {subject: dict(types) for subject, types in counts.items()}
 
 
-def get_subject_frequency(client: Client) -> Dict[str, float]:
-    res = asyncio.run(_get_subject_attendance(client))
+def get_subject_frequency(client: Client, attendances=None) -> Dict[str, float]:
+    if not attendances:
+        attendances = asyncio.run(_get_subject_attendance(client))
     frequency = {}
     for sub in res:
         attended = res[sub].get("ob", 0) + res[sub].get("sp", 0)
