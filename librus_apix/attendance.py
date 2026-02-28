@@ -37,7 +37,8 @@ import asyncio
 from collections import defaultdict
 from collections.abc import Coroutine
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup, NavigableString, Tag
@@ -111,7 +112,9 @@ def get_detail(client: Client, detail_url: str) -> Dict[str, str]:
     return details
 
 
-async def _get_subject_attendance(client):
+async def _get_subject_attendance(
+    client, start: Optional[datetime] = None, end: Optional[datetime] = None
+):
     types = {
         "1": "nb",
         "2": "sp",
@@ -125,6 +128,17 @@ async def _get_subject_attendance(client):
 
     client.refresh_oauth()
     attendances = client.get(client.GATEWAY_API_ATTENDANCE).json()["Attendances"]
+
+    if start is not None or end is not None:
+        filtered = []
+        for a in attendances:
+            date = datetime.strptime(a["Date"], "%Y-%m-%d")
+            if start is not None and date < start:
+                continue
+            if end is not None and date > end:
+                continue
+            filtered.append(a)
+        attendances = filtered
 
     cookies = client._session.cookies
     headers = client._session.headers
@@ -180,14 +194,21 @@ async def _get_subject_attendance(client):
     return {subject: dict(types) for subject, types in counts.items()}
 
 
-def get_subject_frequency(client: Client, attendances=None) -> Dict[str, float]:
+def get_subject_frequency(
+    client: Client,
+    attendances=None,
+    start: Optional[datetime] = None,
+    end: Optional[datetime] = None,
+) -> Dict[str, float]:
     if not attendances:
-        attendances = asyncio.run(_get_subject_attendance(client))
+        attendances = asyncio.run(_get_subject_attendance(client, start, end))
     frequency = {}
     for sub in attendances:
         attended = attendances[sub].get("ob", 0) + attendances[sub].get("sp", 0)
         unattended = (
-            attendances[sub].get("nb", 0) + attendances[sub].get("u", 0) + attendances[sub].get("zw", 0)
+            attendances[sub].get("nb", 0)
+            + attendances[sub].get("u", 0)
+            + attendances[sub].get("zw", 0)
         )
         total = attended + unattended
         frequency[sub] = round(attended / total * 100, 2) if total > 0 else 100.0
