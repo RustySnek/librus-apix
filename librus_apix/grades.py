@@ -272,7 +272,7 @@ def _extract_grades_numeric(
                     sem_grades[semester_number][subject].append(g)
             avg_gr = (
                 average_grades[semester_number]
-                if len(average_grades) >= semester_number
+                if len(average_grades) > semester_number
                 else 0.0
             )  # might happen that the list is empty
             gpa = Gpa(semester_number + 1, avg_gr, subject)
