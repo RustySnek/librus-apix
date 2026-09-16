@@ -145,23 +145,29 @@ def get_timetable(client: Client, monday_date: datetime) -> List[List[Period]]:
             date, date_from, date_to = [
                 val for key, val in lesson.attrs.items() if key.startswith("data")
             ]
-            lesson = lesson.select_one("div.text")
-            if lesson is None:
+            lessons = lesson.select("div.text")
+            if not lessons:
                 subject = ""
                 teacher_and_classroom = ""
             else:
-                subject = lesson.select_one("b")
-                subject = subject.text if subject is not None else ""
-                teacher_and_classroom = (
-                    lesson.text.replace("\xa0", " ")
-                    .replace("\n", "")
-                    .replace("&nbsp", "")
-                    .split("-")
-                )
-                if len(teacher_and_classroom) >= 2:
-                    teacher_and_classroom = "-".join(teacher_and_classroom[1:])
-                else:
-                    teacher_and_classroom = ""
+                all_subjects = []
+                all_teachers = []
+                for l in lessons:
+                    sub = l.select_one("b")
+                    if sub is not None:
+                        all_subjects.append(sub.text.strip())
+                    
+                    tc = (
+                        l.text.replace("\xa0", " ")
+                        .replace("\n", "")
+                        .replace("&nbsp", "")
+                        .split("-")
+                    )
+                    if len(tc) >= 2:
+                        all_teachers.append("-".join(tc[1:]).strip())
+                
+                subject = " / ".join(all_subjects)
+                teacher_and_classroom = " / ".join(all_teachers)
 
             weekday_str = datetime.strptime(date, "%Y-%m-%d").strftime("%A")
             p = Period(
