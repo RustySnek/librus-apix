@@ -304,8 +304,16 @@ def _extract_grades_descriptive(
         semesters = [semester_grades[1], semester_grades[2]]
         subject = semester_grades[0].text.replace("\n", "").strip()
         for sem_index, sg in enumerate(semesters):
-            grade_a = sg.select("td[class!='center'] > span.grade-box > a")
-            for a in grade_a:
+            grade_elements = sg.select(
+                "td[class!='center'] > span.grade-box > a, "
+                "span.grade-box > span.ocena"
+            )
+            for element in grade_elements:
+                grade_tag = (
+                    element.parent
+                    if element.name == "span" and "ocena" in element.get("class", [])
+                    else element
+                )
                 (
                     _grade,
                     date,
@@ -315,7 +323,7 @@ def _extract_grades_descriptive(
                     _category,
                     teacher,
                     _weight,
-                ) = _extract_grade_info(a, subject)
+                ) = _extract_grade_info(grade_tag, subject)
                 if "javascript" in href:
                     # javascript content is not standard href - clear it
                     href = ""
