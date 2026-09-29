@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from librus_apix.client import Client, Token
 import logging
@@ -17,6 +19,10 @@ def pytest_addoption(parser):
     )
     parser.addoption(
         "--mock_url", action="store", default="http://localhost:8000", help="mock url"
+    )
+    parser.addoption("--login", default=os.environ.get("LIBRUS_LOGIN"), help="live tests")
+    parser.addoption(
+        "--password", default=os.environ.get("LIBRUS_PASSWORD"), help="live tests"
     )
 
 

@@ -28,6 +28,11 @@ pip install pytest
   ```bash
   pytest --token {output of token.API_Key}
   ```
+
+  #### Compare grades with synergia.librus.pl (login + password)
+  ```bash
+  LIBRUS_LOGIN=... LIBRUS_PASSWORD=... pytest tests/test_live_grades.py
+  ```
   
   #### [Dev] Test using a mock server
   - For developing purposes I've created a [simple mock html server](https://github.com/RustySnek/librus-apix-mock)
