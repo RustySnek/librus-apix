@@ -30,10 +30,11 @@ except ParseError as e:
 import re
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import DefaultDict, List, Tuple, Union
+from typing import DefaultDict, Dict, List, Tuple, Union
 
 from bs4 import BeautifulSoup, Tag
 
+import librus_apix.urls as urls
 from librus_apix.client import Client
 from librus_apix.exceptions import ArgumentError, ParseError
 from librus_apix.helpers import no_access_check
@@ -149,17 +150,34 @@ def get_grades(client: Client, sort_by: str = "all") -> Tuple[
             "Wrong value for sort_by it can be either all, week or last_login"
         )
 
-    tr = no_access_check(
+    soup = no_access_check(
         BeautifulSoup(
             client.post(client.GRADES_URL, data={SORT[sort_by]: "1"}).text,
             "lxml",
         )
-    ).find_all("tr", attrs={"class": ["line0", "line1"], "id": None})
+    )
+    tr = soup.find_all("tr", attrs={"class": ["line0", "line1"], "id": None})
     if len(tr) < 1:
         raise ParseError("Error in parsing grades")
 
     sem_grades, avg_grades = _extract_grades_numeric(tr)
     sem_grades_desc = _extract_grades_descriptive(tr)
+
+    # New descriptive grading schema: the page contains only an empty table,
+    # grades are loaded by JavaScript from the gateway API.
+    if soup.select_one("table.newSchemaGradesByStudentTable") is not None:
+        try:
+            api_grades_desc = _extract_grades_descriptive_from_api(
+                client, soup.select("table.newSchemaGradesByStudentTable tr.studentRow")
+            )
+        except Exception:
+            # optional data - never break get_grades because of the API
+            api_grades_desc = []
+        for sem_index, semester in enumerate(api_grades_desc):
+            for subject, grades in semester.items():
+                if not sem_grades_desc[sem_index][subject]:
+                    sem_grades_desc[sem_index][subject] = grades
+
     return sem_grades, avg_grades, sem_grades_desc
 
 
@@ -384,4 +402,68 @@ def _extract_grades_descriptive(
             sem_grades_desc[sem_index][summary_title] = []
         sem_grades_desc[sem_index][summary_title].append(semester_summary)
 
+    return sem_grades_desc
+
+
+def _extract_grades_descriptive_from_api(
+    client: Client, subject_rows: List[Tag]
+) -> List[DefaultDict[str, List[GradeDescriptive]]]:
+    """
+    Fetches descriptive grades of the new schema the same way Librus' JavaScript
+    (gradesByStudent.js) does: resolve the student identifier, then
+    POST /gateway/api/2.0/Auth/DescriptiveGradingSystem/PartialGrades/Student/{id}.
+    """
+    sem_grades_desc: List[DefaultDict[str, List[GradeDescriptive]]] = [
+        defaultdict(list) for _ in range(2)
+    ]
+    client.refresh_oauth()  # sets the oauth_token cookie required by the gateway API
+
+    user_id = client.get(urls.GATEWAY_API_TOKEN_INFO).json()["UserIdentifier"]
+    user_info = client.get(urls.GATEWAY_API_USER_INFO + user_id).json()
+    student_id = user_info.get("IdentifierOfStudentAssignedWithUser") or user_id
+
+    response = client.post_json(urls.GATEWAY_API_DESCRIPTIVE_GRADES + student_id)
+    response.raise_for_status()
+    items = response.json().get("data") or []
+    if not items:
+        return sem_grades_desc
+
+    # grade -> subject: identifier -> numericIdentifier (data-subject_id on the page)
+    subjects: Dict[str, Dict] = {
+        s["identifier"]: s for s in client.get(urls.GATEWAY_API_SUBJECTS).json()["data"]
+    }
+    teachers: Dict[str, str] = {
+        u["AccountId"]: f"{u['LastName']} {u['FirstName'] or ''}".strip()
+        for u in client.get(urls.GATEWAY_API_USERS).json()["Users"]
+    }
+    subject_names = {
+        row["data-subject_id"]: row.find_all("td")[1].text.strip() for row in subject_rows
+    }
+
+    for item in items:
+        semester = int(item["semester"])
+        if semester not in (1, 2):
+            continue
+        subject = subjects.get(item["subjectId"], {})
+        title = (
+            subject_names.get(str(subject.get("numericIdentifier")))
+            or subject.get("name")
+            or item["subjectId"]
+        )
+        grade = (item.get("scaleValue") or {}).get("value") or "OO"
+        teacher = teachers.get(item.get("teacherId"), "")
+        date = item.get("date", "")[:10]
+        desc = (
+            f"Ocena: {grade}\n"
+            f"Przedmiot: {title}\n"
+            f"Obszar: {(item.get('area') or {}).get('name', '')}\n"
+            f"Data: {date}\n"
+            f"Nauczyciel: {teacher}\n"
+            f"Treść oceny: {item.get('content') or ''}\n"
+            f"Dodał: {teachers.get(item.get('addedBy'), '')}\n"
+            f"Komentarz: {item.get('comments') or ''}\n"
+        )
+        sem_grades_desc[semester - 1][title].append(
+            GradeDescriptive(title, grade, date, "", desc, semester, teacher)
+        )
     return sem_grades_desc

@@ -324,6 +324,23 @@ class Client:
             response: Response = s.post(url, data=data, proxies=self.proxy)
             return response
 
+    def post_json(self, url: str, data: Optional[Dict] = None) -> Response:
+        """
+        Makes a POST request with a JSON body (gateway API), by default ``{}``.
+
+        Args:
+            url (str): The URL to send the POST request to.
+            data (Dict, optional): The JSON body.
+
+        Returns:
+            Response: The response from the server.
+        """
+        self.cookies.update(self.token.access_cookies())
+        with self._session as s:
+            s.headers = {**urls.HEADERS, "Content-Type": "application/json"}
+            s.cookies = self.cookies
+            return s.post(url, json=data or {}, proxies=self.proxy)
+
     def get(self, url: str) -> Response:
         """
         Makes a GET request to the specified URL.
