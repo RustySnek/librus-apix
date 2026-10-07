@@ -63,7 +63,8 @@ class Grade:
     Attributes:
         title (str): The title of the grade.
         grade (str): The grade string value (e.g., '2', '4+', etc.).
-        value (float): Property function. Returns calculated float of grade. (e.g., '4.5 for 4+', '2.75 for 3-')
+        value (float | str): Property function. Returns calculated float of grade. (e.g., '4.5 for 4+', '2.75 for 3-'),
+            or the raw grade string if it isn't numeric (e.g., '85%', '85/100').
         counts (bool): Indicates whether the grade counts towards the GPA.
         date (str): The date when the grade was given.
         href (str): A URL suffix associated with the grade.
@@ -91,22 +92,19 @@ class Grade:
         Calculates and returns the numeric value of the grade based on its string representation.
 
         Returns:
-            Union[float, str]: The numeric value of the grade or a string indicating it doesn't count.
-        Raises:
-            ValueError: if grade's format is invalid ex. A+, B+ instead of 5+, 4+
+            Union[float, str]: The numeric value of the grade, a string indicating it doesn't count,
+                or the raw grade string if it can't be converted (ex. '85%', '85/100', 'A+').
         """
         if self.counts is False:
             return "Does not count"
+        modified = re.fullmatch(r"(\d)([+-])", self.grade)
+        if modified is not None:
+            base, modifier = modified.groups()
+            return float(base) + (0.5 if modifier == "+" else -0.25)
         try:
-            if len(self.grade) > 1:
-                grade_value = float(self.grade[0]) + float(
-                    self.grade[1].replace("+", ".5").replace("-", "-0.25")
-                )
-            else:
-                grade_value = float(self.grade)
-            return grade_value
+            return float(self.grade.replace(",", "."))
         except ValueError:
-            raise ValueError("Invalid grade format in .value property func")
+            return self.grade
 
 
 @dataclass

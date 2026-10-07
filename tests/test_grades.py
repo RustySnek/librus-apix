@@ -100,3 +100,30 @@ def test_extract_descriptive_grades_new_schema():
     assert grade.semester == 1
     assert grade.href == ""
     assert grades[1]["Przedmiot"] == []
+
+
+def _make_grade(grade: str, counts: bool = True) -> Grade:
+    return Grade("Przedmiot", grade, counts, "", "", "", 1, "", "", 1)
+
+
+@pytest.mark.parametrize(
+    "grade, expected",
+    [
+        ("5", 5.0),
+        ("4+", 4.5),
+        ("3-", 2.75),
+        ("85", 85.0),
+        ("100", 100.0),
+        ("4,5", 4.5),
+        ("85%", "85%"),
+        ("85/100", "85/100"),
+        ("+", "+"),
+        ("np", "np"),
+    ],
+)
+def test_grade_value(grade: str, expected: Union[float, str]):
+    assert _make_grade(grade).value == expected
+
+
+def test_grade_value_does_not_count():
+    assert _make_grade("85", counts=False).value == "Does not count"
