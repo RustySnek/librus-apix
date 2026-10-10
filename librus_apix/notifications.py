@@ -60,7 +60,7 @@ def get_new_token_notification_amounts(client: Client) -> List[NotificationAmoun
     """
     soup = no_access_check(BeautifulSoup(client.get(client.INDEX_URL).text, "lxml"))
     notifications = []
-    circles = soup.select("div#graphic-menu > ul > li > a[class!='button counter']")
+    circles = soup.select("div#graphic-menu > ul > li > a:not([class='button counter'])")
     for circle in circles:
         name = circle.text.replace("\n", "").strip()
         destination = circle.attrs.get("href", "/")
