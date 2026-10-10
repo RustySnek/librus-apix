@@ -227,7 +227,7 @@ def _extract_grades_numeric(
         if box.select_one("td[class='center micro screen-only']") is None:
             # row without grade data - skip
             continue
-        semester_grades = box.select('td[class!="center micro screen-only"]')
+        semester_grades = box.select('td:not([class="center micro screen-only"])')
         if len(semester_grades) < 9:
             continue
         average_grades = list(map(lambda x: x.text, box.select("td.right")))
@@ -238,10 +238,10 @@ def _extract_grades_numeric(
                 sem_grades[semester_number][subject] = []
             for sg in semester:
                 grade_a_improved = sg.select(
-                    "td[class!='center'] > span > span.grade-box > a"
+                    "td:not([class='center']) > span > span.grade-box > a"
                 )
                 grade_a = (
-                    sg.select("td[class!='center'] > span.grade-box > a")
+                    sg.select("td:not([class='center']) > span.grade-box > a")
                     + grade_a_improved
                 )
                 for a in grade_a:
@@ -296,14 +296,14 @@ def _extract_grades_descriptive(
         if box.select_one("td[class='micro center screen-only']") is None:
             # row without descriptive grade data - skip
             continue
-        semester_grades = box.select('td[class!="micro center screen-only"]')
+        semester_grades = box.select('td:not([class="micro center screen-only"])')
         if len(semester_grades) < 3:
             continue
         semesters = [semester_grades[1], semester_grades[2]]
         subject = semester_grades[0].text.replace("\n", "").strip()
         for sem_index, sg in enumerate(semesters):
             grade_elements = sg.select(
-                "td[class!='center'] > span.grade-box > a, "
+                "td:not([class='center']) > span.grade-box > a, "
                 "span.grade-box > span.ocena"
             )
             for element in grade_elements:
