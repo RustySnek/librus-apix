@@ -141,7 +141,7 @@ class Client:
         RECIPIENTS_URL (str): The URL for recipients.
         RECIPIENT_GROUPS_URL (str): The URL for recipient groups.
         INDEX_URL (str): Url for student index
-        cookies (RequestsCookieJar): additional cookies
+        cookies (RequestsCookieJar): Cookies used for authentication and requests.
         _session (Session): The requests session for making HTTP calls.
 
     Methods:
@@ -177,7 +177,7 @@ class Client:
         refresh_oauth_url: str = urls.REFRESH_OAUTH_URL,
         index_url: str = urls.INDEX_URL,
         proxy: Dict[str, str] = {},
-        extra_cookies: RequestsCookieJar = RequestsCookieJar(),
+        extra_cookies: Optional[RequestsCookieJar] = None,
     ):
         self.token = token
         self.proxy = proxy
@@ -201,8 +201,10 @@ class Client:
         self.RECIPIENT_GROUPS_URL = recipient_groups_url
         self.REFRESH_URL = refresh_oauth_url
         self.INDEX_URL = index_url
-        self.cookies = extra_cookies
         self._session = Session()
+        if extra_cookies is not None:
+            self._session.cookies = extra_cookies
+        self.cookies = self._session.cookies
         """
         Initializes a new instance of Client.
 
@@ -227,6 +229,7 @@ class Client:
             gateway_api_attendance (str, optional): The URL of the gateway API attendance endpoint. Defaults to urls.GATEWAY_API_ATTENDANCE.
             refresh_oauth_url (str, optional): The URL of the refresh OAuth endpoint. Defaults to urls.REFRESH_OAUTH_URL.
             proxy (Dict[str, str], optional): A dictionary containing proxy settings. Defaults to an empty dictionary.
+            extra_cookies (RequestsCookieJar, optional): Cookie jar used by the session. Defaults to a new jar for each client.
          """
 
     def get_token(
